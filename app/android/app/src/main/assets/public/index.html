@@ -108,10 +108,12 @@ button.go:focus-visible{outline:3px solid var(--p1);outline-offset:3px}
 textarea{font:13px/1.3 ui-monospace,Menlo,monospace;width:100%;min-height:72px;background:var(--night);color:var(--fg);border:2px solid var(--muted);padding:8px;resize:vertical;box-sizing:border-box;user-select:text;-webkit-user-select:text}
 details{text-align:left;width:100%}
 details summary{cursor:pointer;color:var(--muted);font-size:16px}
+.setl{display:grid;gap:8px;max-width:22rem;width:100%;margin:0 auto}
 .status{font-family:var(--display);font-size:12px;line-height:1.5;color:var(--gold);letter-spacing:.03em}
 
 .pad{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}
-.pad{--d:clamp(40px,12.5vh,56px);--b:clamp(46px,14.5vh,62px)}
+.pad{--ps:1;--d:calc(clamp(40px,12.5vh,56px)*var(--ps));--b:calc(clamp(46px,14.5vh,62px)*var(--ps))}
+.pad.lefty{flex-direction:row-reverse}
 .dpad{display:grid;grid-template-columns:repeat(3,var(--d));grid-template-rows:repeat(3,var(--d));gap:2px;pointer-events:auto;touch-action:none;border-radius:50%;background:color-mix(in srgb,var(--night) 35%,transparent)}
 .dpad span{pointer-events:none}
 .dpad .hub{display:block;margin:22%;border-radius:50%;background:color-mix(in srgb,var(--panel) 60%,transparent);border:2px solid var(--muted)}
@@ -290,7 +292,7 @@ addEventListener('contextmenu',e=>e.preventDefault());
    the guest so both phones see and hear the same thing.
    ===================================================================== */
 let ac=null,NOISE=null;
-function tone(f1,f2,d,type,v,noise){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}}
+function tone(f1,f2,d,type,v,noise){if(!SET.sound)return;if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}}
   const t=ac.currentTime,g=ac.createGain();g.connect(ac.destination);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
   if(noise){if(!NOISE){NOISE=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const ch=NOISE.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1}
     // one shared noise buffer: building a fresh one on every hit made the garbage collector pause mid-fight
@@ -322,7 +324,7 @@ const FX={
   tx:o=>{o.t0=o.t;texts.push(o)},
   sf:n=>SFX[n]&&SFX[n](),
   sh:v=>shake=Math.max(shake,v),
-  vb:(who,ms)=>{if(who===myIndex()&&navigator.vibrate)try{navigator.vibrate(ms)}catch(_){}},
+  vb:(who,ms)=>{if(SET.buzz&&who===myIndex()&&navigator.vibrate)try{navigator.vibrate(ms)}catch(_){}},
 };
 function fx(type,...a){FX[type](...a);if(NET.role==='host'&&NET.inMatch)NET.evq.push([type,...a])}
 const spark=(x,y,c,n,ring)=>fx('sp',Math.round(x),Math.round(y),c,n,ring||0);
@@ -911,7 +913,14 @@ function stageCafe(t){
    GAME STATE
    ===================================================================== */
 let p1=null,p2=null,round=0,timer=60,phase='menu',phaseT=0,cpuLevel=1,superFreeze=0,superBy=null,projs=[],stage=STAGES[0];
-let mode='cpu',pickChar=0,pickStage=0,lastPicks=null,paused=false;
+let mode='cpu',pickChar=0,pickStage=0,lastPicks=null,paused=false,screen='';
+// settings and last picks, kept on this phone between sessions
+const SET={sound:1,buzz:1,pad:1,lefty:0,char:0,stage:0};
+try{Object.assign(SET,JSON.parse(localStorage.getItem('rr-settings')||'{}'))}catch(_){}
+function saveSet(){try{localStorage.setItem('rr-settings',JSON.stringify(SET))}catch(_){}}
+pickChar=Math.min(CHARS.length-1,SET.char|0);pickStage=Math.min(STAGES.length-1,SET.stage|0);
+function applySet(){const pd=$('pad');if(pd){pd.style.setProperty('--ps',SET.pad);pd.classList.toggle('lefty',!!SET.lefty)}}
+applySet();
 const arc={list:[],idx:0};
 const train={dummy:'stand',meter:true,hits:0,dmg:0};
 const DUMMY_MODES={stand:'Stand',block:'Block',cblock:'Crouch block',jump:'Jump'};
@@ -1433,7 +1442,7 @@ function snapF(f){return[Math.round(f.x*10)/10,Math.round(f.y*10)/10,f.face,STAT
 function unsnapF(f,a){
   const[x,y,face,si,t,hp,lag,meter,wins,cr,bl,inv,an,sup,vx,walkT,dir,flo,flip,ad,hh,fl,vy,bt]=a;f.bindT=bt||0;
   const st=STATES[si];
-  if(an&&(f.atkName!==an||!f.atk||st!=='attack'||t<f.t)){f.supNext=sup;f.atk=moveDef(f,an);f.atk.super=!!sup;f.atkName=an}
+  if(an&&(f.atkName!==an||!f.atk||st!=='attack'||t<f.t-.2)){f.supNext=sup;f.atk=moveDef(f,an);f.atk.super=!!sup;f.atkName=an}
   if(fl&&f.flashT<=0)f.flashT=.09;
   Object.assign(f,{x,y,face,state:st,t,hp,lag,meter,wins,crouch:!!cr,blocking:!!bl,inv,vx,vy,walkT,dir,floating:flo,flip,adT:ad?.1:0,hitH:HH[hh]||'mid'});
 }
@@ -1444,7 +1453,7 @@ function sendSnap(){
   try{NET.st.send(JSON.stringify(s))}catch(_){}
 }
 function applySnap(s){
-  if(!p1||!p2)return;
+  if(!p1||!p2)return;NET.snapAt=performance.now();
   unsnapF(p1,s.a);unsnapF(p2,s.b);timer=s.tm;superFreeze=s.sf;superBy=s.sb===0?p1:s.sb===1?p2:null;crowd=s.cr;slowmo=s.sl?.2:0;
   if(s.ph!==phase&&s.ph==='intro')for(const f of [p1,p2]){f.ribbon=[];f.hair=[];f.smear=[]}
   phase=s.ph;
@@ -1454,7 +1463,7 @@ function applySnap(s){
 /* =====================================================================
    SCREENS
    ===================================================================== */
-function showPanel(html){$('panel').innerHTML=html;$('card').hidden=false;$('card').scrollTop=0}
+function showPanel(html){screen='';$('panel').innerHTML=html;$('card').hidden=false;$('card').scrollTop=0}
 function hideMatchUI(){$('hud').hidden=true;$('pad').hidden=true;$('pausebtn').hidden=true;$('trainInfo').hidden=true}
 function renderTrain(){$('trainInfo').innerHTML=`DUMMY: ${esc(DUMMY_MODES[train.dummy]).toUpperCase()} · LAST COMBO: <b>${train.hits}</b> HITS, <b>${train.dmg}</b> DMG`}
 function portrait(def){
@@ -1495,12 +1504,22 @@ function menu(){
     <button class="mode" id="m_train" type="button"><b>TRAINING</b><small>Practise strings and juggles on a dummy. Shows combo damage.</small></button>
     <button class="mode${CAN_NET?'':' dis'}" id="m_friend" type="button"><b>VS FRIEND</b><small>${CAN_NET?'Two phones on the same Wi-Fi or hotspot. Pair with a QR code.':'Wi-Fi matches work in the Android app.'}</small></button>
   </div>
-  ${CONTROLS}`);
+  ${CONTROLS}
+  <div class="row"><button class="go ghost" id="m_set" type="button">Settings</button></div>`);screen='main';
   $('m_arcade').onclick=()=>{mode='arcade';selectFighter(false)};
   $('m_cpu').onclick=()=>{mode='cpu';selectFighter(false)};
   $('m_train').onclick=()=>{mode='training';selectFighter(false)};
   $('m_friend').onclick=()=>{if(CAN_NET)netMenu()};
+  $('m_set').onclick=settings;
   $('m_arcade').focus();
+}
+function settings(){
+  const lab={sound:v=>'Sound: '+(v?'On':'Off'),buzz:v=>'Vibration: '+(v?'On':'Off'),pad:v=>'Button size: '+(v<.95?'Small':v>1.05?'Large':'Normal'),lefty:v=>'D-pad on the '+(v?'right':'left')};
+  showPanel(`<h2>SETTINGS</h2><div class="setl">${Object.keys(lab).map(k=>`<button class="go ghost" id="s_${k}" type="button">${lab[k](SET[k])}</button>`).join('')}</div>
+  <p>Settings stay on this phone.</p><div class="row"><button class="go" id="back">Done</button></div>`);
+  const flip={sound:v=>v?0:1,buzz:v=>{v=v?0:1;if(v&&navigator.vibrate)try{navigator.vibrate(30)}catch(_){};return v},pad:v=>v<.95?1:v>1.05?.85:1.15,lefty:v=>v?0:1};
+  for(const k in lab)$('s_'+k).onclick=()=>{SET[k]=flip[k](SET[k]);saveSet();applySet();$('s_'+k).textContent=lab[k](SET[k]);if(k==='sound'&&SET.sound)SFX.hit()};
+  $('back').onclick=menu;$('back').focus();
 }
 function netMenu(){
   mode='net';phase='menu';
@@ -1531,12 +1550,12 @@ function selectFighter(net){
     box.append(b)});
   info();
   if(net){$('back').onclick=leaveNet;$('go').onclick=netReady;if(NET.guestPick!=null&&NET.role==='host')setStatus(`Your friend picked ${CHARS[NET.guestPick].name}.`)}
-  else{$('back').onclick=menu;$('go').onclick=()=>mode==='arcade'?startArcade():selectStage(false)}
+  else{$('back').onclick=menu;$('go').onclick=()=>{SET.char=pickChar;saveSet();mode==='arcade'?startArcade():selectStage(false)}}
 }
 function selectStage(net){
   showPanel(`<h2>CHOOSE A STAGE</h2>${net?`<p>${CHARS[NET.myPick].name} vs ${CHARS[NET.guestPick].name}</p>`:''}<div class="grid st" id="stages"></div>
   <div class="row"><button class="go ghost" id="back">Back</button><button class="go" id="go">Fight</button></div>`);
-  const box=$('stages'),go=()=>net?netStartMatch():mode==='training'?startTraining():startCpu();
+  const box=$('stages'),go=()=>(SET.stage=pickStage,saveSet(),0)||net?netStartMatch():mode==='training'?startTraining():startCpu();
   STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='pick'+(i===pickStage?' sel':'');b.type='button';
     if(!PREVIEWS.has(s.id))PREVIEWS.set(s.id,stagePreview(s));
     b.append(cloneCanvas(PREVIEWS.get(s.id)));b.insertAdjacentHTML('beforeend',`<b>${s.name}</b><small>${s.sub}</small>`);
@@ -1609,6 +1628,15 @@ function openPause(){
 }
 function resume(){paused=false;$('card').hidden=true}
 $('pausebtn').addEventListener('click',e=>{e.preventDefault();openPause()});
+// Android back button (called by the app): pause a fight, close the pause menu, or step back one screen.
+// Returns false on the main menu so the phone leaves the app as usual.
+window.rrBack=()=>{
+  if(p1&&$('card').hidden&&['intro','fight','ko'].includes(phase)){openPause();return true}
+  if(p1&&paused){resume();return true}
+  if(screen==='main')return false;
+  const b=$('back')||$('leave')||$('quit');if(b){b.click();return true}
+  if(mode!=='net'){menu();return true}
+  return true};
 
 /* =====================================================================
    MAIN UPDATE
@@ -1619,7 +1647,15 @@ function update(dt,realDt){
   for(let i=texts.length-1;i>=0;i--){texts[i].t-=realDt;if(texts[i].t<=0)texts.splice(i,1)}
   shake*=Math.pow(.004,realDt);crowd=Math.max(0,crowd-realDt*.5);
   if(!p1||!['intro','fight','ko'].includes(phase))return;
-  if(NET.role==='guest')return;
+  if(NET.role==='guest'){
+    // between host updates, keep everything moving along its last known path, so Wi-Fi hiccups
+    // don't freeze the picture; the next update from the host corrects any drift
+    if(dt>0&&superFreeze<=0&&performance.now()-(NET.snapAt||0)<150){
+      for(const f of [p1,p2]){f.t+=dt;if(f.state==='thrown')continue;f.x=clamp(f.x+f.vx*dt,40,SW-40);
+        if(f.y>0||f.vy>0){const g=f.floating?380:f.adT>0?300:f.state==='down'?1100:1700;f.y=Math.max(0,f.y+f.vy*dt);f.vy-=g*dt}}
+      for(const q of projs){q.x+=q.vx*dt;q.t+=dt}
+    }
+    return}
   if(superFreeze>0){superFreeze-=realDt;flushNet();return}
   phaseT+=dt;
   if(phase==='intro'&&phaseT>1.3&&!texts.some(t=>t.txt==='YALLA!')&&phaseT<1.5){say({txt:'YALLA!',t:.8,size:96,y:210,col:GOLD});play('bell')}

@@ -6,6 +6,7 @@ import android.view.WindowManager;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.activity.OnBackPressedCallback;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -20,6 +21,17 @@ public class MainActivity extends BridgeActivity {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
         goFullscreen();
+
+        // Back button: let the game pause / close menus first; leave the app only from the main menu.
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getBridge() == null || getBridge().getWebView() == null) { finish(); return; }
+                getBridge().getWebView().evaluateJavascript(
+                    "window.rrBack ? String(window.rrBack()) : 'false'",
+                    result -> { if (!"\"true\"".equals(result)) moveTaskToBack(true); });
+            }
+        });
     }
 
     @Override
