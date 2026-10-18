@@ -17,6 +17,22 @@ A Tunisian 1v1 fighting game with Tekken-style controls: nine fighters with thei
 
 Everyone has **1 2** (One-Two), **↓+2** (launcher: juggle them in the air with 1 or 4) and **↓+4** (sweep). Each fighter's own strings, direction moves and movement trick are in the move list on the fighter select screen and in the pause menu.
 
+## Last Breath (آخر نفس)
+
+Once per round, when your health drops to 25% or less, press **S + GRAB** together (or the red **LAST BREATH** button, or **H** on a keyboard). Each fighter's move is slow or easy to read, and leaves you wide open if it misses; if it lands, it plays a short cinematic and deals about a third of a health bar.
+
+| Fighter | Move | How to avoid it |
+|---|---|---|
+| Hamma | Bab Sidi Bou Said: charges in and hammers you through a giant blue door | Block |
+| Mokhtar | La Goulette Anchor: an anchor crashes down a fixed distance ahead | Don't stand there |
+| Elissa | Fire of Tanit: the sign of Tanit marks the ground under you, then erupts | Step off it |
+| Selma | Guellala Jar: a huge Djerba clay jar lands on you and traps you | Move |
+| Dihya | Scorched Earth: a sprint across the arena on a trail of fire | Jump, or block low |
+| Zied | Chlouk Storm: a slow sirocco twister along the ground | Block or jump |
+| Salah | Chkobba!: a card-sharp's stance that punishes any strike | Throw him, or wait |
+| Hannibal | Cannae: two ranks of soldiers close in from both sides | Jump or get out |
+| Kmar | Barra Aqra!: an ear-grab and a slipper lecture | Crouch, jump or stay out of reach |
+
 ## Art and cultural references
 
 The game is drawn as pixel art: the world renders at low resolution and is scaled up with hard pixels, and every fighter is an outlined sprite. Fonts: Press Start 2P and Pixelify Sans (SIL Open Font License).
