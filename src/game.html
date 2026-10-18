@@ -24,7 +24,7 @@ html,body{height:100%}
 body{background:var(--night);color:var(--fg);font-family:var(--body);overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 #c{position:fixed;inset:0;width:100%;height:100%;display:block}
 #vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 50%,var(--vig,transparent) 100%)}
-#px{position:fixed;left:0;top:0;display:block;image-rendering:crisp-edges;image-rendering:pixelated;transform-origin:0 0}
+#px,#fg{position:fixed;left:0;top:0;display:block;image-rendering:crisp-edges;image-rendering:pixelated;transform-origin:0 0}
 
 .hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;pointer-events:none;max-width:900px;margin-inline:auto;text-shadow:0 0 3px var(--night),0 2px 0 var(--night),0 0 8px var(--night)}
 .side{display:grid;gap:4px;min-width:0}
@@ -179,7 +179,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 </style>
 <!--APP_HEAD-->
 
-<canvas id="px" aria-hidden="true"></canvas><div id="vig"></div><canvas id="c" aria-label="Rooftop Rumble stage"></canvas>
+<canvas id="px" aria-hidden="true"></canvas><canvas id="fg" aria-hidden="true"></canvas><div id="vig"></div><canvas id="c" aria-label="Rooftop Rumble stage"></canvas>
 <div class="hud" id="hud" hidden>
   <div class="side">
     <div class="name"><span id="n1"></span><small id="y1"></small><span class="pips" id="p1w"></span></div>
@@ -1880,40 +1880,45 @@ function drawOver(f){
    The world is drawn into a low-resolution buffer (half the world size),
    each fighter gets hard edges and a 1-pixel dark outline, then the buffer
    is scaled up with no smoothing so every pixel stays a crisp square. */
-const PXS=.4,OUTLINE='#120c08';
-const low=document.getElementById('px'),lctx=low.getContext('2d',{alpha:false});let lowCss='',txtShown=false;
+const PXS=.4,OUTLINE='#120c08',EDGE='#2a1a12';
+const low=document.getElementById('px'),lctx=low.getContext('2d',{alpha:false});
+// fighters, effects and particles go on a second layer at twice the stage's resolution: same pixel style, finer edges
+const HI=2,fg=document.getElementById('fg'),fctx=fg.getContext('2d');let lowCss='',txtShown=false;
 const lay=document.createElement('canvas'),layc=lay.getContext('2d',{willReadFrequently:true});
 const sil=document.createElement('canvas'),silc=sil.getContext('2d');
 const rim=document.createElement('canvas'),rimc=rim.getContext('2d');
-function sizeLow(){low.width=lay.width=sil.width=rim.width=Math.ceil(innerWidth/S*PXS)+2;low.height=lay.height=sil.height=rim.height=Math.ceil(innerHeight/S*PXS)+2}
+function sizeLow(){low.width=Math.ceil(innerWidth/S*PXS)+2;low.height=Math.ceil(innerHeight/S*PXS)+2;fg.width=low.width*HI;fg.height=low.height*HI;lowCss=''}
+const SPW=340,SPH=300;lay.width=sil.width=rim.width=SPW;lay.height=sil.height=rim.height=SPH;
 function crisp(c,x,y,w,h){
   x=Math.max(0,x|0);y=Math.max(0,y|0);w=Math.min(c.canvas.width-x,Math.ceil(w));h=Math.min(c.canvas.height-y,Math.ceil(h));if(w<=0||h<=0)return;
-  const im=c.getImageData(x,y,w,h),d=im.data;for(let i=3;i<d.length;i+=4){const a=d[i];if(a&&a<255)d[i]=a<100?0:255}c.putImageData(im,x,y)}
-function outlined(dst,src,x,y,w,h){
-  // only touch the sprite's own box: copying the whole buffer five times a frame was the main cost on phones
-  x=Math.max(0,(x|0)-1);y=Math.max(0,(y|0)-1);w=Math.min(src.width-x,Math.ceil(w)+3);h=Math.min(src.height-y,Math.ceil(h)+3);if(w<=0||h<=0)return;
-  silc.globalCompositeOperation='copy';silc.drawImage(src,x,y,w,h,x,y,w,h);silc.globalCompositeOperation='source-in';silc.fillStyle=OUTLINE;silc.fillRect(x,y,w,h);silc.globalCompositeOperation='source-over';
-  dst.save();dst.setTransform(1,0,0,1,0,0);for(let i=0;i<4;i++){const ox=i===0?1:i===1?-1:0,oy=i===2?1:i===3?-1:0;dst.drawImage(sil,x,y,w,h,x+ox,y+oy,w,h)}dst.drawImage(src,x,y,w,h,x,y,w,h);
+  const im=c.getImageData(x,y,w,h),u=new Uint32Array(im.data.buffer);let ch=0;
+  for(let i=0;i<u.length;i++){const v=u[i],a=v>>>24;if(a&&a<255){u[i]=a<100?0:(v|0xff000000)>>>0;ch=1}}if(ch)c.putImageData(im,x,y)}
+// Sprites are drawn into a small scratch canvas the size of one fighter, hardened, outlined and then
+// stamped onto the fighter layer. Keeping the scratch canvases small matters on phones: every copy
+// from a CPU-side canvas uploads the whole canvas to the GPU.
+function outlined(dst,src,w,h,dx,dy){
+  w=Math.min(SPW,Math.ceil(w)+2);h=Math.min(SPH,Math.ceil(h)+2);if(w<=0||h<=0)return;
+  silc.globalCompositeOperation='copy';silc.drawImage(src,0,0,w,h,0,0,w,h);silc.globalCompositeOperation='source-in';silc.fillStyle=EDGE;silc.fillRect(0,0,w,h);silc.globalCompositeOperation='source-over';
+  dst.save();dst.setTransform(1,0,0,1,0,0);for(let i=0;i<4;i++){const ox=i===0?1:i===1?-1:0,oy=i===2?1:i===3?-1:0;dst.drawImage(sil,0,0,w,h,dx+ox,dy+oy,w,h)}dst.drawImage(src,0,0,w,h,dx,dy,w,h);
   // rim light: a one-pixel edge of stage-coloured light on the side facing the sun
   const R=(stage&&stage.rim)||['#fff3d6',-1,-1,.55];
-  rimc.globalCompositeOperation='copy';rimc.drawImage(src,x,y,w,h,x,y,w,h);rimc.globalCompositeOperation='source-in';rimc.fillStyle=R[0];rimc.fillRect(x,y,w,h);
-  rimc.globalCompositeOperation='destination-out';rimc.drawImage(src,x,y,w,h,x-R[1],y-R[2],w,h);rimc.globalCompositeOperation='source-over';
-  dst.globalAlpha=R[3];dst.drawImage(rim,x,y,w,h,x,y,w,h);dst.globalAlpha=1;dst.restore()}
-function bake(g,x0,y0,x1,y1){const x=Math.min(x0,x1),y=Math.min(y0,y1),w=Math.abs(x1-x0),h=Math.abs(y1-y0);crisp(layc,x,y,w,h);outlined(g,lay,x,y,w,h)}
-// render one fighter as an outlined pixel sprite onto the low buffer (whose transform is current)
+  rimc.globalCompositeOperation='copy';rimc.drawImage(src,0,0,w,h,0,0,w,h);rimc.globalCompositeOperation='source-in';rimc.fillStyle=R[0];rimc.fillRect(0,0,w,h);
+  rimc.globalCompositeOperation='destination-out';rimc.drawImage(src,0,0,w,h,-R[1],-R[2],w,h);rimc.globalCompositeOperation='source-over';
+  dst.globalAlpha=R[3];dst.drawImage(rim,0,0,w,h,dx,dy,w,h);dst.globalAlpha=1;dst.restore()}
+// draw fn() into the scratch canvas for the world box (bx0,by0)-(bx1,by1), then stamp it outlined
+function sprite(bx0,by0,bx1,by1,fn){
+  const g=ctx,m=g.getTransform();
+  const ax=m.a*bx0+m.e,ay=m.d*by0+m.f,bx=m.a*bx1+m.e,by=m.d*by1+m.f;
+  const x0=Math.floor(Math.min(ax,bx))-1,y0=Math.floor(Math.min(ay,by))-1,w=Math.abs(bx-ax)+2,h=Math.abs(by-ay)+2;
+  layc.setTransform(1,0,0,1,0,0);layc.clearRect(0,0,SPW,SPH);layc.setTransform(m.a,m.b,m.c,m.d,m.e-x0,m.f-y0);
+  ctx=layc;fn();ctx=g;
+  crisp(layc,0,0,Math.min(SPW,w),Math.min(SPH,h));outlined(g,lay,w,h,x0,y0)}
 function spriteFighter(f,dt){
-  const g=lctx,m=g.getTransform();
   drawShadow(f);drawUnder(f);
-  layc.setTransform(1,0,0,1,0,0);layc.clearRect(0,0,lay.width,lay.height);layc.setTransform(m);
-  ctx=layc;drawFighter(f,dt);ctx=g;
-  const x0=m.a*(f.x-140)+m.e,y0=m.d*(GROUND-f.y-230)+m.f,x1=m.a*(f.x+140)+m.e,y1=m.d*(GROUND+20)+m.f;
-  bake(g,x0,y0,x1,y1);
+  sprite(f.x-140,GROUND-f.y-230,f.x+140,GROUND+20,()=>drawFighter(f,dt));
   drawOver(f);
 }
-function spriteThing(bx0,by0,bx1,by1,fn){
-  const g=lctx,m=g.getTransform();layc.setTransform(1,0,0,1,0,0);layc.clearRect(0,0,lay.width,lay.height);layc.setTransform(m);
-  ctx=layc;fn();ctx=g;
-  const x0=m.a*bx0+m.e,y0=m.d*by0+m.f,x1=m.a*bx1+m.e,y1=m.d*by1+m.f;bake(g,x0,y0,x1,y1)}
+function spriteThing(bx0,by0,bx1,by1,fn){sprite(bx0,by0,bx1,by1,fn)}
 function drawElephant(p){
   const d=Math.sign(p.vx)||1,x=p.x,y=p.y,t=p.t,G='#8e8883',GD='#6f6964',trump=t<.35;
   ctx.fillStyle='rgba(30,15,5,.3)';ctx.beginPath();ctx.ellipse(x,GROUND+3,54,7,0,0,7);ctx.fill();
@@ -2070,13 +2075,14 @@ function updateCam(rdt){
 function draw(dt){
   updateCam(FDT);
   const need=Math.ceil(innerWidth/S*PXS)+2,needH=Math.ceil(innerHeight/S*PXS)+2;if(low.width!==need||low.height!==needH)sizeLow();
-  const g=lctx;ctx=g;
+  let g=lctx;ctx=g;
   g.setTransform(1,0,0,1,0,0);g.fillStyle=NIGHT;g.fillRect(0,0,low.width,low.height);
   g.setTransform(PXS,0,0,PXS,OX/S*PXS,OY/S*PXS);
   g.save();g.beginPath();g.rect(-OX/S,-OY/S,innerWidth/S,innerHeight/S);g.clip();
   g.translate(Math.round((Math.random()-.5)*shake),Math.round((Math.random()-.5)*shake));
   const fy=GROUND-100;g.translate(SW/2,fy);g.scale(cam.z,cam.z);g.translate(-cam.x,-fy);
   stage.draw(performance.now()/1000);
+  {const m=g.getTransform();fctx.setTransform(1,0,0,1,0,0);fctx.clearRect(0,0,fg.width,fg.height);fctx.setTransform(m.a*HI,m.b*HI,m.c*HI,m.d*HI,m.e*HI,m.f*HI);g.restore();g=fctx;ctx=g}
   const dd=NET.role==='guest'?Math.min(.033,dt||.016):dt;
   if(p1&&p2){
     const cv=cineView();
@@ -2097,9 +2103,9 @@ function draw(dt){
     if(s.flash){g.globalAlpha=clamp(s.t*10,0,1)*.8;g.fillStyle=s.c;g.beginPath();g.arc(s.x,s.y,Math.max(1,s.r*(1.25-s.t*4)),0,7);g.fill();continue}
     g.globalAlpha=clamp(s.t*5,0,1);g.strokeStyle=s.c;g.lineWidth=s.ring?4:s.w+1;g.beginPath();
     if(s.ring)g.arc(s.x,s.y,s.r,0,7);else{g.moveTo(s.x,s.y);g.lineTo(s.x-s.vx*.03,s.y-s.vy*.03)}g.stroke()}
-  g.globalAlpha=1;g.restore();
+  g.globalAlpha=1;ctx=lctx;
   // the browser scales the pixel buffer up on the GPU (CSS pixelated), so the big screen canvas only carries text
-  const css=(low.width*S/PXS).toFixed(2)+'px,'+(low.height*S/PXS).toFixed(2)+'px';if(css!==lowCss){lowCss=css;const[a,b]=css.split(',');low.style.width=a;low.style.height=b}
+  const css=(low.width*S/PXS).toFixed(2)+'px,'+(low.height*S/PXS).toFixed(2)+'px';if(css!==lowCss){lowCss=css;const[a,b]=css.split(',');low.style.width=fg.style.width=a;low.style.height=fg.style.height=b}
   const m=mctx;if(!texts.length&&!txtShown)return;
   m.setTransform(1,0,0,1,0,0);m.clearRect(0,0,cv.width,cv.height);txtShown=texts.length>0;
   m.setTransform(dpr*S,0,0,dpr*S,dpr*OX,dpr*OY);m.textAlign='center';m.textBaseline='middle';
