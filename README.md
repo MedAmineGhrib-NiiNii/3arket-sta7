@@ -29,7 +29,7 @@ Once per round, when your health drops to 25% or less, press **S + GRAB** togeth
 | Selma | Guellala Jar: a huge Djerba clay jar lands on you and traps you | Move |
 | Dihya | Scorched Earth: a sprint across the arena on a trail of fire | Jump, or block low |
 | Zied | Chlouk Storm: a slow sirocco twister along the ground | Block or jump |
-| Salah | Chkobba!: a card-sharp's stance that punishes any strike | Throw him, or wait |
+| Salah | Chkobba!: a card-sharp's stance that punishes any strike; if you wait, he lunges in anyway | Block the lunge, or throw him during the stance |
 | Hannibal | Cannae: two ranks of soldiers close in from both sides | Jump or get out |
 | Kmar | Barra Aqra!: an ear-grab and a slipper lecture | Crouch, jump or stay out of reach |
 

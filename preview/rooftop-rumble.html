@@ -1052,7 +1052,7 @@ function cpuInput(me,op,dt){
   if(ai.holdT>0||ai.think>0)return inp;
   if(!['idle','walk','crouch','run'].includes(me.state))return inp;
   const sp=D.sp;
-  if(canArt(me)&&mode!=='training'){const A=ARTS[D.id],ok=A.type==='grab'?dist<80:A.type==='rush'?dist<300:A.type==='parry'?dist<130:A.type==='trap'&&A.at==='front'?Math.abs(dist-A.dist)<50:dist>120;
+  if(canArt(me)&&mode!=='training'){const A=ARTS[D.id],ok=A.type==='grab'?dist<80:A.type==='rush'?dist<300:A.type==='parry'?dist<200:A.type==='trap'&&A.at==='front'?Math.abs(dist-A.dist)<50:dist>120;
     if(ok&&Math.random()<.35*skill){inp.pressed.x=1;ai.think=rand(.5,.9)/speed;return inp}}
   if(canSpecial(me)){
     if(sp.kind==='proj'&&dist>170&&Math.random()<.5){inp.pressed.s=1;ai.think=rand(.4,.8)/speed;return inp}
@@ -1100,8 +1100,8 @@ const ARTS={
     desc:'Sprints the length of the arena on a trail of fire. Hits low: jump it or block crouching.'},
   zied:{name:'CHLOUK STORM',type:'storm',s:.25,a:.1,r:.6,h:'mid',pose:'palm',beats:['art','art','art','art','art'],
     desc:'Sends a slow sirocco twister along the ground. Block it, or jump over it.'},
-  salah:{name:'CHKOBBA!',type:'parry',s:.12,a:.85,r:.6,pose:'flourish',melee:1,beats:['c_deal','c_deal1b','c_akala','c_bermila','c_karta','c_dinari'],
-    desc:'A card-sharp\'s stance: strike him during it and he sweeps the whole table. Throws and projectiles beat it.'},
+  salah:{name:'CHKOBBA!',type:'parry',s:.12,a:.6,r:.8,range:70,h:'mid',pose:'flourish',melee:1,beats:['c_deal','c_deal1b','c_akala','c_bermila','c_karta','c_dinari'],
+    desc:'A card-sharp\'s stance: strike him during it and he sweeps the whole table. Wait it out and he lunges in to deal anyway; block that.'},
   hannibal:{name:'CANNAE',type:'trap',at:'target',rad:62,fuse:.95,s:.1,a:.1,r:1.05,pose:'command',beats:['art','art','art','art','art'],
     desc:'Two ranks of soldiers close in from both sides of the opponent, the double envelopment of 216 BC. Jump or get out before they meet.'},
   kmar:{name:'BARRA AQRA!',type:'grab',s:.34,a:.1,r:.9,range:78,pose:'palm',melee:1,beats:['k_slap','k_spoon','k_slap','k_spoon2','k_smash'],
@@ -1121,6 +1121,10 @@ function artStep(f,op,m,dt){
   if(m.type==='grab'&&act&&!f.hitDone){const dx=(op.x-f.x)*f.face;
     if(dx>-5&&dx<m.range&&op.y<=0&&!op.crouch&&op.inv<=0&&!evading(op)&&!['down','ko','thrown','throw'].includes(op.state)){f.hitDone=true;applyHit(f,op,m,f.face,op.x,GROUND-110,false)}}
   if(m.type==='parry'&&act&&Math.random()<.5)fx('cd',Math.round(f.x+f.face*20),GROUND-110,1,'up',f.face);
+  // nobody took the bait: he lunges in and deals anyway
+  if(m.type==='parry'&&!f.hitDone&&f.t>m.s+m.a&&f.t<=m.s+m.a+.22){f.vx=f.face*680;if(Math.random()<.6)fx('cd',Math.round(f.x),GROUND-80,1,'fwd',f.face);
+    const dx=(op.x-f.x)*f.face;if(dx>-10&&dx<m.range&&op.inv<=0&&!evading(op)&&!['ko','thrown','down'].includes(op.state)){f.hitDone=true;applyHit(f,op,m,f.face,op.x,GROUND-80,false)}}
+  else if(m.type==='parry'&&f.t>m.s+m.a+.22)f.vx*=Math.pow(.001,dt);
   if((m.type==='trap'||m.type==='lob'||m.type==='storm')&&!f.fired&&f.t>=m.s){f.fired=1;
     if(m.type==='trap'){const x=m.at==='front'?clamp(f.x+f.face*m.dist,40,SW-40):op.x;projs.push({owner:f,x,y:GROUND,vx:0,r:m.rad,kind:'trap',t:0,fuse:m.fuse,m,still:1})}
     else if(m.type==='lob'){const x0=f.x+f.face*24,tx=clamp(op.x,40,SW-40);projs.push({owner:f,x:x0,y:GROUND-120,x0,tx,vx:(tx-x0)/m.flight,r:m.rad,kind:'jar',t:0,fuse:m.flight,m,still:1})}
@@ -1239,7 +1243,7 @@ function updateFighter(f,op,inp,dt){
       const m=f.atk,act=f.t>=m.s&&f.t<=m.s+m.a;
       if(m.art){artStep(f,op,m,dt);if(f.state!=='attack')break;
         if(f.t>m.s+m.a+m.r)f.state='idle';
-        if(m.type!=='rush'&&grounded)f.vx*=Math.pow(.01,dt);
+        if(m.type!=='rush'&&m.type!=='parry'&&grounded)f.vx*=Math.pow(.01,dt);
         break}
       // 1 then 3 pressed a moment apart still counts as a throw
       if((f.atkName==='lp'||f.atkName===(D.basic&&D.basic.lp))&&!f.fromChain&&f.t<.045&&inp.pressed.lk){startAttack(f,'grab','lk');break}
@@ -1427,6 +1431,7 @@ function updateProjs(dt){
       if(p.t>p.fuse+.4)p.dead=1;
       continue}
     if(p.kind==='storm'&&p.t>3.4)p.dead=1;
+    if(tgt.state==='attack'&&tgt.atk&&tgt.atk.art&&tgt.atk.type==='parry'&&tgt.t>=tgt.atk.s&&tgt.t<=tgt.atk.s+tgt.atk.a&&Math.abs(p.x-tgt.x)<p.r+20&&!p.heavy){p.dead=1;fx('cd',Math.round(tgt.x+tgt.face*20),GROUND-100,4,'up',tgt.face);say({txt:'CAUGHT',t:.6,size:26,y:180,col:GOLD,x:Math.round(tgt.x)});continue}
     if(!p.spent&&tgt.inv<=0&&!evading(tgt)&&(jug||!['down','ko','thrown'].includes(tgt.state))&&Math.abs(p.x-tgt.x)<p.r+16&&p.y+p.r>top&&p.y-p.r<bot){if(p.kind==='slipper'&&!p.rain){p.spent=1;p.vx=-p.d0*Math.max(300,Math.abs(p.vx))}else p.dead=1;applyHit(p.owner,tgt,p.m,Math.sign(p.vx)||p.owner.face,p.kind==='elephant'?tgt.x:p.x,p.kind==='elephant'?p.y-20:p.y,jug)}
     if((p.vx>0&&p.x>SW+160)||(p.vx<0&&p.x<-160))p.dead=1;
     if(p.rain&&p.y>GROUND-6){p.dead=1;puff(p.x,GROUND-4,rand(-60,60),rand(-80,-20),.3,'#d9c6a0',4)}
