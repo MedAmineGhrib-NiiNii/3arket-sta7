@@ -1,0 +1,9 @@
+{
+  "appId": "com.rooftoprumble.game",
+  "appName": "Rooftop Rumble",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#0f1d38",
+    "allowMixedContent": false
+  }
+}
