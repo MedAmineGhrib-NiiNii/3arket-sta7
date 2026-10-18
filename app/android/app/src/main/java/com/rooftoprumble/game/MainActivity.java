@@ -1,5 +1,6 @@
 package com.rooftoprumble.game;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 import androidx.core.view.WindowCompat;
@@ -13,6 +14,11 @@ public class MainActivity extends BridgeActivity {
         super.onCreate(savedInstanceState);
         // Keep the screen awake during fights.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Draw under the camera notch too; the game keeps its buttons inside the safe area.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
         goFullscreen();
     }
 
