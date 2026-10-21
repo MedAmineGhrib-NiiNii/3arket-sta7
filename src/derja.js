@@ -8,7 +8,7 @@
 const TN={
   // ---- main menu
   'Nine fighters from across Tunisia\'s history and its living rooms. Tekken-style strings, launchers, juggles and throws.':'Tes3a m9atlin mel tari5 mta3 Tounes w mel dyar mte3na. Combos kima Tekken, tayyir fil hwa w tay7at.',
-  'ARCADE':'BTOULA','VS CPU':'DHED EL MACHINA','TRAINING':'TAMRIN','VS FRIEND':'DHED SA7BEK',
+  'ARCADE':'BOUTOULA','VS CPU':'DHED EL MAKINA','TRAINING':'TAMRIN','VS FRIEND':'DHED SA7BEK',
   'Beat all eight rivals, one stage at a time, to become champion.':'Arba7 3al tmenya wa7ed wa7ed, mar7la b mar7la, w walli batal.',
   'One match against a random rival, on the stage you pick.':'Match wa7ed dhed m9atel 3achwe2i, fil blasa elli t5tarha.',
   'Practise strings and juggles on a dummy. Shows combo damage.':'Tmarren 3al combos 3la dummy. Ywarrik 9addech ydhorr kol combo.',
@@ -28,12 +28,12 @@ const TN={
   'On':'Ya5dem','Off':'Msakker','Small':'S8ar','Normal':'3adi','Large':'Kbar','left':'lisar','right':'limin',
   // ---- fighter / stage select
   'CHOOSE YOUR FIGHTER':'E5TAR EL M9ATEL MTE3EK','PICK YOUR FIGHTER':'E5TAR EL M9ATEL MTE3EK',
-  'TRAINING · PICK A FIGHTER':'TAMRIN · E5TAR M9ATEL','ARCADE · PICK A FIGHTER':'BTOULA · E5TAR M9ATEL',
-  'Back':'Raja3','Choose stage':'E5tar el blasa','Start arcade':'Ebda el btoula','Ready':'7adher','Leave':'O5rej',
+  'TRAINING · PICK A FIGHTER':'TAMRIN · E5TAR M9ATEL','ARCADE · PICK A FIGHTER':'BOUTOULA · E5TAR M9ATEL',
+  'Back':'Arja3','Choose stage':'E5tar el blasa','Start arcade':'Ebda el boutoula','Ready':'7adher','Leave':'O5rej',
   'CHOOSE A STAGE':'E5TAR EL BLASA','Fight':'Yalla 3arka','RANDOM':'3ACHWE2I','Let fate pick the place.':'5alli el mektoub y5tar el blasa.',
   // ---- pause / training
   'PAUSED':'PAUSE','MOVE LIST':'LISTA MTA3 EL 7ARAKAT','The match keeps running while this is open.':'El match ma ye7besch wenti 7alla hedhi.',
-  'Quit to menu':'Raja3 lel menu','Leave match':'O5rej mel match','Resume':'Kammel','Reset positions':'Raja3 el blayes',
+  'Quit to menu':'Arja3 lel menu','Leave match':'O5rej mel match','Resume':'Kammel','Reset positions':'Rajja3 el blayes',
   'Always full':'Dima malyena','Stand':'Wa9ef','Block':'Ysodd','Crouch block':'Ysodd 9a3ed','Jump':'Yo9fez',
   // ---- results
   'CHAMPION OF TUNISIA':'BATAL TOUNES','WINS':'RBE7',
@@ -81,9 +81,9 @@ const TN={
   'The other phone left or the Wi-Fi dropped. Make sure both phones stay on the same Wi-Fi or hotspot, then pair again.':'El telifoun el e5er 5raj walla el Wi-Fi ta7. Thabbet elli zouz 3al nafs el Wi-Fi walla hotspot, w 3awed rabbet.',
   // ---- HUD and touch pad
   'L PUNCH':'BOUNYA','R PUNCH':'BOUNYA','L KICK':'RAFSA','R KICK':'RAFSA','GRAB':'CHED','LAST':'A5ER','BREATH':'NAFES','LAST BREATH':'A5ER NAFES',
-  'YOU':'ENTI','CPU':'MACHINA','DUMMY':'DUMMY',
+  'YOU':'ENTI','CPU':'MAKINA','DUMMY':'DUMMY',
   // ---- in-fight call-outs
-  'TIME':'WFE EL WA9T','PERFECT':'NDHIF!','COUNTER HIT':'KONTRA!','RAGE':'GHACHCH!','BREAK!':'FLET!','ARMOR':'SOLB!','BLOCKED':'SADD!',
+  'TIME':'WFE EL WA9T','DRAW':'BEJI!','PERFECT':'NDHIF!','COUNTER HIT':'KONTRA!','RAGE':'GHACHCH!','BREAK!':'FLET!','ARMOR':'SOLB!','BLOCKED':'SADD!',
   'READ YOU!':'9RITEK!','CAUGHT':'CHADDHA!','FINAL ROUND':'A5ER ROUND',
   // ---- universal moves
   'One-Two':'Wa7da-Thnin','Launcher. Juggle them in the air with 1 or 4':'Ytayyer. Kammel 3lih fil hwa b 1 walla 4',
@@ -148,7 +148,7 @@ const TN={
   'Two ranks of soldiers close in from both sides of the opponent, the double envelopment of 216 BC. Jump or get out before they meet.':'Zouz sfouf 3asker ysakrou 3al 5asm men zouz jihat, el 7isar el mzouz mta3 216 9bal el milad. O9fez walla o5rej 9bal ma yetla9aw.',
   'Grabs the opponent by the ear for a slipper lecture. Very short range; crouching or jumping avoids it.':'Tched el 5asm men wedhnou w ta3tih dars bel chlaka. 9rib barcha; ken to93ed walla to9fez tfelt.',
   // ---- stages
-  'Tunis':'Tounes','Carthage':'9artej','Djerba':'Jerba','Medina of Tunis':'L\'Mdina, Tounes','Douz Dunes':'Kthob Douz','Djerba Harbor':'Marsa Jerba','The Aurès':'El Aurès','La Goulette':'7alg el Wed',
+  'Tunis':'Tounes','Djerba':'Jerba','Medina of Tunis':'L\'Mdina, Tounes','Douz Dunes':'Kthob Douz','Djerba Harbor':'Marsa Jerba','The Aurès':'El Aurès','La Goulette':'7alg el Wed',
   'Blue and white since the 1920s, bougainvillea on the walls':'Zra9 w byadh men 3achrinet, w el bougainvillier 3al 7yout',
   'Souk Ech-Chaouachine, chechia makers since 1691':'Souk ech-Chaouachine, sna3 el chechia men 1691',
   'Amphitheatre for 35,000, built around 238 AD. Dihya\'s last stand.':'Amphithéâtre ychedd 35,000, mabni 7wali 238 ba3d el milad. A5er 3arka mta3 Dihya.',
@@ -162,7 +162,7 @@ const TN={
   'Fisherwoman from Houmt Souk on Djerba. Wears the m\'dhalla palm-leaf hat against the sun and the fouta zarga, the dark blue wrap with red stripes. Slippery up close; never lost a catch.':'Sayyda men 7oumet Souk fi Jerba. Labsa el mdhalla mta3 el sa3af dhed el chams w el fouta zar9a b 5tout 7mor. Tezle9 ki tet9arrablha; 3omorha ma dhayy3et sayda.',
   'Berber warrior queen of the Aurès. A draped melhfa pinned with silver fibulae, a silver headband and her hair loose, as legend says she fought her last stand inside the amphitheatre of El Jem. The fastest fighter here.':'Malka m9atla amazighia mel Aurès. Melhfa mchedda b 5lel fadha, 3sseba mta3 fadha w cha3rha msayyeb, kima t9oul el 7kaya elli 3mlet a5er 3arka fi amphithéâtre el Jem. Asra3 m9atel lehna.',
   'Mrazig guide from Douz, gateway to the Sahara and its 500,000 palms. Cream robe, brown wool waistcoat and a white chech turban against the sand. His super is named after the chlouk, Tunisian Arabic for the sirocco.':'Guide mrazgui men Douz, bab el sa7ra w 500,000 n5la. Jebba beige, sedria souf ma7lia w chech abyadh dhed el rmel. El super mte3ou esmou chlouk, ri7 el sa7ra.',
-  'Salah, the oldest regular at Café M\'Rabet, the oldest café in Tunis. Unbeaten at chkobba: he counts every fallen card and slaps them down hard. A brown wool burnous with the hood up over a grey jebba, white beard, round glasses, always a fan of cards in hand.':'Salah, a9dem 7rif fi Café M\'Rabet, a9dem 9ahwa fi Tounes. 7atta 7ad ma ghlbou fil chkobba: y7seb kol carta ta7et w yrakkez el cartas b 9wa. Bornous souf ma7li w el 9ob 3la rasou fou9 jebba rmadia, l7ia bidha, mreyet mdawrin, w dima cartas f yeddou.',
+  'Salah, the oldest regular at Café M\'Rabet, the oldest café in Tunis. Unbeaten at chkobba: he counts every fallen card and slaps them down hard. A brown wool burnous with the hood up over a grey jebba, white beard, round glasses, always a fan of cards in hand: the sab\'a l-hayya, the las and the dama of dinari. Plays to 21: carta, dinari, bermila and sab\'a l-hayya are a point each, and a chkobba sweeps the table.':'Salah, a9dem 7rif fi Café M\'Rabet, a9dem 9ahwa fi Tounes. 7atta 7ad ma ghlbou fil chkobba: y7seb kol carta ta7et w yrakkez el cartas b 9wa. Bornous souf ma7li w el 9ob 3la rasou fou9 jebba rmadia, l7ia bidha, mreyet mdawrin, w dima cartas f yeddou: sab3a l7ayya, el las w el dama mta3 dinari. Yal3eb lel 21: carta, dinari, bermila w sab3a l7ayya kol wa7da b point, w el chkobba tkannes el tawla.',
   'Hannibal, son of Hamilcar Barca. In 218 BC he crossed the Alps into Italy with North African war elephants, then beat Rome at the Trebia, Lake Trasimene and Cannae. He lost his right eye crossing the Apennines. Bronze armour, a round shield and a cloak in Carthage\'s purple.':'Hannibal, weld Hamilcar Barca. Fi 218 9bal el milad 9ta3 el Alpes l Italia b fyela mta3 7arb men chmel Ifri9ia, w ghlb Roma fil Trebia, b7ayret Trasimene w Cannae. Dhayya3 3inou limin w howa 9ate3 el Apennins. Dir3 n7as, dar9a mdawra w bornous b orjouani Carthage.',
   'Kmar, mother of five in an old Tunis neighbourhood. A wooden spoon in one hand, the msalha (floor squeegee) and its wet cloth never far away, and a slipper that has never missed. Floral house dress, apron, a knotted foulard and gold bangles.':'Kmar, omm 5amsa fi 7ouma 9dima fi Tounes. Mghorfa mta3 3oud fi yed, el msal7a w char7tha mbalra dima 9rib, w chlaka 3omorha ma ghaltet. Robe mta3 dar mwarda, tablier, foulard mrabbet w smayem dheb.',
 };
