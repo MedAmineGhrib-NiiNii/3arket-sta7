@@ -1086,8 +1086,14 @@ function applyHit(a,d,m,dir,hx,hy,juggle){
     if(!m.unblock&&isBlocking(d,m)){d.state='block';d.stun=.32;d.vx=dir*160;d.hp=Math.max(1,d.hp-3);spark(hx-dir*14,hy,FG,14,18);hitstop=.08;play('block');fx('sh',8);
       say({txt:'BLOCKED',t:.8,size:32,y:180,col:FG,x:Math.round(d.x)});return}
     startCine(a,d);return}
+  // anti-lock: mashing the same move pushes harder each time, and a fighter pinned against the wall
+  // pushes the attacker back instead, so nobody gets stuck in an endless string of jabs
+  if(a.atkName&&a.atkName===a.lastMv&&now()-a.lastMvT<.8&&!a.fromChain)a.rep=(a.rep||0)+1;else a.rep=0;
+  a.lastMv=a.atkName;a.lastMvT=now();
+  const push=1+.45*Math.min(4,a.rep),atWall=(dir>0&&d.x>=SW-58)||(dir<0&&d.x<=58);
+  const wallPush=v=>{if(atWall&&!juggle&&!m.proj)a.vx=-dir*v};
   if(!juggle&&!m.unblock&&isBlocking(d,m)){
-    d.state='block';d.stun=.17;d.vx=dir*Math.max(80,m.kb)*.7;d.meter=Math.min(100,d.meter+4);
+    d.state='block';d.stun=.17;d.vx=dir*Math.max(80,m.kb)*.7*push;wallPush(Math.max(80,m.kb)*.8*push+60);d.meter=Math.min(100,d.meter+4);
     if(m.kind)d.hp=Math.max(1,d.hp-2);
     spark(hx-dir*14,hy,FG,8);hitstop=.05;play('block');return;
   }
@@ -1110,7 +1116,10 @@ function applyHit(a,d,m,dir,hx,hy,juggle){
   else{d.vx=dir*m.kb;
     if(m.launch||m.trip||d.hp<=0||(m.air&&d.y>0)){d.state='down';d.t=0;d.groundT=0;d.jug=m.trip?9:0;
       d.vy=d.hp<=0?420:m.trip?170:m.super?480:(m.lift||360);d.y=Math.max(d.y,1);d.vx=dir*(m.kb+(m.trip?0:40))}
-    else{d.state='hit';d.stun=m.stun+(counter?.15:0)}}
+    else{d.state='hit';
+      // hitstun shrinks over a long string of plain hits, so loops of one button run out
+      const decay=comboing?Math.max(.5,Math.pow(.85,a.combo-1)):1;
+      d.stun=(m.stun+(counter?.15:0))*decay*(a.rep>=2?.7:1);d.vx=dir*m.kb*push;wallPush(m.kb*.7*push+50)}}
   spark(hx,hy,m.super?GOLD:counter?GOLD:heavy?(m.fx||m.burst||GOLD):FG,m.super?28:heavy?18:11);
   hitstop=m.super?.16:counter?.13:heavy?.1:.06;fx('sh',m.super?18:heavy?10:5);play(counter?'counter':heavy?'heavy':'hit');
   if(counter)say({txt:'COUNTER HIT',t:.9,size:36,y:120,col:GOLD,x:Math.round(d.x)});
