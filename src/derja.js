@@ -139,7 +139,7 @@ const TN={
   // ---- Last Breath
   'BAB SIDI BOU SAID':'BAB SIDI BOU SAID','LA GOULETTE ANCHOR':'ANCRE 7ALG EL WED','FIRE OF TANIT':'NAR TANIT','GUELLALA JAR':'5ABIA MTA3 GUELLALA','SCORCHED EARTH':'EL ARDH EL MA7ROU9A','CHLOUK STORM':'3AJET CHLOUK',
   'Charges in; on contact he hammers the opponent through a giant blue Sidi Bou Said door. Can be blocked.':'Yhajjem; ki yousel ydhrab el 5asm w y3addih men bab zar9a kbira mta3 Sidi Bou Said. Tetsadd.',
-  'Hurls a ship\'s anchor that crashes down a fixed distance ahead. Cannot be blocked, so don\'t stand there.':'Ylawa7 ancre mta3 babbour ta7 b3id 3lih b chwaya. Ma tetsaddech, ma to93odch ghadi.',
+  'Swings a ship\'s anchor at the opponent from up to most of the screen away. It crashes down a moment later where they stood. Cannot be blocked: move or jump.':'Ylawa7 ancre mta3 babbour 3al 5asm 7atta men b3id. Ta7 ba3d chwaya fil blasa elli kan wa9ef fiha. Ma tetsaddech: ta7arrek walla o9fez.',
   'Marks the ground under the opponent with the sign of Tanit, which bursts into flame a moment later. Step off it.':'Tmarki el ga3a ta7t el 5asm b 3alamet Tanit, w ba3d chwaya techta3el nar. O5rej menha.',
   'Lobs a huge Djerba clay jar onto the opponent and traps them inside. Cannot be blocked, but it is slow: move.':'Ttayyech 5abia kbira mta3 Jerba 3al 5asm w t7absou fiha. Ma tetsaddech, ama bta2a: ta7arrek.',
   'Sprints the length of the arena on a trail of fire. Hits low: jump it or block crouching.':'Tejri el arena lkol w nar mel lteli. Todhrab louta: o9fezha walla soddha 9a3ed.',

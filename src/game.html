@@ -177,6 +177,14 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
   .status{font-size:9px}
   .qrbox canvas{width:min(46vh,300px)}
 }
+
+/* body text uses Jersey 10 (clear 3, 5, 7, 9 for Derja); it needs a bigger size than Pixelify to stay sharp */
+.panelx p{font-size:19px}.mode small{font-size:18px}.info{font-size:19px}.ml dd{font-size:18px}.keys{font-size:19px}.pick small{font-size:17px}details summary{font-size:18px}
+.ml dt{white-space:normal;max-width:11ch;line-height:1.5}
+.btns span small{font-family:var(--display);font-size:7px;letter-spacing:0;margin-top:3px}
+@media (max-height:500px) and (orientation:landscape){
+  .panelx p{font-size:16px;line-height:1.25}.mode small{font-size:15px;line-height:1.2}.keys{font-size:15px}.info{font-size:16px}.ml dd{font-size:15px;line-height:1.2}
+}
 @media (pointer:fine){.pad{opacity:.85;transform:scale(.8);transform-origin:bottom center}.keys .tc{display:none}}
 @media (pointer:coarse){.keys .kb{display:none}}
 </style>
@@ -771,7 +779,7 @@ function cpuInput(me,op,dt){
   if(ai.holdT>0||ai.think>0)return inp;
   if(!['idle','walk','crouch','run'].includes(me.state))return inp;
   const sp=D.sp;
-  if(canArt(me)&&mode!=='training'){const A=ARTS[D.id],ok=A.type==='grab'?dist<80:A.type==='rush'?dist<300:A.type==='parry'?dist<200:A.type==='trap'&&A.at==='front'?Math.abs(dist-A.dist)<50:dist>120;
+  if(canArt(me)&&mode!=='training'){const A=ARTS[D.id],ok=A.type==='grab'?dist<80:A.type==='rush'?dist<300:A.type==='parry'?dist<200:A.type==='trap'&&A.at==='aim'?dist<330:dist>120;
     if(ok&&Math.random()<.35*skill){inp.pressed.x=1;ai.think=rand(.5,.9)/speed;return inp}}
   if(canSpecial(me)){
     if(sp.kind==='proj'&&dist>170&&Math.random()<.5){inp.pressed.s=1;ai.think=rand(.4,.8)/speed;return inp}
@@ -809,8 +817,8 @@ function cpuInput(me,op,dt){
 const ARTS={
   hamma:{name:'BAB SIDI BOU SAID',type:'rush',s:.3,a:.26,r:.85,range:72,h:'mid',spd:620,pose:'rush',melee:1,beats:['lp','rp','h_hook','h_elbow','h_spin','h_rise'],
     desc:'Charges in; on contact he hammers the opponent through a giant blue Sidi Bou Said door. Can be blocked.'},
-  brik:{name:'LA GOULETTE ANCHOR',type:'trap',at:'front',dist:215,rad:58,fuse:.9,s:.1,a:.1,r:1.05,pose:'smash',beats:['art','art','art','art'],
-    desc:'Hurls a ship\'s anchor that crashes down a fixed distance ahead. Cannot be blocked, so don\'t stand there.'},
+  brik:{name:'LA GOULETTE ANCHOR',type:'trap',at:'aim',min:70,max:340,rad:80,fuse:.72,s:.1,a:.1,r:1.05,pose:'smash',beats:['art','art','art','art'],
+    desc:'Swings a ship\'s anchor at the opponent from up to most of the screen away. It crashes down a moment later where they stood. Cannot be blocked: move or jump.'},
   alyssa:{name:'FIRE OF TANIT',type:'trap',at:'target',rad:52,fuse:.8,s:.1,a:.1,r:.95,pose:'palm',beats:['art','art','art','art','art'],
     desc:'Marks the ground under the opponent with the sign of Tanit, which bursts into flame a moment later. Step off it.'},
   selma:{name:'GUELLALA JAR',type:'lob',flight:.85,rad:44,s:.22,a:.08,r:1.0,pose:'slipthrow',melee:1,beats:['s_oar','s_tide1','s_tide2','s_oar'],
@@ -845,7 +853,7 @@ function artStep(f,op,m,dt){
     const dx=(op.x-f.x)*f.face;if(dx>-10&&dx<m.range&&op.inv<=0&&!evading(op)&&!['ko','thrown','down'].includes(op.state)){f.hitDone=true;applyHit(f,op,m,f.face,op.x,GROUND-80,false)}}
   else if(m.type==='parry'&&f.t>m.s+m.a+.22)f.vx*=Math.pow(.001,dt);
   if((m.type==='trap'||m.type==='lob'||m.type==='storm')&&!f.fired&&f.t>=m.s){f.fired=1;
-    if(m.type==='trap'){const x=m.at==='front'?clamp(f.x+f.face*m.dist,40,SW-40):op.x;projs.push({owner:f,x,y:GROUND,vx:0,r:m.rad,kind:'trap',t:0,fuse:m.fuse,m,still:1})}
+    if(m.type==='trap'){const x=m.at==='aim'?clamp(f.x+f.face*clamp((op.x-f.x)*f.face,m.min,m.max),40,SW-40):op.x;projs.push({owner:f,x,y:GROUND,vx:0,r:m.rad,kind:'trap',t:0,fuse:m.fuse,m,still:1})}
     else if(m.type==='lob'){const x0=f.x+f.face*24,tx=clamp(op.x,40,SW-40);projs.push({owner:f,x:x0,y:GROUND-120,x0,tx,vx:(tx-x0)/m.flight,r:m.rad,kind:'jar',t:0,fuse:m.flight,m,still:1})}
     else projs.push({owner:f,x:f.x+f.face*56,y:GROUND-40,vx:f.face*190,r:30,kind:'storm',t:0,m,heavy:1});
     play('proj');fx('sh',5)}

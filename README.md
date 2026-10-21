@@ -28,7 +28,7 @@ Once per round, when your health drops to 25% or less, press **S + GRAB** togeth
 | Fighter | Move | How to avoid it |
 |---|---|---|
 | Hamma | Bab Sidi Bou Said: charges in and hammers you through a giant blue door | Block |
-| Mokhtar | La Goulette Anchor: an anchor crashes down a fixed distance ahead | Don't stand there |
+| Mokhtar | La Goulette Anchor: an anchor thrown at you from up to most of the screen away crashes down where you stood | Move or jump |
 | Elissa | Fire of Tanit: the sign of Tanit marks the ground under you, then erupts | Step off it |
 | Selma | Guellala Jar: a huge Djerba clay jar lands on you and traps you | Move |
 | Dihya | Scorched Earth: a sprint across the arena on a trail of fire | Jump, or block low |
