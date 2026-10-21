@@ -185,6 +185,20 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 @media (max-height:500px) and (orientation:landscape){
   .panelx p{font-size:16px;line-height:1.25}.mode small{font-size:15px;line-height:1.2}.keys{font-size:15px}.info{font-size:16px}.ml dd{font-size:15px;line-height:1.2}
 }
+
+.modes.m5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.pick.hasprog{position:relative}.pick.hasprog::after{content:attr(data-prog);position:absolute;top:6px;right:6px;font-family:var(--display);font-size:8px;color:var(--gold);background:var(--night);padding:3px 4px}
+.pick.done::after{background:var(--gold);color:var(--night)}
+@media (max-height:500px) and (orientation:landscape){.pick.hasprog::after{font-size:6px;padding:2px 3px;top:4px;right:4px}}
+.svs{display:flex;align-items:center;justify-content:center;gap:16px}.svs canvas{width:clamp(70px,16vh,120px);height:auto;image-rendering:pixelated;background:var(--night)}.svs b{font-family:var(--display);font-size:18px;color:var(--gold)}
+.slines{display:grid;gap:8px;align-content:start;text-align:left;max-width:40rem;margin:0 auto;width:100%}
+.sline{display:grid;grid-template-columns:8.5em 1fr;gap:10px;font-size:19px;line-height:1.3;background:var(--night);padding:8px 12px}
+.sline b{font-family:var(--display);font-size:10px;font-weight:400;align-self:center}
+.sline.n{grid-template-columns:1fr;color:var(--muted);font-style:normal;background:transparent;padding:2px 4px}
+@media (max-height:500px) and (orientation:landscape){
+  .modes.m5{grid-template-columns:repeat(5,minmax(0,1fr))}.modes.m5 .mode small{font-size:13px}.modes.m5 .mode b{font-size:9px}
+  .svs{display:none}.slines{overflow-y:auto;flex:1 1 auto;min-height:0;gap:5px}.sline{font-size:15px;padding:5px 9px;grid-template-columns:7.5em 1fr}.sline b{font-size:8px}
+}
 @media (pointer:fine){.pad{opacity:.85;transform:scale(.8);transform-origin:bottom center}.keys .tc{display:none}}
 @media (pointer:coarse){.keys .kb{display:none}}
 </style>
@@ -725,13 +739,14 @@ function newMatch(defA,defB,stageIdx){
 }
 function newRound(){
   round++;
-  cpuLevel=mode==='arcade'?Math.min(5,[1,2,2,3,3,4,4,4][arc.idx]+(round>=3?1:0)):Math.min(round,3);
+  cpuLevel=mode==='arcade'?Math.min(5,[1,2,2,3,3,4,4,4][arc.idx]+(round>=3?1:0)):mode==='story'?Math.min(5,[2,3,3,4][story.i]+(round>=3?1:0)):Math.min(round,3);
   for(const[f,x,face] of [[p1,260,1],[p2,540,-1]]){Object.assign(f,{x,y:0,vx:0,vy:0,face,hp:100,lag:100,state:'idle',t:0,atk:null,atkName:'',queued:null,stun:0,inv:0,combo:0,dmgTaken:0,pulled:0,dj:0,ad:0,jug:0,rage:0,artUsed:0,smear:[]});if(round===1)f.meter=0}
   if(mode==='training')p1.meter=100;
   timer=60;phase='intro';phaseT=0;shake=0;hitstop=0;slowmo=0;superFreeze=0;superBy=null;cine=null;gcine=null;sparks=[];texts=[];projs=[];ai.hold={};ai.think=.6;crowd=0;
   const fin=p1.wins===1&&p2.wins===1;
   if(mode==='training')say({txt:'TRAINING',t:1.2,size:64,y:200,col:FG});
   else say({txt:fin?'FINAL ROUND':'ROUND '+round,t:1.2,size:fin?80:72,y:200,col:fin?HURT:FG});
+  if(mode==='story'&&round===1)say({txt:story.boss?'FINAL CHAPTER':'CHAPTER '+(story.i+1),t:1.2,size:30,y:140,col:GOLD});
   if(mode==='arcade'&&round===1)say({txt:'STAGE '+(arc.idx+1)+' OF '+arc.list.length,t:1.2,size:30,y:140,col:GOLD});
   play('darbuka');
 }
@@ -809,6 +824,7 @@ function cpuInput(me,op,dt){
   return inp;
 }
 
+/*@@STORY@@*/
 /* =====================================================================
    LAST BREATH (آخر نفس)
    Once per round, at 25% health or less: one desperate, cinematic move per
@@ -836,7 +852,7 @@ const ARTS={
 };
 let cine=null,gcine=null;
 const hash=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
-function canArt(f){return !!f&&phase==='fight'&&!f.artUsed&&f.hp>0&&(f.hp<=25||mode==='training')&&!cine}
+function canArt(f){return !!f&&!!ARTS[f.def.id]&&phase==='fight'&&!f.artUsed&&f.hp>0&&(f.hp<=25||mode==='training')&&!cine}
 function artStep(f,op,m,dt){
   const act=f.t>=m.s&&f.t<=m.s+m.a;
   if(m.type==='rush'){
@@ -1186,7 +1202,7 @@ function endRound(winner,loser){
   say({txt:loser&&loser.hp<=0?'K.O.':'TIME',t:2.2,size:110,y:210,col:HURT});if(!winner)say({txt:'DRAW',t:2.2,size:60,y:290,col:GOLD});play('bell');
   if(winner&&winner.dmgTaken===0)say({txt:'PERFECT',t:2.2,size:64,y:282,col:GOLD});
 }
-function afterRound(){if(p1.wins>=2||p2.wins>=2){phase='over';showResult();return}newRound()}
+function afterRound(){const need=mode==='story'&&!story.boss?1:2;if(p1.wins>=need||p2.wins>=need){phase='over';showResult();return}newRound()}
 const cap=s=>s.charAt(0)+s.slice(1).toLowerCase();
 
 /* =====================================================================
@@ -1463,7 +1479,8 @@ function menu(){
   netClose();mode='cpu';phase='menu';p1=p2=null;paused=false;hideMatchUI();
   showPanel(`<div class="ar">عركة فوق السطح</div><h1>ROOFTOP RUMBLE</h1>
   <p class="intro">Nine fighters from across Tunisia's history and its living rooms. Tekken-style strings, launchers, juggles and throws.</p>
-  <div class="modes">
+  <div class="modes m5">
+    <button class="mode" id="m_story" type="button"><b>STORY</b><small>Each fighter's own story, against opponents you can't pick anywhere else.</small></button>
     <button class="mode" id="m_arcade" type="button"><b>ARCADE</b><small>Beat all eight rivals, one stage at a time, to become champion.</small></button>
     <button class="mode" id="m_cpu" type="button"><b>VS CPU</b><small>One match against a random rival, on the stage you pick.</small></button>
     <button class="mode" id="m_train" type="button"><b>TRAINING</b><small>Practise strings and juggles on a dummy. Shows combo damage.</small></button>
@@ -1471,6 +1488,7 @@ function menu(){
   </div>
   ${CONTROLS}
   <div class="row"><button class="go ghost" id="m_set" type="button">Settings</button></div>`);screen='main';
+  $('m_story').onclick=()=>{mode='story';selectFighter(false)};
   $('m_arcade').onclick=()=>{mode='arcade';selectFighter(false)};
   $('m_cpu').onclick=()=>{mode='cpu';selectFighter(false)};
   $('m_train').onclick=()=>{mode='training';selectFighter(false)};
@@ -1506,19 +1524,21 @@ function moveListHTML(d){
 }
 function selectFighter(net){
   if(!net){phase='menu';hideMatchUI()}
-  const next=net?'Ready':mode==='arcade'?'Start arcade':'Choose stage';
-  showPanel(`<h2>${net?'PICK YOUR FIGHTER':mode==='training'?'TRAINING · PICK A FIGHTER':mode==='arcade'?'ARCADE · PICK A FIGHTER':'CHOOSE YOUR FIGHTER'}</h2><div class="sp"><div class="grid" id="chars"></div><div class="info" id="info"></div></div><p class="status" id="st"></p>
+  const next=net?'Ready':mode==='arcade'?'Start arcade':mode==='story'?(storyProg(CHARS[pickChar].id)>0&&storyProg(CHARS[pickChar].id)<4?'Continue story':'Start story'):'Choose stage';
+  showPanel(`<h2>${net?'PICK YOUR FIGHTER':mode==='training'?'TRAINING · PICK A FIGHTER':mode==='arcade'?'ARCADE · PICK A FIGHTER':mode==='story'?'STORY · PICK A FIGHTER':'CHOOSE YOUR FIGHTER'}</h2><div class="sp"><div class="grid" id="chars"></div><div class="info" id="info"></div></div><p class="status" id="st"></p>
   <div class="row"><button class="go ghost" id="back">${net?'Leave':'Back'}</button><button class="go" id="go">${next}</button></div>`);
   const box=$('chars');
   const info=()=>{const d=CHARS[pickChar];$('info').innerHTML=`<b style="color:${d.hud}">${d.name} · ${d.from}</b><span>${esc(d.bio)}</span><span class="m">${esc(d.sp.desc)}</span>${moveListHTML(d)}`};
   CHARS.forEach((d,i)=>{const b=document.createElement('button');b.className='pick'+(i===pickChar?' sel':'');b.type='button';
     if(!PORTRAITS.has(d.id))PORTRAITS.set(d.id,portrait(d));
+    if(mode==='story'&&!net){const pr=storyProg(d.id);b.classList.add('hasprog');b.dataset.prog=Math.min(4,pr)+'/4';if(pr>=4)b.classList.add('done')}
     b.append(cloneCanvas(PORTRAITS.get(d.id)));b.insertAdjacentHTML('beforeend',`<b style="color:${d.hud}">${d.name}</b><small>${d.from}</small>`);
-    b.onclick=()=>{pickChar=i;box.querySelectorAll('.pick').forEach((x,j)=>x.classList.toggle('sel',j===i));info()};
+    b.onclick=()=>{pickChar=i;box.querySelectorAll('.pick').forEach((x,j)=>x.classList.toggle('sel',j===i));info();
+      if(mode==='story'&&!net){const pr=storyProg(d.id);$('go').textContent=pr>0&&pr<4?'Continue story':'Start story'}};
     box.append(b)});
   info();
   if(net){$('back').onclick=leaveNet;$('go').onclick=netReady;if(NET.guestPick!=null&&NET.role==='host')setStatus(`Your friend picked ${CHARS[NET.guestPick].name}.`)}
-  else{$('back').onclick=menu;$('go').onclick=()=>{SET.char=pickChar;saveSet();mode==='arcade'?startArcade():selectStage(false)}}
+  else{$('back').onclick=menu;$('go').onclick=()=>{SET.char=pickChar;saveSet();mode==='arcade'?startArcade():mode==='story'?startStory():selectStage(false)}}
 }
 function selectStage(net){
   showPanel(`<h2>CHOOSE A STAGE</h2>${net?`<p>${CHARS[NET.myPick].name} vs ${CHARS[NET.guestPick].name}</p>`:''}<div class="grid st" id="stages"></div>
@@ -1538,6 +1558,34 @@ function startCpu(){
   newMatch(def,cpuDef,pickStage);tone(1,1,.01,'sine',.0001);
 }
 function startTraining(){mode='training';newMatch(CHARS[pickChar],CHARS[(pickChar+1)%CHARS.length],pickStage);tone(1,1,.01,'sine',.0001)}
+
+/* ---- story mode flow ---- */
+const story={id:null,i:0,boss:false};
+function storyProg(id){return (SET.story&&SET.story[id])||0}
+function startStory(){const d=CHARS[pickChar];story.id=d.id;const pr=storyProg(d.id);story.i=pr>=4?0:pr;storyScene(true)}
+function storyScene(first){
+  phase='menu';hideMatchUI();mode='story';
+  const d=CHARS[pickChar],S=STORIES[d.id],c=S.ch[story.i],e=NPCS[c[0]];story.boss=story.i===S.ch.length-1;
+  const lines=[...(first&&story.i===0?S.intro:[]),...c[3]],who=w=>w==='h'?d:w==='e'?e:null;
+  const html=lines.map(([w,t])=>{const p=who(w);return`<div class="sline ${w}">${p?`<b style="color:${p.hud}">${esc(p.name)}</b>`:''}<span>${esc(t)}</span></div>`}).join('');
+  showPanel(`<h2><span>${story.boss?'FINAL CHAPTER':'CHAPTER '+(story.i+1)}</span> · <span>${esc(c[2])}</span></h2>
+    <div class="svs"><div class="sp1"></div><b>VS</b><div class="sp2"></div></div><div class="slines">${html}</div>
+    <div class="row"><button class="go ghost" id="back">Quit</button><button class="go" id="go">Fight</button></div>`);
+  for(const[sel,def,flip] of [['.sp1',d,0],['.sp2',e,1]]){if(!PORTRAITS.has(def.id))PORTRAITS.set(def.id,portrait(def));const cv=cloneCanvas(PORTRAITS.get(def.id));if(flip)cv.style.transform='scaleX(-1)';document.querySelector(sel).append(cv)}
+  $('back').onclick=menu;$('go').onclick=()=>{mode='story';newMatch(d,e,c[1]);tone(1,1,.01,'sine',.0001)};$('go').focus();
+}
+function storyResult(won,w){
+  const d=CHARS[pickChar],S=STORIES[d.id];
+  if(won){SET.story=Object.assign({},SET.story,{[d.id]:Math.max(storyProg(d.id),story.i+1)});saveSet();
+    if(story.i>=S.ch.length-1){
+      showPanel(`<div class="ar">النهاية</div><h1><span style="color:${d.hud}">${d.name}</span><br>THE END</h1><p>${esc(S.end)}</p>
+        <div class="row"><button class="go ghost" id="back">Main menu</button><button class="go" id="go">Another story</button></div>`);
+      $('back').onclick=menu;$('go').onclick=()=>{mode='story';selectFighter(false)};$('go').focus();return}
+    story.i++;storyScene(false);return}
+  showPanel(`<div class="ar">يزّي!</div><h1><span style="color:${w.def.hud}">${w.name}</span> WINS</h1><p>Get up and try again.</p>
+    <div class="row"><button class="go ghost" id="back">Quit</button><button class="go" id="go">Try again</button></div>`);
+  $('back').onclick=menu;$('go').onclick=()=>{const c=S.ch[story.i];mode='story';newMatch(d,NPCS[c[0]],c[1])};$('go').focus();
+}
 function startArcade(){
   const others=CHARS.filter((_,i)=>i!==pickChar).sort(()=>Math.random()-.5);
   arc.list=others;arc.idx=0;arcadeFight();tone(1,1,.01,'sine',.0001);
@@ -1549,6 +1597,7 @@ function showResult(){
   const me=mode==='net'?(myIndex()===0?p1:p2):p1,them=me===p1?p2:p1;
   const won=me.wins>them.wins,w=won?me:them;
   NET.inMatch=false;
+  if(mode==='story'){storyResult(won,w);return}
   if(mode==='arcade'){
     if(won&&arc.idx>=arc.list.length-1){
       showPanel(`<div class="ar">بطل تونس</div><h1><span style="color:${me.def.hud}">${me.name}</span><br>CHAMPION OF TUNISIA</h1>
@@ -1864,7 +1913,7 @@ function drawFighter(f,dt,still,offX=0,alphaMul=1){
   const tail=(x,y,col,w,len)=>{if(!lying)trail(f.ribbon,x,y,face,len,col,w,2,1.6,still||rot)};
   if(D.hat==='chechia'){const c=D.hatCol||RED;ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(hdx-hr+1,hdy-4);ctx.lineTo(hdx-hr+3,hdy-17);ctx.quadraticCurveTo(hdx,hdy-22,hdx+hr-3,hdy-17);ctx.lineTo(hdx+hr-1,hdy-4);ctx.closePath();ctx.fill();
     ctx.fillStyle=shade(c,.78);ctx.fillRect(hdx-hr+1,hdy-8,(hr-1)*2,4);ctx.fillStyle=shade(c,1.18);ctx.fillRect(hdx+face*3-2,hdy-18,4,8);if(D.tassel)tail(hdx,hdy-20,INK,3,5)}
-  if(D.hat==='chech'){const c='#f4f0e6',sh=shade(c,.84),tt=performance.now()/1000,sw=still||rot?0:clamp(-f.vx*.02,-6,6)+Math.sin(tt*2.6)*1.5;
+  if(D.hat==='chech'){const c=D.hatCol||'#f4f0e6',sh=shade(c,.84),tt=performance.now()/1000,sw=still||rot?0:clamp(-f.vx*.02,-6,6)+Math.sin(tt*2.6)*1.5;
     ctx.fillStyle=sh;taper(hdx-face*(hr-2),hdy-6,hdx-face*(hr+5)+sw,hdy+hr+12,8,6);   // loose end hanging down the back
     ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(hdx-face,hdy-hr*.45,hr+3,hr*.62,0,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(hdx-face*2,hdy-hr*.92,hr*.86,hr*.5,0,0,7);ctx.fill();
     ctx.strokeStyle=sh;ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(hdx-face*(hr+1),hdy-hr*.2-i*5);ctx.lineTo(hdx+face*(hr+1),hdy-hr*.55-i*5);ctx.stroke()}
@@ -1890,8 +1939,8 @@ function drawFighter(f,dt,still,offX=0,alphaMul=1){
     ctx.fillRect(hdx+face*3-(face>0?0:6),hdy-1,6,11);ctx.fillStyle=bh;ctx.fillRect(hdx-hr-1,hdy-4,(hr+1)*2,3);ctx.fillRect(hdx-4,hdy-hr-2,8,2)}
   if(D.hat==='silverband'){ctx.fillStyle='#c9c9d2';ctx.fillRect(hdx-hr,hdy-11,hr*2,4);ctx.fillStyle='#e8e8f0';for(let i=-2;i<=2;i++)dot(hdx+i*5+face*2,hdy-5,1.8);
     ctx.fillStyle=RED;ctx.fillRect(hdx+face*3-1,hdy-12,3,3);ctx.fillStyle='#d8d8e2';ctx.fillRect(hdx-face*(hr-3)-2,hdy+6,4,6)}
-  if(D.hat==='bandana'){ctx.fillStyle='#1c63b0';ctx.beginPath();ctx.arc(hdx,hdy,hr+1.5,Math.PI,2*Math.PI);ctx.fill();ctx.fillRect(hdx-hr-1,hdy-3,(hr+1)*2,5);
-    ctx.fillStyle='#f5efe4';for(let i=-1;i<=1;i++)ctx.fillRect(hdx+i*7-1,hdy-9,3,3);tail(hdx-face*(hr-1),hdy-2,'#1c63b0',5,6)}
+  if(D.hat==='bandana'){ctx.fillStyle=D.hatCol||'#1c63b0';ctx.beginPath();ctx.arc(hdx,hdy,hr+1.5,Math.PI,2*Math.PI);ctx.fill();ctx.fillRect(hdx-hr-1,hdy-3,(hr+1)*2,5);
+    ctx.fillStyle='#f5efe4';for(let i=-1;i<=1;i++)ctx.fillRect(hdx+i*7-1,hdy-9,3,3);tail(hdx-face*(hr-1),hdy-2,D.hatCol||'#1c63b0',5,6)}
   if(D.hat==='crown'){ctx.fillStyle=GOLD;ctx.beginPath();ctx.moveTo(hdx-hr,hdy-6);for(let i=0;i<4;i++){const x=hdx-hr+i*hr/2;ctx.lineTo(x+hr/4,hdy-(i%2?13:21));ctx.lineTo(x+hr/2,hdy-11)}ctx.lineTo(hdx+hr,hdy-6);ctx.closePath();ctx.fill();
     ctx.fillStyle=RED;ctx.fillRect(hdx-2,hdy-12,4,4);ctx.fillStyle=GOLD;ctx.fillRect(hdx+face*(hr-4)-2,hdy+5,4,5)}
   if(D.hat==='straw'){ctx.fillStyle='#e3c37a';ctx.beginPath();ctx.ellipse(hdx,hdy-8,hr+12,5,0,0,7);ctx.fill();ctx.beginPath();ctx.arc(hdx,hdy-8,hr-3,Math.PI,0);ctx.fill();

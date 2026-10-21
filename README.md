@@ -17,6 +17,10 @@ A Tunisian 1v1 fighting game with Tekken-style controls: nine fighters with thei
 
 Everyone has **1 2** (One-Two), **↓+2** (launcher: juggle them in the air with 1 or 4) and **↓+4** (sweep). Each fighter's own strings, direction moves and movement trick are in the move list on the fighter select screen and in the pause menu.
 
+## Story mode
+
+Each of the nine fighters has a four-chapter story with short dialogue scenes between fights. The opponents only appear in story mode: street bandis, smugglers, card sharks, sailors, Roman legionaries, Tyrian guards and dune raiders, then a boss for each story: El Boss, Rais el Bahr (a corsair captain), Pygmalion, Odysseus, the Iron General, El Ghoul, El Ghachach, the Consul and El Ghoula. The first three chapters are one round each; the boss is best of three. Progress is saved on the phone (shown as 2/4 and so on on the fighter cards). The stories lean on history and legend: Elissa's flight from Tyre and the oxhide of Byrsa, Djerba as Homer's island of the Lotus-eaters, Hannibal's road from the Trebia to Cannae, and Tunisian folklore's ghoul and ghoula. Story text and opponents are in `src/story.js`; their Derja is in `tools/derja_story.py`.
+
 ## Language
 
 The game speaks Tunisian Derja by default, written in Latin letters with numbers the way people type it online (3 = ع, 7 = ح, 9 = ق, 5 = خ). Spellings follow the most common forms in the TUNIZI corpus of 100,000 Tunisian comments (barcha, mta3, bech, mouch, ken, tawa). English is one tap away in Settings. All the Derja text lives in `src/derja.js`, keyed by the English it replaces, so it is easy to correct a word.

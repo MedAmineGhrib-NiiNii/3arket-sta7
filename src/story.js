@@ -1,0 +1,110 @@
+/* =====================================================================
+   STORY MODE
+   Each of the nine fighters has a four-chapter story against opponents
+   that only appear here (they can't be picked in the other modes):
+   three chapters against one-round opponents, then a best-of-three boss.
+   Dialogue lines are [who, text]: 'n' narrator, 'h' hero, 'e' enemy.
+   ===================================================================== */
+const NPC_BASE={g:'m',from:'',home:0,bio:'',list:[],chain:{},cmd:{},tech:'dash',bounce:1,size:1,speed:1,power:1,throwName:'THROW',hud:'#d0d0d0',npc:1};
+const npc=o=>Object.assign({},NPC_BASE,o);
+const SP_RUSH=(name,sup,fx)=>({kind:'rush',name,super:sup,desc:'',s:.12,a:.3,r:.38,dmg:12,range:60,h:'mid',kb:280,stun:.45,pose:'rush',launch:1,fx});
+const SP_UPPER=(name,sup,fx)=>({kind:'uppercut',name,super:sup,desc:'',s:.09,a:.2,r:.42,dmg:14,range:80,h:'mid',kb:260,stun:.5,pose:'dragon',limb:'aF',launch:1,fx});
+const SP_SLIDE=(name,sup,fx)=>({kind:'slide',name,super:sup,desc:'',s:.09,a:.3,r:.34,dmg:11,range:70,h:'low',kb:220,stun:.45,pose:'slide',limb:'lF',launch:1,crouch:1,fx});
+const SP_PROJ=(name,sup,proj,fx,extra)=>Object.assign({kind:'proj',name,super:sup,desc:'',s:.16,a:.05,r:.34,dmg:9,h:'mid',kb:160,stun:.4,pose:'cast',limb:'aF',proj,fx},extra||{});
+const SP_TELE=(name,sup,fx)=>({kind:'teleport',name,super:sup,desc:'',s:.22,a:.1,r:.32,dmg:12,range:95,h:'mid',kb:220,stun:.45,pose:'kick',limb:'lF',launch:1,fx});
+const NPCS={
+  // ---- one-round opponents
+  bandi:npc({id:'bandi',name:'BANDI',hud:'#9fb4d8',col:'#1d2b4f',skin:'#b98058',pants:'#1d2b4f',shoe:'#f2f2f2',trim:'#f2f2f2',sash:'#1d2b4f',vest:{col:'#2b3f6e',trim:'#f2f2f2'},
+    hat:'bandana',hatCol:'#c8102e',face:'stubble',speed:1.05,power:.92,throwName:'POCKET CHECK',sp:SP_RUSH('Bandi Rush','NO MERCY','#9fb4d8')}),
+  contra:npc({id:'contra',name:'CONTRABANDI',hud:'#c9a27a',col:'#5a3a22',arm:'#5a3a22',fore:'#a8704a',skin:'#a8704a',pants:'#2a2a2a',shoe:'#1b1b1b',trim:'#c9a27a',sash:'#2a2a2a',
+    face:'mustache',hair:{type:'short',col:'#1b120c'},size:1.04,speed:.95,power:.98,throwName:'BACK ALLEY',sp:SP_UPPER('Crate Breaker','BLACK MARKET','#c9a27a')}),
+  legion:npc({id:'legion',name:'LEGIONARY',hud:'#e07a6a',col:'#8a8f98',arm:'#b07a52',fore:'#b07a52',skin:'#c48a5c',pants:'#c48a5c',greave:'#8a8f98',shoe:'#5a3a22',trim:'#c9c9d2',sash:'#9e1b28',
+    hat:'helmet',shield:1,sword:1,face:'stubble',robe:{len:.6,col:'#9e1b28',trim:'#c9c9d2',strips:1},basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},speed:.92,power:.95,throwName:'SHIELD SHOVE',sp:SP_RUSH('Testudo','PILUM VOLLEY','#e07a6a')}),
+  guard:npc({id:'guard',name:'TYRIAN GUARD',hud:'#b58ad8',col:'#a8925a',arm:'#c08a5e',fore:'#c08a5e',skin:'#c08a5e',pants:'#c08a5e',greave:'#a8925a',shoe:'#5a3a22',trim:'#e8c66a',sash:'#5b2a7a',
+    hat:'helmet',shield:1,sword:1,face:'beard',beardCol:'#1f1510',robe:{len:.62,col:'#5b2a7a',trim:'#e8c66a',strips:1},basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},speed:.95,power:.95,throwName:'KING\'S ORDER',sp:SP_RUSH('Phoenician Charge','PURPLE TIDE','#b58ad8')}),
+  raider:npc({id:'raider',name:'DUNE RAIDER',hud:'#e0c08a',col:'#4a3f36',skin:'#9c5f3a',pants:'#3a322b',shoe:'#3a2a1e',trim:'#8a7660',sash:'#8a2b1e',
+    hat:'chech',hatCol:'#3a322b',face:'stubble',robe:{len:1.3,col:'#4a3f36',trim:'#6b5a4a'},tech:'airdash',speed:1.08,power:.95,throwName:'SAND TRAP',sp:SP_SLIDE('Dune Ambush','SANDSTORM','#e0c08a')}),
+  sharper:npc({id:'sharper',name:'CARD SHARK',hud:'#d6d68a',col:'#2d2d3a',skin:'#c49a72',pants:'#2d2d3a',shoe:'#1b1b1b',trim:'#c9b05a',sash:'#2d2d3a',vest:{col:'#7a1f2b',trim:'#c9b05a'},
+    face:'mustache',hair:{type:'short',col:'#151515'},glasses:1,cards:1,tech:'shuffle',speed:.98,power:.92,throwName:'MARKED DECK',sp:SP_PROJ('Ace Up the Sleeve','FULL DECK','card','#f6f1e7',{dmg:8})}),
+  sailor:npc({id:'sailor',name:'SAILOR',hud:'#8fc8e8',col:'#d9cfb8',skin:'#c99a6e',pants:'#c99a6e',shoe:'#6b4628',trim:'#3a6fa8',sash:'#3a6fa8',
+    hat:'bandana',hatCol:'#3a6fa8',face:'beard',beardCol:'#4a3020',robe:{len:.7,col:'#d9cfb8',trim:'#3a6fa8'},tech:'roll',speed:1.02,power:.94,throwName:'OVERBOARD',sp:SP_PROJ('Ship\'s Net','HEAVE HO','net','#e9dcc0',{dmg:7,kb:0,stun:.7,pull:1})}),
+  // ---- bosses
+  elboss:npc({id:'elboss',name:'EL BOSS',hud:'#f2f2f2',col:'#efefea',skin:'#b98058',pants:'#efefea',shoe:'#8a5a32',trim:'#c9a46a',sash:'#2a2a2a',vest:{col:'#d8d2c4',trim:'#c9a46a'},
+    face:'mustache',hair:{type:'short',col:'#8a8a8a'},glasses:1,size:1.1,speed:.98,power:1.12,throwName:'EVERYBODY PAYS',sp:SP_UPPER('Kingpin Uppercut','HOSTILE TAKEOVER','#f2c14e')}),
+  rais:npc({id:'rais',name:'RAIS EL BAHR',hud:'#ff8a6a',col:'#7a1f2b',arm:'#7a1f2b',fore:'#a8704a',skin:'#a8704a',pants:'#2a2a2a',shoe:'#1b1b1b',trim:'#e8c66a',sash:'#e8c66a',
+    hat:'bandana',hatCol:'#1b1b1b',face:'beard',beardCol:'#1b1b1b',sword:1,cape:{col:'#1b1b1b',edge:'#e8c66a',front:false},size:1.1,speed:1,power:1.12,throwName:'WALK THE PLANK',sp:SP_RUSH('Boarding Rush','CORSAIR STORM','#ff8a6a')}),
+  pygmalion:npc({id:'pygmalion',name:'PYGMALION',hud:'#c79bff',col:'#3e1f6b',skin:'#cf9c74',pants:'#e8c66a',shoe:'#e8c66a',trim:'#e8c66a',sash:'#e8c66a',
+    hat:'crown',face:'beard',beardCol:'#1b120c',cape:{col:'#e8c66a',edge:'#3e1f6b',front:false},robe:{len:1.5,col:'#3e1f6b',trim:'#e8c66a'},size:1.1,speed:.96,power:1.12,throwName:'TYRE\'S GREED',sp:SP_PROJ('Tyrian Fire','GOLD OF TYRE','flame','#b26bff',{dmg:10})}),
+  odysseus:npc({id:'odysseus',name:'ODYSSEUS',hud:'#9fd8ff',col:'#b9a27a',arm:'#c99a6e',fore:'#c99a6e',skin:'#c99a6e',pants:'#c99a6e',greave:'#b9a27a',shoe:'#6b4628',trim:'#e8c66a',sash:'#2f5f9f',
+    hat:'helmet',shield:1,sword:1,face:'beard',beardCol:'#6b4020',cape:{col:'#2f5f9f',edge:'#e8c66a',front:false},robe:{len:.65,col:'#2f5f9f',trim:'#e8c66a',strips:1},
+    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},size:1.08,speed:1.02,power:1.1,throwName:'TROJAN TRICK',sp:SP_TELE('Trojan Trick','WINE-DARK SEA','#9fd8ff')}),
+  irongen:npc({id:'irongen',name:'IRON GENERAL',hud:'#c9c9d2',col:'#5b6470',arm:'#5b6470',fore:'#b07a52',skin:'#b07a52',pants:'#3a3f48',greave:'#5b6470',shoe:'#2a2a2a',trim:'#c9c9d2',sash:'#7a1f2b',
+    hat:'helmet',shield:1,sword:1,face:'beard',beardCol:'#2a1d17',cape:{col:'#7a1f2b',edge:'#c9c9d2',front:false},robe:{len:.6,col:'#3a3f48',trim:'#c9c9d2',strips:1},
+    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},size:1.12,speed:.92,power:1.15,throwName:'IRON GRIP',sp:SP_RUSH('Iron March','SIEGE ENGINE','#c9c9d2')}),
+  ghoul:npc({id:'ghoul',name:'EL GHOUL',hud:'#a8d88a',col:'#3b2f2a',skin:'#7e8f6a',pants:'#3b2f2a',shoe:'#3b2f2a',trim:'#5a4a3a',sash:'#5a4a3a',hair:{type:'loose',col:'#e8e2d0'},
+    face:'beard',beardCol:'#e8e2d0',robe:{len:1.6,col:'#3b2f2a',trim:'#5a4a3a'},size:1.2,speed:.95,power:1.15,tech:'float',throwName:'SAND SWALLOW',sp:SP_PROJ('Ghoul Fire','NIGHT OF THE DUNES','flame','#b26bff',{dmg:10})}),
+  ghachach:npc({id:'ghachach',name:'EL GHACHACH',hud:'#f2c14e',col:'#1f1f26',skin:'#c49a72',pants:'#1f1f26',shoe:'#8a5a32',trim:'#f2c14e',sash:'#1f1f26',vest:{col:'#f2c14e',trim:'#1f1f26'},
+    face:'mustache',glasses:1,cards:1,tech:'shuffle',size:1.1,speed:1,power:1.1,throwName:'HOUSE ALWAYS WINS',sp:SP_PROJ('Loaded Deal','STACKED DECK','card','#f2c14e',{dmg:10})}),
+  consul:npc({id:'consul',name:'THE CONSUL',hud:'#ff8a8a',col:'#f0ece0',arm:'#c48a5c',fore:'#c48a5c',skin:'#c48a5c',pants:'#c48a5c',greave:'#c9c9d2',shoe:'#5a3a22',trim:'#9e1b28',sash:'#9e1b28',
+    hat:'helmet',shield:1,sword:1,face:'stubble',cape:{col:'#9e1b28',edge:'#e8c66a',front:false},robe:{len:.75,col:'#f0ece0',trim:'#9e1b28',strips:1},
+    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},size:1.1,speed:.96,power:1.14,throwName:'SPQR',sp:SP_RUSH('Legion Charge','ROME ETERNAL','#ff8a8a')}),
+  ghoula:npc({id:'ghoula',name:'EL GHOULA',g:'f',hud:'#b8e0a0',col:'#2f2a3a',skin:'#8a9a78',pants:'#2f2a3a',shoe:'#2f2a3a',trim:'#6a5a7a',sash:'#6a5a7a',hair:{type:'loose',col:'#151318'},
+    earring:1,robe:{len:1.65,col:'#2f2a3a',trim:'#6a5a7a'},size:1.18,speed:.98,power:1.15,tech:'float',throwName:'BEDTIME',sp:SP_PROJ('Ghoula Fire','NO DINNER FOR YOU','flame','#b26bff',{dmg:10})}),
+};
+// chapter: [opponent, stage index, title, lines]; the last chapter is the boss (best of three)
+const STORIES={
+  hamma:{intro:[['n','Hamma\'s café on the hill has been wrecked. A gang that works for a man called El Boss wants money from every shop in Sidi Bou Said.']],
+    ch:[['bandi',0,'The blue door',[['e','Nice blue door. Shame if someone painted it grey.'],['h','Touch that door and you\'ll swim home.']]],
+        ['contra',1,'Down in the Medina',[['n','The trail leads down to the Medina, where the money changes hands.'],['e','You\'re far from your café, ya Hamma.'],['h','And you\'re far from your excuses.']]],
+        ['bandi',5,'Café M\'Rabet',[['e','El Boss is busy. Leave a message.'],['h','I\'ll leave it on your face.']]],
+        ['elboss',0,'El Boss',[['e','Everyone pays. Even the sea pays me to stay blue.'],['h','Today you pay the bill.']]]],
+    end:'The cafés of Sidi Bou Said open again. Hamma\'s tea is free for a week, and the blue doors stay blue.'},
+  brik:{intro:[['n','At the port of La Goulette, crates of fish keep vanishing at night. Mokhtar has unloaded boats here for twenty years, and he can smell a smuggler.']],
+    ch:[['contra',4,'Night shift',[['e','Mind your own crates, dock boy.'],['h','I am. They\'re full of my fish.']]],
+        ['bandi',1,'Fish in the souk',[['n','The stolen fish turn up in the souk, sold twice the price.'],['e','Fresh fish! Very fresh! Very cheap!'],['h','Very stolen.']]],
+        ['sharper',5,'The bookkeeper',[['n','The smugglers\' bookkeeper spends their money on cards.'],['e','One hand of chkobba, and the debt is yours.'],['h','I don\'t play cards. I play brik.']]],
+        ['rais',4,'Rais el Bahr',[['e','La Goulette was a corsair port long before it was yours.'],['h','And now it\'s a working port. Crispy outside, soft inside. Except me.']]]],
+    end:'The smugglers\' ship is towed back to the quay and the fish go back to the fishermen. La Goulette eats well tonight.'},
+  alyssa:{intro:[['n','Tyre, 814 BC. King Pygmalion has murdered Elissa\'s husband for his gold. That night she slips out of the palace with loyal sailors and the treasure, heading west.']],
+    ch:[['guard',4,'Escape from Tyre',[['e','The king wants his gold back.'],['h','It was never his.']]],
+        ['raider',3,'A foreign shore',[['n','On the African shore, local warriors test the newcomers.'],['e','Strangers buy land here. They don\'t take it.'],['h','Then sell me as much as an oxhide can cover.']]],
+        ['guard',2,'Followed',[['n','Pygmalion\'s soldiers have followed her ships.'],['e','You can\'t hide behind a cow skin, queen.'],['h','Watch me build a city with it.']]],
+        ['pygmalion',0,'Pygmalion',[['e','Sister. Come home, and bring my gold.'],['h','My home is here now. It will be called the new city.']]]],
+    end:'With strips of oxhide she circles the hill of Byrsa. The city she founds is called Qart-Hadasht, the new city: Carthage.'},
+  selma:{intro:[['n','Homer wrote that Djerba was the island of the Lotus-eaters, where sailors forgot their way home. One morning a strange ship anchors at Houmt Souk, and its crew starts taking every octopus pot on the beach.']],
+    ch:[['sailor',4,'Strangers on the beach',[['e','We only take lotus. And pots. And nets.'],['h','Put them down before I put you down.']]],
+        ['contra',4,'The buyer',[['n','A smuggler is buying the stolen pots by the dozen.'],['e','Clay is clay. I pay cash.'],['h','Those pots feed families.']]],
+        ['sailor',5,'Shore leave',[['n','The sailors celebrate in a café, with lotus in their tea.'],['e','Stay a while... forget your nets...'],['h','I never forget a net.']]],
+        ['odysseus',4,'The wanderer',[['e','I am Odysseus. I have beaten giants and gods.'],['h','You haven\'t met a fisherwoman from Djerba.']]]],
+    end:'The pots go back to the sand and the strange ship leaves with only a little lotus on board. Some say Selma\'s net is still in the Odyssey, somewhere between the lines.'},
+  dihya:{intro:[['n','The Aurès mountains, late in the 7th century. An army in iron marches on the passes. Dihya, queen of the Amazigh tribes, gathers her riders.']],
+    ch:[['legion',3,'The passes',[['e','Your mountains will bow.'],['h','Mountains don\'t bow. Neither do I.']]],
+        ['raider',3,'The orchards',[['n','Mercenaries are paid to burn the orchards.'],['e','No fields, no food, no fight.'],['h','Then I\'ll fight hungry.']]],
+        ['legion',2,'El Jem',[['n','She falls back to the great amphitheatre of El Jem.'],['e','These walls won\'t save you.'],['h','I don\'t need walls. I need room.']]],
+        ['irongen',2,'The Iron General',[['e','Your walls are stone. My army is iron.'],['h','Iron rusts. The mountains stay.']]]],
+    end:'Legend says she made her last stand at El Jem. In the Aurès they still remember the queen who never knelt.'},
+  zied:{intro:[['n','Every winter Douz holds the Festival of the Sahara. This year the guides whisper that something walks the dunes at night and eats the tourists\' sandals: El Ghoul.']],
+    ch:[['raider',3,'Desert road',[['e','Your tourists\' wallets are ours.'],['h','In the desert, the guide decides.']]],
+        ['raider',3,'Behind the third dune',[['n','The raiders\' camp is behind the third dune.'],['e','Nobody finds this camp.'],['h','I was born here. I find everything.']]],
+        ['bandi',5,'Word in the café',[['n','A bandit in the café knows where the Ghoul sleeps.'],['e','Ask nicely.'],['h','I am asking nicely.']]],
+        ['ghoul',3,'El Ghoul',[['e','Ghhhrr... sandals...'],['h','Find your own sandals!']]]],
+    end:'El Ghoul runs off into the Sahara with one sandal in his mouth. The salukis race, the festival goes on, and Zied gets a new pair of shoes.'},
+  salah:{intro:[['n','At Café M\'Rabet nobody has beaten Salah at chkobba in forty years. Then a stranger in a shiny suit wins every game, and the regulars lose their wages.']],
+    ch:[['sharper',5,'A lucky stranger',[['e','The sab\'a l-hayya again? What luck!'],['h','Luck doesn\'t keep two of them up its sleeve.']]],
+        ['bandi',1,'The lookout',[['n','The cheats have a lookout in the souk.'],['e','Old man, go home and sleep.'],['h','At my age you sleep less and see more.']]],
+        ['sharper',1,'The marked deck',[['n','The deck they play with is marked.'],['e','A card is a card.'],['h','And a cheat is a cheat.']]],
+        ['ghachach',5,'El Ghachach',[['e','I am El Ghachach. I never lose.'],['h','Tonight you learn what a chkobba feels like.']]]],
+    end:'The regulars get their wages back and the marked deck goes into the fire. Salah wins the next game too, fair and square.'},
+  hannibal:{intro:[['n','218 BC. Rome has declared war on Carthage. Hannibal leaves Spain with soldiers and North African war elephants, bound for Italy over the Alps.']],
+    ch:[['legion',2,'The Trebia',[['e','Go back to Africa.'],['h','I came a long way. I\'m not going back.']]],
+        ['legion',4,'Lake Trasimene',[['n','Morning fog on Lake Trasimene. The Romans march straight into it.'],['e','Where did they come from?'],['h','From everywhere.']]],
+        ['legion',3,'The road to Cannae',[['n','Summer, the plain of Cannae. Rome sends its biggest army yet.'],['e','There are eighty thousand of us.'],['h','Then I\'ll need a plan.']]],
+        ['consul',2,'The Consul',[['e','Rome does not lose.'],['h','Rome has never met Carthage.']]]],
+    end:'Cannae is still studied as the perfect battle. Hannibal never takes Rome, but Rome never forgets him.'},
+  kmar:{intro:[['n','Kmar\'s youngest son came home crying: the bandis took his football. Every Tunisian mother knows what comes next.']],
+    ch:[['bandi',1,'The football',[['e','Go home, ya mra.'],['h','Go home, ya wlidi. To YOUR mother.']]],
+        ['contra',1,'Stolen goods',[['n','The bandis sell stolen footballs in the souk.'],['e','Five dinars, madame. Good price.'],['h','I know that ball. I sewed that ball.']]],
+        ['sharper',5,'The ringleader',[['n','Their leader hides in the café.'],['e','Women don\'t come in here.'],['h','Mothers go everywhere.']]],
+        ['ghoula',1,'El Ghoula',[['n','Kmar always told her children El Ghoula would come if they didn\'t sleep. Tonight El Ghoula is real, and she has the football.'],['e','Hhhh... I eat naughty children!'],['h','And I eat ghoulas for breakfast. Barra a9ra!']]]],
+    end:'The football comes home, El Ghoula goes back into the bedtime stories, and dinner is on the table at eight sharp.'},
+};

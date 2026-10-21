@@ -185,6 +185,20 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 @media (max-height:500px) and (orientation:landscape){
   .panelx p{font-size:16px;line-height:1.25}.mode small{font-size:15px;line-height:1.2}.keys{font-size:15px}.info{font-size:16px}.ml dd{font-size:15px;line-height:1.2}
 }
+
+.modes.m5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.pick.hasprog{position:relative}.pick.hasprog::after{content:attr(data-prog);position:absolute;top:6px;right:6px;font-family:var(--display);font-size:8px;color:var(--gold);background:var(--night);padding:3px 4px}
+.pick.done::after{background:var(--gold);color:var(--night)}
+@media (max-height:500px) and (orientation:landscape){.pick.hasprog::after{font-size:6px;padding:2px 3px;top:4px;right:4px}}
+.svs{display:flex;align-items:center;justify-content:center;gap:16px}.svs canvas{width:clamp(70px,16vh,120px);height:auto;image-rendering:pixelated;background:var(--night)}.svs b{font-family:var(--display);font-size:18px;color:var(--gold)}
+.slines{display:grid;gap:8px;align-content:start;text-align:left;max-width:40rem;margin:0 auto;width:100%}
+.sline{display:grid;grid-template-columns:8.5em 1fr;gap:10px;font-size:19px;line-height:1.3;background:var(--night);padding:8px 12px}
+.sline b{font-family:var(--display);font-size:10px;font-weight:400;align-self:center}
+.sline.n{grid-template-columns:1fr;color:var(--muted);font-style:normal;background:transparent;padding:2px 4px}
+@media (max-height:500px) and (orientation:landscape){
+  .modes.m5{grid-template-columns:repeat(5,minmax(0,1fr))}.modes.m5 .mode small{font-size:13px}.modes.m5 .mode b{font-size:9px}
+  .svs{display:none}.slines{overflow-y:auto;flex:1 1 auto;min-height:0;gap:5px}.sline{font-size:15px;padding:5px 9px;grid-template-columns:7.5em 1fr}.sline b{font-size:8px}
+}
 @media (pointer:fine){.pad{opacity:.85;transform:scale(.8);transform-origin:bottom center}.keys .tc{display:none}}
 @media (pointer:coarse){.keys .kb{display:none}}
 </style>
@@ -843,9 +857,223 @@ const TN={
   'Hannibal, son of Hamilcar Barca. In 218 BC he crossed the Alps into Italy with North African war elephants, then beat Rome at the Trebia, Lake Trasimene and Cannae. He lost his right eye crossing the Apennines. Bronze armour, a round shield and a cloak in Carthage\'s purple.':'Hannibal, weld Hamilcar Barca. Fi 218 9bal el milad 9ta3 el Alpes l Italia b fyela mta3 7arb men chmel Ifri9ia, w ghlb Roma fil Trebia, b7ayret Trasimene w Cannae. Dhayya3 3inou limin w howa 9ate3 el Apennins. Dir3 n7as, dar9a mdawra w bornous b orjouani Carthage.',
   'Kmar, mother of five in an old Tunis neighbourhood. A wooden spoon in one hand, the msalha (floor squeegee) and its wet cloth never far away, and a slipper that has never missed. Floral house dress, apron, a knotted foulard and gold bangles.':'Kmar, omm 5amsa fi 7ouma 9dima fi Tounes. Mghorfa mta3 3oud fi yed, el msal7a w char7tha mbalra dima 9rib, w chlaka 3omorha ma ghaltet. Robe mta3 dar mwarda, tablier, foulard mrabbet w smayem dheb.',
 };
+/*@@STORY-DERJA@@*/
+Object.assign(TN,{
+"STORY": "7KEYA",
+"Each fighter's own story, against opponents you can't pick anywhere else.": "Kol m9atel 3andou 7keytou, dhed 5soum ma tnajjamch t5tarhom fi blasa o5ra.",
+"STORY · PICK A FIGHTER": "7KEYA · E5TAR M9ATEL",
+"Start story": "Ebda el 7keya",
+"Continue story": "Kammel el 7keya",
+"FINAL CHAPTER": "A5ER FASL",
+"THE END": "KHLASET EL 7KEYA",
+"Another story": "7keya o5ra",
+"Get up and try again.": "9oum w 3awed.",
+"Try again": "3awed",
+"CARD SHARK": "SARRA9 CARTAS",
+"LEGIONARY": "3ASKRI ROUMI",
+"TYRIAN GUARD": "7ARES MEN SOUR",
+"DUNE RAIDER": "9OTTA3 EL KTHOB",
+"SAILOR": "BA7RI",
+"IRON GENERAL": "GENERAL EL 7DID",
+"ODYSSEUS": "ULYSSE",
+"RAIS EL BAHR": "RAIS EL BA7AR",
+"THE CONSUL": "EL CONSUL",
+"BANDI RUSH": "HJOUM EL BANDI",
+"NO MERCY": "BLA RA7MA",
+"POCKET CHECK": "FATTECH JIBEK",
+"CRATE BREAKER": "YKASSER EL CAISSE",
+"BLACK MARKET": "MARCHÉ NOIR",
+"BACK ALLEY": "EL ZENGA",
+"TESTUDO": "EL FAKROUNA",
+"PILUM VOLLEY": "MTAR MTA3 RMA7",
+"SHIELD SHOVE": "DAF3A BEL DAR9A",
+"PHOENICIAN CHARGE": "HJOUM FINI9I",
+"PURPLE TIDE": "MOUJA ORJOUANIA",
+"KING'S ORDER": "AMR EL MALEK",
+"DUNE AMBUSH": "KMIN FIL KTHIB",
+"SANDSTORM": "3AJA",
+"SAND TRAP": "FA5 EL RMEL",
+"ACE UP THE SLEEVE": "LAS FIL KMEM",
+"FULL DECK": "EL CARTAS LKOL",
+"MARKED DECK": "CARTAS MMARKIN",
+"SHIP'S NET": "CHBKET EL BABBOUR",
+"HEAVE HO": "HAYLA HOP",
+"OVERBOARD": "LEL BA7AR",
+"KINGPIN UPPERCUT": "UPPERCUT EL BOSS",
+"HOSTILE TAKEOVER": "YAKOL KOL CHAY",
+"EVERYBODY PAYS": "EL KOL YDOFF3OU",
+"BOARDING RUSH": "HJOUM 3AL BABBOUR",
+"CORSAIR STORM": "3ASFET EL 9RASNA",
+"WALK THE PLANK": "OMCHI 3AL LO7A",
+"TYRIAN FIRE": "NAR SOUR",
+"GOLD OF TYRE": "DHEB SOUR",
+"TYRE'S GREED": "TAMA3 SOUR",
+"TROJAN TRICK": "7ILET TROIE",
+"WINE-DARK SEA": "EL BA7AR EL GHAME9",
+"IRON MARCH": "MASIRET EL 7DID",
+"SIEGE ENGINE": "MANJANI9",
+"IRON GRIP": "CHEDDA MEN 7DID",
+"GHOUL FIRE": "NAR EL GHOUL",
+"NIGHT OF THE DUNES": "LILET EL KTHOB",
+"SAND SWALLOW": "YBLA3 FIL RMEL",
+"LOADED DEAL": "TAFRI9 MGHACHECH",
+"STACKED DECK": "CARTAS MRAKBIN",
+"HOUSE ALWAYS WINS": "EL DAR DIMA TARBA7",
+"LEGION CHARGE": "HJOUM EL LEGION",
+"ROME ETERNAL": "ROMA EL DEYMA",
+"GHOULA FIRE": "NAR EL GHOULA",
+"NO DINNER FOR YOU": "MA FAMMECH 3ACHA",
+"BEDTIME": "WA9T EL NOUM",
+"The blue door": "El bab el zar9a",
+"Down in the Medina": "Lta7t fil Mdina",
+"Café M'Rabet": "Café M'Rabet",
+"El Boss": "El Boss",
+"Night shift": "5edmet el lil",
+"Fish in the souk": "El 7out fil souk",
+"The bookkeeper": "Moula el 7sebet",
+"Rais el Bahr": "Rais el Ba7ar",
+"Escape from Tyre": "El harba men Sour",
+"A foreign shore": "Chatt ghrib",
+"Followed": "Tab3ouha",
+"Pygmalion": "Pygmalion",
+"Strangers on the beach": "Ghorba 3al chatt",
+"The buyer": "Elli yechri",
+"Shore leave": "Ra7a fil berr",
+"The wanderer": "El tayeh",
+"The passes": "El mamarrat",
+"The orchards": "El jnen",
+"El Jem": "El Jem",
+"The Iron General": "General el 7did",
+"Desert road": "Tri9 el sa7ra",
+"Behind the third dune": "Wra el kthib el theleth",
+"Word in the café": "Kelma fil 9ahwa",
+"El Ghoul": "El Ghoul",
+"A lucky stranger": "Ghrib mazhar",
+"The lookout": "El 3assas",
+"The marked deck": "El cartas el mmarkin",
+"El Ghachach": "El Ghachach",
+"The Trebia": "El Trebia",
+"Lake Trasimene": "B7ayret Trasimene",
+"The road to Cannae": "Tri9 Cannae",
+"The Consul": "El Consul",
+"The football": "El koura",
+"Stolen goods": "7wayej masrou9a",
+"The ringleader": "El kbir mte3hom",
+"El Ghoula": "El Ghoula",
+"Hamma's café on the hill has been wrecked. A gang that works for a man called El Boss wants money from every shop in Sidi Bou Said.": "El 9ahwa mta3 Hamma fil kodia tkassret. 3issaba te5dem m3a wa7ed esmou El Boss t7eb flous men kol 7anout fi Sidi Bou Said.",
+"Nice blue door. Shame if someone painted it grey.": "Bab zar9a mezyena. Ya 5ssara ken 7ad ydhanha rmadi.",
+"Touch that door and you'll swim home.": "Ken tmess el bab hedhi, traja3 l darkom 3oum.",
+"The trail leads down to the Medina, where the money changes hands.": "El atar yhabbet lel Mdina, win el flous tetbaddel bin el ydin.",
+"You're far from your café, ya Hamma.": "Enti b3id 3la 9ahwtek, ya Hamma.",
+"And you're far from your excuses.": "W enti b3id 3la a3dharek.",
+"El Boss is busy. Leave a message.": "El Boss mechghoul. O5ber 3and el message.",
+"I'll leave it on your face.": "Bech n5allih 3la wejhek.",
+"Everyone pays. Even the sea pays me to stay blue.": "El kol ydoff3ou. 7atta el ba7ar ydeffa3li bech yo93ed azra9.",
+"Today you pay the bill.": "El youm enti elli tdeffa3 el 7seb.",
+"The cafés of Sidi Bou Said open again. Hamma's tea is free for a week, and the blue doors stay blue.": "El 9hawi mta3 Sidi Bou Said 7allou mel jdid. El tey mta3 Hamma bbleech jem3a kemla, w el bibene el zor9 yo93dou zor9.",
+"At the port of La Goulette, crates of fish keep vanishing at night. Mokhtar has unloaded boats here for twenty years, and he can smell a smuggler.": "Fil marsa mta3 7alg el Wed, caisset el 7out 9a3din yetla7ou fil lil. Mokhtar 3andou 3echrin 3am yfarragh fil flouka lehna, w y3ref ri7et el contrabandi men b3id.",
+"Mind your own crates, dock boy.": "Rod belek 3la caissetek, ya weld el marsa.",
+"I am. They're full of my fish.": "Rani rad bali. Malyenin b 7outi.",
+"The stolen fish turn up in the souk, sold twice the price.": "El 7out el masrou9 dhher fil souk, mabi3 b zouz marrat el soum.",
+"Fresh fish! Very fresh! Very cheap!": "7out fresh! Fresh barcha! Rkhis barcha!",
+"Very stolen.": "Masrou9 barcha.",
+"The smugglers' bookkeeper spends their money on cards.": "Moula el 7sebet mta3 el contrabandia yasrof flous-hom fil cartas.",
+"One hand of chkobba, and the debt is yours.": "Partia chkobba wa7da, w el dayn yetla3 3lik.",
+"I don't play cards. I play brik.": "Ana ma nal3abch cartas. Ana nal3eb brik.",
+"La Goulette was a corsair port long before it was yours.": "7alg el Wed kenet marsa mta3 9rasna 9bal ma tkoun mte3ek b barcha.",
+"And now it's a working port. Crispy outside, soft inside. Except me.": "W tawa marsa mta3 5edma. 9armach men barra, rteb men dekhel. Ken ana le.",
+"The smugglers' ship is towed back to the quay and the fish go back to the fishermen. La Goulette eats well tonight.": "Babbour el contrabandia yetjarr lel rasif w el 7out yarja3 lel 7wata. 7alg el Wed tetkhayer el lila.",
+"Tyre, 814 BC. King Pygmalion has murdered Elissa's husband for his gold. That night she slips out of the palace with loyal sailors and the treasure, heading west.": "Sour, 814 9bal el milad. El malek Pygmalion 9tal rajel Elissa 3al dheb mte3ou. Fi nafs el lila to5rej mel 9sar m3a b7ara ywafiw w el kenz, mwajjha lel gharb.",
+"The king wants his gold back.": "El malek y7eb dhhebou yarja3.",
+"It was never his.": "3omrou ma ken mte3ou.",
+"On the African shore, local warriors test the newcomers.": "3al chatt mta3 Ifri9ia, el m9atlin mta3 el blad yjarrbou el jeyin.",
+"Strangers buy land here. They don't take it.": "El ghorba lehna yechriw el ardh. Ma yeddouhech.",
+"Then sell me as much as an oxhide can cover.": "Ya5i bi3li 9ad ma yghatti jeld 3ejel.",
+"Pygmalion's soldiers have followed her ships.": "3asker Pygmalion tab3ou el flouka mte3ha.",
+"You can't hide behind a cow skin, queen.": "Ma tnajjamch tetkhabba wra jeld bagra, ya malka.",
+"Watch me build a city with it.": "Chouf kifech nebni bih medina.",
+"Sister. Come home, and bring my gold.": "Ya o5ti. Arja3 lel dar, w jib dhhabi m3ak.",
+"My home is here now. It will be called the new city.": "Dari tawa lehna. Esmha bech ykoun el medina el jdida.",
+"With strips of oxhide she circles the hill of Byrsa. The city she founds is called Qart-Hadasht, the new city: Carthage.": "B syour mel jeld dawret kodiet Byrsa. El medina elli bnetha esmha Qart-Hadasht, el medina el jdida: Carthage.",
+"Homer wrote that Djerba was the island of the Lotus-eaters, where sailors forgot their way home. One morning a strange ship anchors at Houmt Souk, and its crew starts taking every octopus pot on the beach.": "Homère kteb elli Jerba hiya jazira mta3 wekkalin el lotus, win el b7ara yensew tri9 el dar. Sba7 men el sbe7at babbour ghrib yo9ef fi 7oumet Souk, w el b7ara mte3ou yebdew yhezzou kol 5abia mta3 9arnit 3al chatt.",
+"We only take lotus. And pots. And nets.": "A7na ne5dhou ken el lotus. W el 5wabi. W el chbek.",
+"Put them down before I put you down.": "7ottouhom 9bal ma n7ottkom.",
+"A smuggler is buying the stolen pots by the dozen.": "Contrabandi yechri el 5wabi el masrou9a bel douzaine.",
+"Clay is clay. I pay cash.": "Tin w barra. Nkhalles cash.",
+"Those pots feed families.": "El 5wabi hedhom yoklou menhom 3ayelet.",
+"The sailors celebrate in a café, with lotus in their tea.": "El b7ara y7tflou fi 9ahwa, w el lotus fi tey-hom.",
+"Stay a while... forget your nets...": "O93ed chwaya... insa chbekek...",
+"I never forget a net.": "Ana 3omri ma nensa chbka.",
+"I am Odysseus. I have beaten giants and gods.": "Ana Ulysse. Ghlbt el 3malka w el alihat.",
+"You haven't met a fisherwoman from Djerba.": "Ama 3omrek ma tla9it b sayyda men Jerba.",
+"The pots go back to the sand and the strange ship leaves with only a little lotus on board. Some say Selma's net is still in the Odyssey, somewhere between the lines.": "El 5wabi yarja3ou lel rmel w el babbour el ghrib yemchi b chwaya lotus barka. Fama chkoun y9oul elli chbket Selma mazelet fil Odyssée, fi blasa bin el stour.",
+"The Aurès mountains, late in the 7th century. An army in iron marches on the passes. Dihya, queen of the Amazigh tribes, gathers her riders.": "Jbel el Aurès, fi e5er el 9arn el sabe3. Jich labes 7did yemchi 3al mamarrat. Dihya, malket el 9bayel el amazighia, tlemm el fersan mte3ha.",
+"Your mountains will bow.": "Jbelek bech yerka3.",
+"Mountains don't bow. Neither do I.": "El jbel ma yerka3ch. W ana zeda.",
+"Mercenaries are paid to burn the orchards.": "Mourtazi9a 5edhou flous bech y7ar9ou el jnen.",
+"No fields, no food, no fight.": "Ma fama zra3, ma fama makla, ma fama 3arka.",
+"Then I'll fight hungry.": "Ya5i n9atel jee3a.",
+"She falls back to the great amphitheatre of El Jem.": "Traja3 lel amphithéâtre el kbir mta3 el Jem.",
+"These walls won't save you.": "El 7yout hedhom ma ysallkouch.",
+"I don't need walls. I need room.": "Ma nest7a9ch 7yout. Nest7a99 blasa.",
+"Your walls are stone. My army is iron.": "7youtek 7jar. Jichi 7did.",
+"Iron rusts. The mountains stay.": "El 7did ysadded. El jbel yo93ed.",
+"Legend says she made her last stand at El Jem. In the Aurès they still remember the queen who never knelt.": "El 7kaya t9oul elli 3mlet a5er 3arka fil Jem. Fil Aurès mazelou yetfakrou el malka elli 3omorha ma rak3et.",
+"Every winter Douz holds the Festival of the Sahara. This year the guides whisper that something walks the dunes at night and eats the tourists' sandals: El Ghoul.": "Kol chta Douz ta3mel Festival el Sa7ra. El 3am hedha el guides yetwachwchou elli fama 7aja temchi 3al kthob fil lil w takol sandalet el touristes: El Ghoul.",
+"Your tourists' wallets are ours.": "Portfeyet el touristes mte3ek walew mte3na.",
+"In the desert, the guide decides.": "Fil sa7ra, el guide houwa elli y9arrer.",
+"The raiders' camp is behind the third dune.": "El campement mta3 el 9otta3 wra el kthib el theleth.",
+"Nobody finds this camp.": "7atta 7ad ma yelga hal campement.",
+"I was born here. I find everything.": "Ana tzadt lehna. Nelga kol chay.",
+"A bandit in the café knows where the Ghoul sleeps.": "Bandi fil 9ahwa ya3ref win yor9od el Ghoul.",
+"Ask nicely.": "Es2el b lotf.",
+"I am asking nicely.": "Rani nes2el b lotf.",
+"Ghhhrr... sandals...": "Ghhhrr... sandalet...",
+"Find your own sandals!": "Lawej 3la sandaletek!",
+"El Ghoul runs off into the Sahara with one sandal in his mouth. The salukis race, the festival goes on, and Zied gets a new pair of shoes.": "El Ghoul yehrob lel sa7ra w sandala fi fommou. El sloughi yetsab9ou, el festival ykammel, w Zied yechri sabbat jdid.",
+"At Café M'Rabet nobody has beaten Salah at chkobba in forty years. Then a stranger in a shiny suit wins every game, and the regulars lose their wages.": "Fi Café M'Rabet 7atta 7ad ma ghlb Salah fil chkobba men arb3in 3am. W ba3d ja ghrib b costume ylamma3 rba7 kol partia, w el 7rafa 5sarou chahrya-hom.",
+"The sab'a l-hayya again? What luck!": "Sab3a l7ayya marra o5ra? Ya zhar!",
+"Luck doesn't keep two of them up its sleeve.": "El zhar ma y5abbich zouz fil kmem.",
+"The cheats have a lookout in the souk.": "El ghachachin 3andhom 3assas fil souk.",
+"Old man, go home and sleep.": "Ya chayeb, arwa7 lel dar w ra9ed.",
+"At my age you sleep less and see more.": "Fi 3omri tor9od 9lil w tchouf barcha.",
+"The deck they play with is marked.": "El cartas elli yal3bou bihom mmarkin.",
+"A card is a card.": "El carta carta.",
+"And a cheat is a cheat.": "W el ghachach ghachach.",
+"I am El Ghachach. I never lose.": "Ana El Ghachach. 3omri ma n5ser.",
+"Tonight you learn what a chkobba feels like.": "El lila bech ta3ref chnowa ma3neha chkobba.",
+"The regulars get their wages back and the marked deck goes into the fire. Salah wins the next game too, fair and square.": "El 7rafa yarja3lhom chahryet-hom w el cartas el mmarkin yemchiw lel nar. Salah yarba7 el partia elli ba3dha zeda, b 7a99ou w tri9ou.",
+"218 BC. Rome has declared war on Carthage. Hannibal leaves Spain with soldiers and North African war elephants, bound for Italy over the Alps.": "218 9bal el milad. Roma a3lnet el 7arb 3la Carthage. Hannibal yo5rej men Sbanya b 3asker w fyela mta3 7arb men chmel Ifri9ia, mwajjah l Italia fou9 el Alpes.",
+"Go back to Africa.": "Arja3 l Ifri9ia.",
+"I came a long way. I'm not going back.": "Jit men b3id. Ma nich rajja3.",
+"Morning fog on Lake Trasimene. The Romans march straight into it.": "Dhbeb el sba7 3la b7ayret Trasimene. El rouman yemchiw fih dghri.",
+"Where did they come from?": "Mnin jew?",
+"From everywhere.": "Men kol blasa.",
+"Summer, the plain of Cannae. Rome sends its biggest army yet.": "Sif, sahl Cannae. Roma tab3ath akbar jich 3andha.",
+"There are eighty thousand of us.": "A7na tmenin alf.",
+"Then I'll need a plan.": "Ya5i nest7a99 plan.",
+"Rome does not lose.": "Roma ma t5serch.",
+"Rome has never met Carthage.": "Roma 3omorha ma tla9at b Carthage.",
+"Cannae is still studied as the perfect battle. Hannibal never takes Rome, but Rome never forgets him.": "Cannae mazelou y9raw fiha kima a7sen ma3raka. Hannibal ma 5dhech Roma, ama Roma 3omorha ma nsatou.",
+"Kmar's youngest son came home crying: the bandis took his football. Every Tunisian mother knows what comes next.": "Weld Kmar el sghir rawwa7 yebki: el bandia 5dhewlou el koura. Kol omm tounsia ta3ref chnowa elli ba3dha.",
+"Go home, ya mra.": "Arwa7 lel dar, ya mra.",
+"Go home, ya wlidi. To YOUR mother.": "Arwa7 lel dar, ya wlidi. L OMMEK.",
+"The bandis sell stolen footballs in the souk.": "El bandia ybi3ou kwar masrou9a fil souk.",
+"Five dinars, madame. Good price.": "5amsa dinar, madame. Soum behi.",
+"I know that ball. I sewed that ball.": "Na3ref hal koura. Ana elli 5ayyattha.",
+"Their leader hides in the café.": "El kbir mte3hom mkhabbi fil 9ahwa.",
+"Women don't come in here.": "El nsa ma yod5louch lehna.",
+"Mothers go everywhere.": "El ommahet yod5lou kol blasa.",
+"Kmar always told her children El Ghoula would come if they didn't sleep. Tonight El Ghoula is real, and she has the football.": "Kmar dima t9oul l sgharha elli El Ghoula bech tji ken ma yor9douch. El lila El Ghoula 7a9ania, w el koura 3andha.",
+"Hhhh... I eat naughty children!": "Hhhh... nakol el sghar el mchaytnin!",
+"And I eat ghoulas for breakfast. Barra a9ra!": "W ana nakol el ghoulat fil fter. Barra a9ra!",
+"The football comes home, El Ghoula goes back into the bedtime stories, and dinner is on the table at eight sharp.": "El koura traja3 lel dar, El Ghoula traja3 lel 7kayet mta3 el noum, w el 3cha 3al tawla el tmenya bedhabt."
+});
+/*@@END-STORY-DERJA@@*/
 // sentences with numbers or names inside
 const TN_PAT=[
   [/^(\d+) HIT COMBO$/,m=>m[1]+' DARBAT'],[/^(\d+) HIT JUGGLE$/,m=>m[1]+' DARBAT FIL HWA'],
+  [/^CHAPTER (\d+)$/,m=>'FASL '+m[1]],
   [/^ROUND (\d+)$/,m=>'ROUND '+m[1]],[/^STAGE (\d+) OF (\d+)$/,m=>'MAR7LA '+m[1]+' MEN '+m[2]],
   [/^Dummy: (.+)$/,m=>'Dummy: '+T(m[1])],[/^Meter: (.+)$/,m=>'Jauge: '+(m[1]==='Normal'?'3adia':T(m[1]))],
   [/^Sound: (.+)$/,m=>'Sout: '+T(m[1])],[/^Vibration: (.+)$/,m=>'Rja7a: '+T(m[1])],[/^Button size: (.+)$/,m=>'9ad el boutonet: '+T(m[1])],
@@ -1218,13 +1446,14 @@ function newMatch(defA,defB,stageIdx){
 }
 function newRound(){
   round++;
-  cpuLevel=mode==='arcade'?Math.min(5,[1,2,2,3,3,4,4,4][arc.idx]+(round>=3?1:0)):Math.min(round,3);
+  cpuLevel=mode==='arcade'?Math.min(5,[1,2,2,3,3,4,4,4][arc.idx]+(round>=3?1:0)):mode==='story'?Math.min(5,[2,3,3,4][story.i]+(round>=3?1:0)):Math.min(round,3);
   for(const[f,x,face] of [[p1,260,1],[p2,540,-1]]){Object.assign(f,{x,y:0,vx:0,vy:0,face,hp:100,lag:100,state:'idle',t:0,atk:null,atkName:'',queued:null,stun:0,inv:0,combo:0,dmgTaken:0,pulled:0,dj:0,ad:0,jug:0,rage:0,artUsed:0,smear:[]});if(round===1)f.meter=0}
   if(mode==='training')p1.meter=100;
   timer=60;phase='intro';phaseT=0;shake=0;hitstop=0;slowmo=0;superFreeze=0;superBy=null;cine=null;gcine=null;sparks=[];texts=[];projs=[];ai.hold={};ai.think=.6;crowd=0;
   const fin=p1.wins===1&&p2.wins===1;
   if(mode==='training')say({txt:'TRAINING',t:1.2,size:64,y:200,col:FG});
   else say({txt:fin?'FINAL ROUND':'ROUND '+round,t:1.2,size:fin?80:72,y:200,col:fin?HURT:FG});
+  if(mode==='story'&&round===1)say({txt:story.boss?'FINAL CHAPTER':'CHAPTER '+(story.i+1),t:1.2,size:30,y:140,col:GOLD});
   if(mode==='arcade'&&round===1)say({txt:'STAGE '+(arc.idx+1)+' OF '+arc.list.length,t:1.2,size:30,y:140,col:GOLD});
   play('darbuka');
 }
@@ -1303,6 +1532,117 @@ function cpuInput(me,op,dt){
 }
 
 /* =====================================================================
+   STORY MODE
+   Each of the nine fighters has a four-chapter story against opponents
+   that only appear here (they can't be picked in the other modes):
+   three chapters against one-round opponents, then a best-of-three boss.
+   Dialogue lines are [who, text]: 'n' narrator, 'h' hero, 'e' enemy.
+   ===================================================================== */
+const NPC_BASE={g:'m',from:'',home:0,bio:'',list:[],chain:{},cmd:{},tech:'dash',bounce:1,size:1,speed:1,power:1,throwName:'THROW',hud:'#d0d0d0',npc:1};
+const npc=o=>Object.assign({},NPC_BASE,o);
+const SP_RUSH=(name,sup,fx)=>({kind:'rush',name,super:sup,desc:'',s:.12,a:.3,r:.38,dmg:12,range:60,h:'mid',kb:280,stun:.45,pose:'rush',launch:1,fx});
+const SP_UPPER=(name,sup,fx)=>({kind:'uppercut',name,super:sup,desc:'',s:.09,a:.2,r:.42,dmg:14,range:80,h:'mid',kb:260,stun:.5,pose:'dragon',limb:'aF',launch:1,fx});
+const SP_SLIDE=(name,sup,fx)=>({kind:'slide',name,super:sup,desc:'',s:.09,a:.3,r:.34,dmg:11,range:70,h:'low',kb:220,stun:.45,pose:'slide',limb:'lF',launch:1,crouch:1,fx});
+const SP_PROJ=(name,sup,proj,fx,extra)=>Object.assign({kind:'proj',name,super:sup,desc:'',s:.16,a:.05,r:.34,dmg:9,h:'mid',kb:160,stun:.4,pose:'cast',limb:'aF',proj,fx},extra||{});
+const SP_TELE=(name,sup,fx)=>({kind:'teleport',name,super:sup,desc:'',s:.22,a:.1,r:.32,dmg:12,range:95,h:'mid',kb:220,stun:.45,pose:'kick',limb:'lF',launch:1,fx});
+const NPCS={
+  // ---- one-round opponents
+  bandi:npc({id:'bandi',name:'BANDI',hud:'#9fb4d8',col:'#1d2b4f',skin:'#b98058',pants:'#1d2b4f',shoe:'#f2f2f2',trim:'#f2f2f2',sash:'#1d2b4f',vest:{col:'#2b3f6e',trim:'#f2f2f2'},
+    hat:'bandana',hatCol:'#c8102e',face:'stubble',speed:1.05,power:.92,throwName:'POCKET CHECK',sp:SP_RUSH('Bandi Rush','NO MERCY','#9fb4d8')}),
+  contra:npc({id:'contra',name:'CONTRABANDI',hud:'#c9a27a',col:'#5a3a22',arm:'#5a3a22',fore:'#a8704a',skin:'#a8704a',pants:'#2a2a2a',shoe:'#1b1b1b',trim:'#c9a27a',sash:'#2a2a2a',
+    face:'mustache',hair:{type:'short',col:'#1b120c'},size:1.04,speed:.95,power:.98,throwName:'BACK ALLEY',sp:SP_UPPER('Crate Breaker','BLACK MARKET','#c9a27a')}),
+  legion:npc({id:'legion',name:'LEGIONARY',hud:'#e07a6a',col:'#8a8f98',arm:'#b07a52',fore:'#b07a52',skin:'#c48a5c',pants:'#c48a5c',greave:'#8a8f98',shoe:'#5a3a22',trim:'#c9c9d2',sash:'#9e1b28',
+    hat:'helmet',shield:1,sword:1,face:'stubble',robe:{len:.6,col:'#9e1b28',trim:'#c9c9d2',strips:1},basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},speed:.92,power:.95,throwName:'SHIELD SHOVE',sp:SP_RUSH('Testudo','PILUM VOLLEY','#e07a6a')}),
+  guard:npc({id:'guard',name:'TYRIAN GUARD',hud:'#b58ad8',col:'#a8925a',arm:'#c08a5e',fore:'#c08a5e',skin:'#c08a5e',pants:'#c08a5e',greave:'#a8925a',shoe:'#5a3a22',trim:'#e8c66a',sash:'#5b2a7a',
+    hat:'helmet',shield:1,sword:1,face:'beard',beardCol:'#1f1510',robe:{len:.62,col:'#5b2a7a',trim:'#e8c66a',strips:1},basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},speed:.95,power:.95,throwName:'KING\'S ORDER',sp:SP_RUSH('Phoenician Charge','PURPLE TIDE','#b58ad8')}),
+  raider:npc({id:'raider',name:'DUNE RAIDER',hud:'#e0c08a',col:'#4a3f36',skin:'#9c5f3a',pants:'#3a322b',shoe:'#3a2a1e',trim:'#8a7660',sash:'#8a2b1e',
+    hat:'chech',hatCol:'#3a322b',face:'stubble',robe:{len:1.3,col:'#4a3f36',trim:'#6b5a4a'},tech:'airdash',speed:1.08,power:.95,throwName:'SAND TRAP',sp:SP_SLIDE('Dune Ambush','SANDSTORM','#e0c08a')}),
+  sharper:npc({id:'sharper',name:'CARD SHARK',hud:'#d6d68a',col:'#2d2d3a',skin:'#c49a72',pants:'#2d2d3a',shoe:'#1b1b1b',trim:'#c9b05a',sash:'#2d2d3a',vest:{col:'#7a1f2b',trim:'#c9b05a'},
+    face:'mustache',hair:{type:'short',col:'#151515'},glasses:1,cards:1,tech:'shuffle',speed:.98,power:.92,throwName:'MARKED DECK',sp:SP_PROJ('Ace Up the Sleeve','FULL DECK','card','#f6f1e7',{dmg:8})}),
+  sailor:npc({id:'sailor',name:'SAILOR',hud:'#8fc8e8',col:'#d9cfb8',skin:'#c99a6e',pants:'#c99a6e',shoe:'#6b4628',trim:'#3a6fa8',sash:'#3a6fa8',
+    hat:'bandana',hatCol:'#3a6fa8',face:'beard',beardCol:'#4a3020',robe:{len:.7,col:'#d9cfb8',trim:'#3a6fa8'},tech:'roll',speed:1.02,power:.94,throwName:'OVERBOARD',sp:SP_PROJ('Ship\'s Net','HEAVE HO','net','#e9dcc0',{dmg:7,kb:0,stun:.7,pull:1})}),
+  // ---- bosses
+  elboss:npc({id:'elboss',name:'EL BOSS',hud:'#f2f2f2',col:'#efefea',skin:'#b98058',pants:'#efefea',shoe:'#8a5a32',trim:'#c9a46a',sash:'#2a2a2a',vest:{col:'#d8d2c4',trim:'#c9a46a'},
+    face:'mustache',hair:{type:'short',col:'#8a8a8a'},glasses:1,size:1.1,speed:.98,power:1.12,throwName:'EVERYBODY PAYS',sp:SP_UPPER('Kingpin Uppercut','HOSTILE TAKEOVER','#f2c14e')}),
+  rais:npc({id:'rais',name:'RAIS EL BAHR',hud:'#ff8a6a',col:'#7a1f2b',arm:'#7a1f2b',fore:'#a8704a',skin:'#a8704a',pants:'#2a2a2a',shoe:'#1b1b1b',trim:'#e8c66a',sash:'#e8c66a',
+    hat:'bandana',hatCol:'#1b1b1b',face:'beard',beardCol:'#1b1b1b',sword:1,cape:{col:'#1b1b1b',edge:'#e8c66a',front:false},size:1.1,speed:1,power:1.12,throwName:'WALK THE PLANK',sp:SP_RUSH('Boarding Rush','CORSAIR STORM','#ff8a6a')}),
+  pygmalion:npc({id:'pygmalion',name:'PYGMALION',hud:'#c79bff',col:'#3e1f6b',skin:'#cf9c74',pants:'#e8c66a',shoe:'#e8c66a',trim:'#e8c66a',sash:'#e8c66a',
+    hat:'crown',face:'beard',beardCol:'#1b120c',cape:{col:'#e8c66a',edge:'#3e1f6b',front:false},robe:{len:1.5,col:'#3e1f6b',trim:'#e8c66a'},size:1.1,speed:.96,power:1.12,throwName:'TYRE\'S GREED',sp:SP_PROJ('Tyrian Fire','GOLD OF TYRE','flame','#b26bff',{dmg:10})}),
+  odysseus:npc({id:'odysseus',name:'ODYSSEUS',hud:'#9fd8ff',col:'#b9a27a',arm:'#c99a6e',fore:'#c99a6e',skin:'#c99a6e',pants:'#c99a6e',greave:'#b9a27a',shoe:'#6b4628',trim:'#e8c66a',sash:'#2f5f9f',
+    hat:'helmet',shield:1,sword:1,face:'beard',beardCol:'#6b4020',cape:{col:'#2f5f9f',edge:'#e8c66a',front:false},robe:{len:.65,col:'#2f5f9f',trim:'#e8c66a',strips:1},
+    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},size:1.08,speed:1.02,power:1.1,throwName:'TROJAN TRICK',sp:SP_TELE('Trojan Trick','WINE-DARK SEA','#9fd8ff')}),
+  irongen:npc({id:'irongen',name:'IRON GENERAL',hud:'#c9c9d2',col:'#5b6470',arm:'#5b6470',fore:'#b07a52',skin:'#b07a52',pants:'#3a3f48',greave:'#5b6470',shoe:'#2a2a2a',trim:'#c9c9d2',sash:'#7a1f2b',
+    hat:'helmet',shield:1,sword:1,face:'beard',beardCol:'#2a1d17',cape:{col:'#7a1f2b',edge:'#c9c9d2',front:false},robe:{len:.6,col:'#3a3f48',trim:'#c9c9d2',strips:1},
+    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},size:1.12,speed:.92,power:1.15,throwName:'IRON GRIP',sp:SP_RUSH('Iron March','SIEGE ENGINE','#c9c9d2')}),
+  ghoul:npc({id:'ghoul',name:'EL GHOUL',hud:'#a8d88a',col:'#3b2f2a',skin:'#7e8f6a',pants:'#3b2f2a',shoe:'#3b2f2a',trim:'#5a4a3a',sash:'#5a4a3a',hair:{type:'loose',col:'#e8e2d0'},
+    face:'beard',beardCol:'#e8e2d0',robe:{len:1.6,col:'#3b2f2a',trim:'#5a4a3a'},size:1.2,speed:.95,power:1.15,tech:'float',throwName:'SAND SWALLOW',sp:SP_PROJ('Ghoul Fire','NIGHT OF THE DUNES','flame','#b26bff',{dmg:10})}),
+  ghachach:npc({id:'ghachach',name:'EL GHACHACH',hud:'#f2c14e',col:'#1f1f26',skin:'#c49a72',pants:'#1f1f26',shoe:'#8a5a32',trim:'#f2c14e',sash:'#1f1f26',vest:{col:'#f2c14e',trim:'#1f1f26'},
+    face:'mustache',glasses:1,cards:1,tech:'shuffle',size:1.1,speed:1,power:1.1,throwName:'HOUSE ALWAYS WINS',sp:SP_PROJ('Loaded Deal','STACKED DECK','card','#f2c14e',{dmg:10})}),
+  consul:npc({id:'consul',name:'THE CONSUL',hud:'#ff8a8a',col:'#f0ece0',arm:'#c48a5c',fore:'#c48a5c',skin:'#c48a5c',pants:'#c48a5c',greave:'#c9c9d2',shoe:'#5a3a22',trim:'#9e1b28',sash:'#9e1b28',
+    hat:'helmet',shield:1,sword:1,face:'stubble',cape:{col:'#9e1b28',edge:'#e8c66a',front:false},robe:{len:.75,col:'#f0ece0',trim:'#9e1b28',strips:1},
+    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},size:1.1,speed:.96,power:1.14,throwName:'SPQR',sp:SP_RUSH('Legion Charge','ROME ETERNAL','#ff8a8a')}),
+  ghoula:npc({id:'ghoula',name:'EL GHOULA',g:'f',hud:'#b8e0a0',col:'#2f2a3a',skin:'#8a9a78',pants:'#2f2a3a',shoe:'#2f2a3a',trim:'#6a5a7a',sash:'#6a5a7a',hair:{type:'loose',col:'#151318'},
+    earring:1,robe:{len:1.65,col:'#2f2a3a',trim:'#6a5a7a'},size:1.18,speed:.98,power:1.15,tech:'float',throwName:'BEDTIME',sp:SP_PROJ('Ghoula Fire','NO DINNER FOR YOU','flame','#b26bff',{dmg:10})}),
+};
+// chapter: [opponent, stage index, title, lines]; the last chapter is the boss (best of three)
+const STORIES={
+  hamma:{intro:[['n','Hamma\'s café on the hill has been wrecked. A gang that works for a man called El Boss wants money from every shop in Sidi Bou Said.']],
+    ch:[['bandi',0,'The blue door',[['e','Nice blue door. Shame if someone painted it grey.'],['h','Touch that door and you\'ll swim home.']]],
+        ['contra',1,'Down in the Medina',[['n','The trail leads down to the Medina, where the money changes hands.'],['e','You\'re far from your café, ya Hamma.'],['h','And you\'re far from your excuses.']]],
+        ['bandi',5,'Café M\'Rabet',[['e','El Boss is busy. Leave a message.'],['h','I\'ll leave it on your face.']]],
+        ['elboss',0,'El Boss',[['e','Everyone pays. Even the sea pays me to stay blue.'],['h','Today you pay the bill.']]]],
+    end:'The cafés of Sidi Bou Said open again. Hamma\'s tea is free for a week, and the blue doors stay blue.'},
+  brik:{intro:[['n','At the port of La Goulette, crates of fish keep vanishing at night. Mokhtar has unloaded boats here for twenty years, and he can smell a smuggler.']],
+    ch:[['contra',4,'Night shift',[['e','Mind your own crates, dock boy.'],['h','I am. They\'re full of my fish.']]],
+        ['bandi',1,'Fish in the souk',[['n','The stolen fish turn up in the souk, sold twice the price.'],['e','Fresh fish! Very fresh! Very cheap!'],['h','Very stolen.']]],
+        ['sharper',5,'The bookkeeper',[['n','The smugglers\' bookkeeper spends their money on cards.'],['e','One hand of chkobba, and the debt is yours.'],['h','I don\'t play cards. I play brik.']]],
+        ['rais',4,'Rais el Bahr',[['e','La Goulette was a corsair port long before it was yours.'],['h','And now it\'s a working port. Crispy outside, soft inside. Except me.']]]],
+    end:'The smugglers\' ship is towed back to the quay and the fish go back to the fishermen. La Goulette eats well tonight.'},
+  alyssa:{intro:[['n','Tyre, 814 BC. King Pygmalion has murdered Elissa\'s husband for his gold. That night she slips out of the palace with loyal sailors and the treasure, heading west.']],
+    ch:[['guard',4,'Escape from Tyre',[['e','The king wants his gold back.'],['h','It was never his.']]],
+        ['raider',3,'A foreign shore',[['n','On the African shore, local warriors test the newcomers.'],['e','Strangers buy land here. They don\'t take it.'],['h','Then sell me as much as an oxhide can cover.']]],
+        ['guard',2,'Followed',[['n','Pygmalion\'s soldiers have followed her ships.'],['e','You can\'t hide behind a cow skin, queen.'],['h','Watch me build a city with it.']]],
+        ['pygmalion',0,'Pygmalion',[['e','Sister. Come home, and bring my gold.'],['h','My home is here now. It will be called the new city.']]]],
+    end:'With strips of oxhide she circles the hill of Byrsa. The city she founds is called Qart-Hadasht, the new city: Carthage.'},
+  selma:{intro:[['n','Homer wrote that Djerba was the island of the Lotus-eaters, where sailors forgot their way home. One morning a strange ship anchors at Houmt Souk, and its crew starts taking every octopus pot on the beach.']],
+    ch:[['sailor',4,'Strangers on the beach',[['e','We only take lotus. And pots. And nets.'],['h','Put them down before I put you down.']]],
+        ['contra',4,'The buyer',[['n','A smuggler is buying the stolen pots by the dozen.'],['e','Clay is clay. I pay cash.'],['h','Those pots feed families.']]],
+        ['sailor',5,'Shore leave',[['n','The sailors celebrate in a café, with lotus in their tea.'],['e','Stay a while... forget your nets...'],['h','I never forget a net.']]],
+        ['odysseus',4,'The wanderer',[['e','I am Odysseus. I have beaten giants and gods.'],['h','You haven\'t met a fisherwoman from Djerba.']]]],
+    end:'The pots go back to the sand and the strange ship leaves with only a little lotus on board. Some say Selma\'s net is still in the Odyssey, somewhere between the lines.'},
+  dihya:{intro:[['n','The Aurès mountains, late in the 7th century. An army in iron marches on the passes. Dihya, queen of the Amazigh tribes, gathers her riders.']],
+    ch:[['legion',3,'The passes',[['e','Your mountains will bow.'],['h','Mountains don\'t bow. Neither do I.']]],
+        ['raider',3,'The orchards',[['n','Mercenaries are paid to burn the orchards.'],['e','No fields, no food, no fight.'],['h','Then I\'ll fight hungry.']]],
+        ['legion',2,'El Jem',[['n','She falls back to the great amphitheatre of El Jem.'],['e','These walls won\'t save you.'],['h','I don\'t need walls. I need room.']]],
+        ['irongen',2,'The Iron General',[['e','Your walls are stone. My army is iron.'],['h','Iron rusts. The mountains stay.']]]],
+    end:'Legend says she made her last stand at El Jem. In the Aurès they still remember the queen who never knelt.'},
+  zied:{intro:[['n','Every winter Douz holds the Festival of the Sahara. This year the guides whisper that something walks the dunes at night and eats the tourists\' sandals: El Ghoul.']],
+    ch:[['raider',3,'Desert road',[['e','Your tourists\' wallets are ours.'],['h','In the desert, the guide decides.']]],
+        ['raider',3,'Behind the third dune',[['n','The raiders\' camp is behind the third dune.'],['e','Nobody finds this camp.'],['h','I was born here. I find everything.']]],
+        ['bandi',5,'Word in the café',[['n','A bandit in the café knows where the Ghoul sleeps.'],['e','Ask nicely.'],['h','I am asking nicely.']]],
+        ['ghoul',3,'El Ghoul',[['e','Ghhhrr... sandals...'],['h','Find your own sandals!']]]],
+    end:'El Ghoul runs off into the Sahara with one sandal in his mouth. The salukis race, the festival goes on, and Zied gets a new pair of shoes.'},
+  salah:{intro:[['n','At Café M\'Rabet nobody has beaten Salah at chkobba in forty years. Then a stranger in a shiny suit wins every game, and the regulars lose their wages.']],
+    ch:[['sharper',5,'A lucky stranger',[['e','The sab\'a l-hayya again? What luck!'],['h','Luck doesn\'t keep two of them up its sleeve.']]],
+        ['bandi',1,'The lookout',[['n','The cheats have a lookout in the souk.'],['e','Old man, go home and sleep.'],['h','At my age you sleep less and see more.']]],
+        ['sharper',1,'The marked deck',[['n','The deck they play with is marked.'],['e','A card is a card.'],['h','And a cheat is a cheat.']]],
+        ['ghachach',5,'El Ghachach',[['e','I am El Ghachach. I never lose.'],['h','Tonight you learn what a chkobba feels like.']]]],
+    end:'The regulars get their wages back and the marked deck goes into the fire. Salah wins the next game too, fair and square.'},
+  hannibal:{intro:[['n','218 BC. Rome has declared war on Carthage. Hannibal leaves Spain with soldiers and North African war elephants, bound for Italy over the Alps.']],
+    ch:[['legion',2,'The Trebia',[['e','Go back to Africa.'],['h','I came a long way. I\'m not going back.']]],
+        ['legion',4,'Lake Trasimene',[['n','Morning fog on Lake Trasimene. The Romans march straight into it.'],['e','Where did they come from?'],['h','From everywhere.']]],
+        ['legion',3,'The road to Cannae',[['n','Summer, the plain of Cannae. Rome sends its biggest army yet.'],['e','There are eighty thousand of us.'],['h','Then I\'ll need a plan.']]],
+        ['consul',2,'The Consul',[['e','Rome does not lose.'],['h','Rome has never met Carthage.']]]],
+    end:'Cannae is still studied as the perfect battle. Hannibal never takes Rome, but Rome never forgets him.'},
+  kmar:{intro:[['n','Kmar\'s youngest son came home crying: the bandis took his football. Every Tunisian mother knows what comes next.']],
+    ch:[['bandi',1,'The football',[['e','Go home, ya mra.'],['h','Go home, ya wlidi. To YOUR mother.']]],
+        ['contra',1,'Stolen goods',[['n','The bandis sell stolen footballs in the souk.'],['e','Five dinars, madame. Good price.'],['h','I know that ball. I sewed that ball.']]],
+        ['sharper',5,'The ringleader',[['n','Their leader hides in the café.'],['e','Women don\'t come in here.'],['h','Mothers go everywhere.']]],
+        ['ghoula',1,'El Ghoula',[['n','Kmar always told her children El Ghoula would come if they didn\'t sleep. Tonight El Ghoula is real, and she has the football.'],['e','Hhhh... I eat naughty children!'],['h','And I eat ghoulas for breakfast. Barra a9ra!']]]],
+    end:'The football comes home, El Ghoula goes back into the bedtime stories, and dinner is on the table at eight sharp.'},
+};
+
+/* =====================================================================
    LAST BREATH (آخر نفس)
    Once per round, at 25% health or less: one desperate, cinematic move per
    fighter. Each is slow or easy to read, and leaves you wide open if it misses.
@@ -1329,7 +1669,7 @@ const ARTS={
 };
 let cine=null,gcine=null;
 const hash=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
-function canArt(f){return !!f&&phase==='fight'&&!f.artUsed&&f.hp>0&&(f.hp<=25||mode==='training')&&!cine}
+function canArt(f){return !!f&&!!ARTS[f.def.id]&&phase==='fight'&&!f.artUsed&&f.hp>0&&(f.hp<=25||mode==='training')&&!cine}
 function artStep(f,op,m,dt){
   const act=f.t>=m.s&&f.t<=m.s+m.a;
   if(m.type==='rush'){
@@ -1679,7 +2019,7 @@ function endRound(winner,loser){
   say({txt:loser&&loser.hp<=0?'K.O.':'TIME',t:2.2,size:110,y:210,col:HURT});if(!winner)say({txt:'DRAW',t:2.2,size:60,y:290,col:GOLD});play('bell');
   if(winner&&winner.dmgTaken===0)say({txt:'PERFECT',t:2.2,size:64,y:282,col:GOLD});
 }
-function afterRound(){if(p1.wins>=2||p2.wins>=2){phase='over';showResult();return}newRound()}
+function afterRound(){const need=mode==='story'&&!story.boss?1:2;if(p1.wins>=need||p2.wins>=need){phase='over';showResult();return}newRound()}
 const cap=s=>s.charAt(0)+s.slice(1).toLowerCase();
 
 /* =====================================================================
@@ -1956,7 +2296,8 @@ function menu(){
   netClose();mode='cpu';phase='menu';p1=p2=null;paused=false;hideMatchUI();
   showPanel(`<div class="ar">عركة فوق السطح</div><h1>ROOFTOP RUMBLE</h1>
   <p class="intro">Nine fighters from across Tunisia's history and its living rooms. Tekken-style strings, launchers, juggles and throws.</p>
-  <div class="modes">
+  <div class="modes m5">
+    <button class="mode" id="m_story" type="button"><b>STORY</b><small>Each fighter's own story, against opponents you can't pick anywhere else.</small></button>
     <button class="mode" id="m_arcade" type="button"><b>ARCADE</b><small>Beat all eight rivals, one stage at a time, to become champion.</small></button>
     <button class="mode" id="m_cpu" type="button"><b>VS CPU</b><small>One match against a random rival, on the stage you pick.</small></button>
     <button class="mode" id="m_train" type="button"><b>TRAINING</b><small>Practise strings and juggles on a dummy. Shows combo damage.</small></button>
@@ -1964,6 +2305,7 @@ function menu(){
   </div>
   ${CONTROLS}
   <div class="row"><button class="go ghost" id="m_set" type="button">Settings</button></div>`);screen='main';
+  $('m_story').onclick=()=>{mode='story';selectFighter(false)};
   $('m_arcade').onclick=()=>{mode='arcade';selectFighter(false)};
   $('m_cpu').onclick=()=>{mode='cpu';selectFighter(false)};
   $('m_train').onclick=()=>{mode='training';selectFighter(false)};
@@ -1999,19 +2341,21 @@ function moveListHTML(d){
 }
 function selectFighter(net){
   if(!net){phase='menu';hideMatchUI()}
-  const next=net?'Ready':mode==='arcade'?'Start arcade':'Choose stage';
-  showPanel(`<h2>${net?'PICK YOUR FIGHTER':mode==='training'?'TRAINING · PICK A FIGHTER':mode==='arcade'?'ARCADE · PICK A FIGHTER':'CHOOSE YOUR FIGHTER'}</h2><div class="sp"><div class="grid" id="chars"></div><div class="info" id="info"></div></div><p class="status" id="st"></p>
+  const next=net?'Ready':mode==='arcade'?'Start arcade':mode==='story'?(storyProg(CHARS[pickChar].id)>0&&storyProg(CHARS[pickChar].id)<4?'Continue story':'Start story'):'Choose stage';
+  showPanel(`<h2>${net?'PICK YOUR FIGHTER':mode==='training'?'TRAINING · PICK A FIGHTER':mode==='arcade'?'ARCADE · PICK A FIGHTER':mode==='story'?'STORY · PICK A FIGHTER':'CHOOSE YOUR FIGHTER'}</h2><div class="sp"><div class="grid" id="chars"></div><div class="info" id="info"></div></div><p class="status" id="st"></p>
   <div class="row"><button class="go ghost" id="back">${net?'Leave':'Back'}</button><button class="go" id="go">${next}</button></div>`);
   const box=$('chars');
   const info=()=>{const d=CHARS[pickChar];$('info').innerHTML=`<b style="color:${d.hud}">${d.name} · ${d.from}</b><span>${esc(d.bio)}</span><span class="m">${esc(d.sp.desc)}</span>${moveListHTML(d)}`};
   CHARS.forEach((d,i)=>{const b=document.createElement('button');b.className='pick'+(i===pickChar?' sel':'');b.type='button';
     if(!PORTRAITS.has(d.id))PORTRAITS.set(d.id,portrait(d));
+    if(mode==='story'&&!net){const pr=storyProg(d.id);b.classList.add('hasprog');b.dataset.prog=Math.min(4,pr)+'/4';if(pr>=4)b.classList.add('done')}
     b.append(cloneCanvas(PORTRAITS.get(d.id)));b.insertAdjacentHTML('beforeend',`<b style="color:${d.hud}">${d.name}</b><small>${d.from}</small>`);
-    b.onclick=()=>{pickChar=i;box.querySelectorAll('.pick').forEach((x,j)=>x.classList.toggle('sel',j===i));info()};
+    b.onclick=()=>{pickChar=i;box.querySelectorAll('.pick').forEach((x,j)=>x.classList.toggle('sel',j===i));info();
+      if(mode==='story'&&!net){const pr=storyProg(d.id);$('go').textContent=pr>0&&pr<4?'Continue story':'Start story'}};
     box.append(b)});
   info();
   if(net){$('back').onclick=leaveNet;$('go').onclick=netReady;if(NET.guestPick!=null&&NET.role==='host')setStatus(`Your friend picked ${CHARS[NET.guestPick].name}.`)}
-  else{$('back').onclick=menu;$('go').onclick=()=>{SET.char=pickChar;saveSet();mode==='arcade'?startArcade():selectStage(false)}}
+  else{$('back').onclick=menu;$('go').onclick=()=>{SET.char=pickChar;saveSet();mode==='arcade'?startArcade():mode==='story'?startStory():selectStage(false)}}
 }
 function selectStage(net){
   showPanel(`<h2>CHOOSE A STAGE</h2>${net?`<p>${CHARS[NET.myPick].name} vs ${CHARS[NET.guestPick].name}</p>`:''}<div class="grid st" id="stages"></div>
@@ -2031,6 +2375,34 @@ function startCpu(){
   newMatch(def,cpuDef,pickStage);tone(1,1,.01,'sine',.0001);
 }
 function startTraining(){mode='training';newMatch(CHARS[pickChar],CHARS[(pickChar+1)%CHARS.length],pickStage);tone(1,1,.01,'sine',.0001)}
+
+/* ---- story mode flow ---- */
+const story={id:null,i:0,boss:false};
+function storyProg(id){return (SET.story&&SET.story[id])||0}
+function startStory(){const d=CHARS[pickChar];story.id=d.id;const pr=storyProg(d.id);story.i=pr>=4?0:pr;storyScene(true)}
+function storyScene(first){
+  phase='menu';hideMatchUI();mode='story';
+  const d=CHARS[pickChar],S=STORIES[d.id],c=S.ch[story.i],e=NPCS[c[0]];story.boss=story.i===S.ch.length-1;
+  const lines=[...(first&&story.i===0?S.intro:[]),...c[3]],who=w=>w==='h'?d:w==='e'?e:null;
+  const html=lines.map(([w,t])=>{const p=who(w);return`<div class="sline ${w}">${p?`<b style="color:${p.hud}">${esc(p.name)}</b>`:''}<span>${esc(t)}</span></div>`}).join('');
+  showPanel(`<h2><span>${story.boss?'FINAL CHAPTER':'CHAPTER '+(story.i+1)}</span> · <span>${esc(c[2])}</span></h2>
+    <div class="svs"><div class="sp1"></div><b>VS</b><div class="sp2"></div></div><div class="slines">${html}</div>
+    <div class="row"><button class="go ghost" id="back">Quit</button><button class="go" id="go">Fight</button></div>`);
+  for(const[sel,def,flip] of [['.sp1',d,0],['.sp2',e,1]]){if(!PORTRAITS.has(def.id))PORTRAITS.set(def.id,portrait(def));const cv=cloneCanvas(PORTRAITS.get(def.id));if(flip)cv.style.transform='scaleX(-1)';document.querySelector(sel).append(cv)}
+  $('back').onclick=menu;$('go').onclick=()=>{mode='story';newMatch(d,e,c[1]);tone(1,1,.01,'sine',.0001)};$('go').focus();
+}
+function storyResult(won,w){
+  const d=CHARS[pickChar],S=STORIES[d.id];
+  if(won){SET.story=Object.assign({},SET.story,{[d.id]:Math.max(storyProg(d.id),story.i+1)});saveSet();
+    if(story.i>=S.ch.length-1){
+      showPanel(`<div class="ar">النهاية</div><h1><span style="color:${d.hud}">${d.name}</span><br>THE END</h1><p>${esc(S.end)}</p>
+        <div class="row"><button class="go ghost" id="back">Main menu</button><button class="go" id="go">Another story</button></div>`);
+      $('back').onclick=menu;$('go').onclick=()=>{mode='story';selectFighter(false)};$('go').focus();return}
+    story.i++;storyScene(false);return}
+  showPanel(`<div class="ar">يزّي!</div><h1><span style="color:${w.def.hud}">${w.name}</span> WINS</h1><p>Get up and try again.</p>
+    <div class="row"><button class="go ghost" id="back">Quit</button><button class="go" id="go">Try again</button></div>`);
+  $('back').onclick=menu;$('go').onclick=()=>{const c=S.ch[story.i];mode='story';newMatch(d,NPCS[c[0]],c[1])};$('go').focus();
+}
 function startArcade(){
   const others=CHARS.filter((_,i)=>i!==pickChar).sort(()=>Math.random()-.5);
   arc.list=others;arc.idx=0;arcadeFight();tone(1,1,.01,'sine',.0001);
@@ -2042,6 +2414,7 @@ function showResult(){
   const me=mode==='net'?(myIndex()===0?p1:p2):p1,them=me===p1?p2:p1;
   const won=me.wins>them.wins,w=won?me:them;
   NET.inMatch=false;
+  if(mode==='story'){storyResult(won,w);return}
   if(mode==='arcade'){
     if(won&&arc.idx>=arc.list.length-1){
       showPanel(`<div class="ar">بطل تونس</div><h1><span style="color:${me.def.hud}">${me.name}</span><br>CHAMPION OF TUNISIA</h1>
@@ -2357,7 +2730,7 @@ function drawFighter(f,dt,still,offX=0,alphaMul=1){
   const tail=(x,y,col,w,len)=>{if(!lying)trail(f.ribbon,x,y,face,len,col,w,2,1.6,still||rot)};
   if(D.hat==='chechia'){const c=D.hatCol||RED;ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(hdx-hr+1,hdy-4);ctx.lineTo(hdx-hr+3,hdy-17);ctx.quadraticCurveTo(hdx,hdy-22,hdx+hr-3,hdy-17);ctx.lineTo(hdx+hr-1,hdy-4);ctx.closePath();ctx.fill();
     ctx.fillStyle=shade(c,.78);ctx.fillRect(hdx-hr+1,hdy-8,(hr-1)*2,4);ctx.fillStyle=shade(c,1.18);ctx.fillRect(hdx+face*3-2,hdy-18,4,8);if(D.tassel)tail(hdx,hdy-20,INK,3,5)}
-  if(D.hat==='chech'){const c='#f4f0e6',sh=shade(c,.84),tt=performance.now()/1000,sw=still||rot?0:clamp(-f.vx*.02,-6,6)+Math.sin(tt*2.6)*1.5;
+  if(D.hat==='chech'){const c=D.hatCol||'#f4f0e6',sh=shade(c,.84),tt=performance.now()/1000,sw=still||rot?0:clamp(-f.vx*.02,-6,6)+Math.sin(tt*2.6)*1.5;
     ctx.fillStyle=sh;taper(hdx-face*(hr-2),hdy-6,hdx-face*(hr+5)+sw,hdy+hr+12,8,6);   // loose end hanging down the back
     ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(hdx-face,hdy-hr*.45,hr+3,hr*.62,0,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(hdx-face*2,hdy-hr*.92,hr*.86,hr*.5,0,0,7);ctx.fill();
     ctx.strokeStyle=sh;ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(hdx-face*(hr+1),hdy-hr*.2-i*5);ctx.lineTo(hdx+face*(hr+1),hdy-hr*.55-i*5);ctx.stroke()}
@@ -2383,8 +2756,8 @@ function drawFighter(f,dt,still,offX=0,alphaMul=1){
     ctx.fillRect(hdx+face*3-(face>0?0:6),hdy-1,6,11);ctx.fillStyle=bh;ctx.fillRect(hdx-hr-1,hdy-4,(hr+1)*2,3);ctx.fillRect(hdx-4,hdy-hr-2,8,2)}
   if(D.hat==='silverband'){ctx.fillStyle='#c9c9d2';ctx.fillRect(hdx-hr,hdy-11,hr*2,4);ctx.fillStyle='#e8e8f0';for(let i=-2;i<=2;i++)dot(hdx+i*5+face*2,hdy-5,1.8);
     ctx.fillStyle=RED;ctx.fillRect(hdx+face*3-1,hdy-12,3,3);ctx.fillStyle='#d8d8e2';ctx.fillRect(hdx-face*(hr-3)-2,hdy+6,4,6)}
-  if(D.hat==='bandana'){ctx.fillStyle='#1c63b0';ctx.beginPath();ctx.arc(hdx,hdy,hr+1.5,Math.PI,2*Math.PI);ctx.fill();ctx.fillRect(hdx-hr-1,hdy-3,(hr+1)*2,5);
-    ctx.fillStyle='#f5efe4';for(let i=-1;i<=1;i++)ctx.fillRect(hdx+i*7-1,hdy-9,3,3);tail(hdx-face*(hr-1),hdy-2,'#1c63b0',5,6)}
+  if(D.hat==='bandana'){ctx.fillStyle=D.hatCol||'#1c63b0';ctx.beginPath();ctx.arc(hdx,hdy,hr+1.5,Math.PI,2*Math.PI);ctx.fill();ctx.fillRect(hdx-hr-1,hdy-3,(hr+1)*2,5);
+    ctx.fillStyle='#f5efe4';for(let i=-1;i<=1;i++)ctx.fillRect(hdx+i*7-1,hdy-9,3,3);tail(hdx-face*(hr-1),hdy-2,D.hatCol||'#1c63b0',5,6)}
   if(D.hat==='crown'){ctx.fillStyle=GOLD;ctx.beginPath();ctx.moveTo(hdx-hr,hdy-6);for(let i=0;i<4;i++){const x=hdx-hr+i*hr/2;ctx.lineTo(x+hr/4,hdy-(i%2?13:21));ctx.lineTo(x+hr/2,hdy-11)}ctx.lineTo(hdx+hr,hdy-6);ctx.closePath();ctx.fill();
     ctx.fillStyle=RED;ctx.fillRect(hdx-2,hdy-12,4,4);ctx.fillStyle=GOLD;ctx.fillRect(hdx+face*(hr-4)-2,hdy+5,4,5)}
   if(D.hat==='straw'){ctx.fillStyle='#e3c37a';ctx.beginPath();ctx.ellipse(hdx,hdy-8,hr+12,5,0,0,7);ctx.fill();ctx.beginPath();ctx.arc(hdx,hdy-8,hr-3,Math.PI,0);ctx.fill();

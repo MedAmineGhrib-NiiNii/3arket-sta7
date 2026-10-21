@@ -5,7 +5,7 @@ import os,re
 here=os.path.dirname(os.path.abspath(__file__))
 src=open(os.path.join(here,'src/game.html')).read()
 stages=open(os.path.join(here,'src/stages.js')).read()
-game=src.replace('/*@@STAGES@@*/',stages).replace('/*@@DERJA@@*/',open(os.path.join(here,'src/derja.js')).read())
+game=src.replace('/*@@STAGES@@*/',stages).replace('/*@@STORY@@*/',open(os.path.join(here,'src/story.js')).read()).replace('/*@@DERJA@@*/',open(os.path.join(here,'src/derja.js')).read())
 # preview artifact: no app libs
 os.makedirs(os.path.join(here,'preview'),exist_ok=True)
 open(os.path.join(here,'preview/rooftop-rumble.html'),'w').write(game.replace('<!--APP_HEAD-->',''))
