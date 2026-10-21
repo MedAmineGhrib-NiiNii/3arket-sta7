@@ -12,7 +12,8 @@ open(os.path.join(here,'preview/rooftop-rumble.html'),'w').write(game.replace('<
 # app: full document, local libs, native flag, offline fonts fall back gracefully
 head='''<script>window.RR_NATIVE=1</script>
 <script src="lib/qrcode.js"></script>
-<script src="lib/jsQR.js"></script>'''
+<script src="lib/jsQR.js"></script>
+<script src="lib/peerjs.min.js"></script>'''
 doc='''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -35,6 +36,6 @@ import shutil
 shutil.rmtree(os.path.join(here,'app/www/fonts'),ignore_errors=True);os.makedirs(os.path.join(here,'app/www/fonts'),exist_ok=True)
 for f in os.listdir(os.path.join(here,'fonts')):
     open(os.path.join(here,'app/www/fonts',f),'wb').write(open(os.path.join(here,'fonts',f),'rb').read())
-for f in ('qrcode.js','jsQR.js'):
+for f in ('qrcode.js','jsQR.js','peerjs.min.js'):
     open(os.path.join(here,'app/www/lib',f),'w').write(open(os.path.join(here,'lib',f)).read())
 print('built preview + app/www')

@@ -111,6 +111,9 @@ textarea{font:13px/1.3 ui-monospace,Menlo,monospace;width:100%;min-height:72px;b
 details{text-align:left;width:100%}
 details summary{cursor:pointer;color:var(--muted);font-size:16px}
 .setl{display:grid;gap:8px;max-width:22rem;width:100%;margin:0 auto}
+.roomcode{font-family:var(--display);font-size:clamp(28px,9vh,52px);letter-spacing:.18em;color:var(--gold);text-shadow:4px 4px 0 #000;user-select:text;-webkit-user-select:text}
+.roomin{font-family:var(--display);font-size:28px;letter-spacing:.2em;text-align:center;text-transform:uppercase;width:min(100%,14ch);margin:0 auto;padding:10px;background:var(--night);color:var(--gold);border:3px solid var(--muted);box-sizing:border-box;user-select:text;-webkit-user-select:text}
+.roomin:focus{outline:3px solid var(--gold);outline-offset:2px}
 .status{font-family:var(--display);font-size:12px;line-height:1.5;color:var(--gold);letter-spacing:.03em}
 
 .pad{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}
@@ -184,6 +187,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 <script>window.RR_NATIVE=1</script>
 <script src="lib/qrcode.js"></script>
 <script src="lib/jsQR.js"></script>
+<script src="lib/peerjs.min.js"></script>
 
 <canvas id="px" aria-hidden="true"></canvas><canvas id="fg" aria-hidden="true"></canvas><div id="vig"></div></head><body>
 <canvas id="c" aria-label="Rooftop Rumble stage"></canvas>
@@ -366,67 +370,67 @@ const CHARS=[
   {id:'hamma',name:'HAMMA',g:'m',from:'Sidi Bou Said',home:0,
    bio:'Sidi Bou Said regular in a white jebba with a blue farmla waistcoat, red chechia from the Souk Ech-Chaouachine and yellow balgha slippers. Mint tea with pine nuts at Café des Nattes. Balanced and quick.',hud:'#7fb6ff',
    col:'#efe7d4',fore:'#c98b5e',vest:{col:'#1f4f9f',trim:'#f2c14e'},skin:'#c98b5e',pants:'#e6dcc4',shoe:'#f2c14e',trim:'#f2c14e',sash:RED,
-   hat:'chechia',hatCol:RED,tassel:1,face:'mustache',robe:{len:1.55,col:'#efe7d4',trim:'#d4c29a'},size:1,speed:1,power:1,tech:'dash',bounce:1.4,throwName:'CAFÉ TOSS',
+   hat:'chechia',hatCol:RED,tassel:1,face:'mustache',robe:{len:1.55,col:'#efe7d4',trim:'#d4c29a'},size:1,speed:1.05,power:1.1,tech:'dash',bounce:1.4,throwName:'CAFÉ TOSS',
    chain:{'onetwo>lp':'h_hook','onetwo>rk':'h_spin','lk>rk':'h_twin','h_twin>rp':'h_rise','rp>lp':'h_back','h_back>rk':'h_sweep'},cmd:{f2:'h_elbow'},
    list:[['→→ ←←','Dash step'],['1 2 1','Café Hook'],['1 2 4','Chechia Spin (knockdown)'],['3 4 2','Twin Kicks into Marsa Rise (launches)'],['2 1 4','Backfist into Souk Sweep (ends low)'],['→ + 2','Brass Elbow lunge']],
    sp:{kind:'uppercut',name:'Bou Said Uppercut',super:'SKYBREAKER',desc:'A rising uppercut that launches the opponent.',s:.08,a:.2,r:.4,dmg:17,range:82,h:'mid',kb:280,stun:.5,pose:'dragon',limb:'aF',launch:1,fx:GOLD}},
   {id:'brik',name:'MOKHTAR',g:'m',from:'La Goulette',home:1,
    bio:'Mokhtar, called "Brik" on the docks of La Goulette, after the egg-and-tuna pastry: crispy outside, soft inside. Khaki work blouza, off-white chechia, a striped fouta for a belt. Slow, heavy, hard to stop.',hud:'#ff9a52',
    col:'#7f8a5c',fore:'#a8673f',skin:'#a8673f',pants:'#3b3428',shoe:'#6b4628',trim:'#5f6844',sash:'fouta',
-   hat:'chechia',hatCol:'#ece4cf',face:'beard',robe:{len:.55,col:'#7f8a5c'},size:1.1,speed:.9,power:1.12,tech:'run',bounce:.8,throwName:'PORT SLAM',
+   hat:'chechia',hatCol:'#ece4cf',face:'beard',robe:{len:.55,col:'#7f8a5c'},size:1.1,speed:.9,power:1.05,tech:'run',bounce:.8,throwName:'PORT SLAM',
    chain:{'lp>lp':'b_jab2','b_jab2>rp':'b_fold','b_fold>rp':'b_dock','rp>rk':'b_crane','lk>rp':'b_hammer','rk>rk':'b_stomp'},cmd:{f2:'b_head'},
    list:[['Hold →','Builds into a charging run'],['1 1 2','Brik Flip: leaping overhand right (block standing)'],['1 1 2 2','... into Dock Slam'],['2 4','Port Crane Kick (launches)'],['3 2','Hammer Fist'],['4 4','Anchor Stomp (ends low)'],['→ + 2','Headbutt, charges in and can\'t be interrupted']],
    sp:{kind:'rush',name:'Harissa Rush',super:'HARISSA INFERNO',desc:'A burning shoulder charge that shrugs off hits.',s:.12,a:.32,r:.35,dmg:15,range:60,h:'mid',kb:300,stun:.5,pose:'rush',launch:1,armor:1,fx:'#ff4b2b'}},
   {id:'alyssa',name:'ELISSA',g:'f',from:'Carthage',home:2,
    bio:'Elissa (Dido), founding queen of Carthage. Offered only as much land as an oxhide could cover, she cut the hide into thin strips and circled the hill of Byrsa with them. She fights with those strips. Dressed in Tyrian purple, the dye Carthage and Djerba were famous for. Fights under the sign of Tanit.',hud:'#c79bff',
    col:'#6b2fa3',skin:'#d7a27a',pants:'#e8c66a',shoe:'#e8c66a',trim:'#e8c66a',sash:'#e8c66a',
-   hat:'crown',hair:{type:'long',col:'#2b1a12'},robe:{len:1.45,col:'#6b2fa3',trim:'#e8c66a'},size:.97,speed:1.02,power:.95,tech:'float',bounce:1.1,throwName:'ROYAL BANISHMENT',
+   hat:'crown',hair:{type:'long',col:'#2b1a12'},robe:{len:1.45,col:'#6b2fa3',trim:'#e8c66a'},size:.97,speed:1.02,power:1.03,tech:'float',bounce:1.1,throwName:'ROYAL BANISHMENT',
    chain:{'lk>lk':'a_kick2','a_kick2>rp':'a_burst','rk>lk':'a_fan','a_fan>rk':'a_wheel','onetwo>lk':'a_byrsa'},cmd:{f1:'a_palm'},
    list:[['Hold ↑ in air','Float down slowly'],['3 3 2','Tyrian Burst (launches)'],['4 3','Dido\'s Fan (ends low)'],['4 3 4','... into Tanit Wheel (launches)'],['1 2 3','Byrsa Kick, huge push'],['→ + 1','Royal Palm']],
    sp:{kind:'lash',name:'Oxhide Lash',super:'BYRSA',desc:'Lashes out with a long strip cut from an oxhide, from the legend of how she won the hill of Byrsa. The super throws hide strips around the opponent anywhere on screen and binds them.',s:.14,a:.1,r:.3,dmg:12,range:215,h:'mid',kb:200,stun:.4,pose:'whip',limb:'aF',fx:'#c8955a'}},
   {id:'selma',name:'SELMA',g:'f',from:'Djerba',home:4,
    bio:'Fisherwoman from Houmt Souk on Djerba. Wears the m\'dhalla palm-leaf hat against the sun and the fouta zarga, the dark blue wrap with red stripes. Slippery up close; never lost a catch.',hud:'#6fe0d0',
    col:'#f3eee2',fore:'#b97a52',skin:'#b97a52',pants:'#22306e',shoe:'#7a4b2a',trim:'#2f8a8a',sash:'#2f8a8a',
-   hat:'mdhalla',hair:{type:'braid',col:INK},robe:{len:1.15,col:'#22306e',stripe:RED},size:.95,speed:1.06,power:.95,tech:'roll',bounce:1.6,throwName:'NET TOSS',
+   hat:'mdhalla',hair:{type:'braid',col:INK},robe:{len:1.15,col:'#22306e',stripe:RED},size:.95,speed:1.06,power:1.08,tech:'roll',bounce:1.6,throwName:'NET TOSS',
    chain:{'onetwo>rp':'s_oar','lp>lk':'s_tide1','s_tide1>rk':'s_tide2','rp>lp':'s_jab2b','s_jab2b>lk':'s_grip','rk>rk':'s_wave'},cmd:{b4:'s_anchor'},
    list:[['→→ ←←','Dodge roll, passes through attacks'],['1 2 2','Oar Swing'],['1 3 4','Low Tide (low, then launch)'],['2 1 3','Octopus Grip (ends low)'],['4 4','Wave Kick'],['← + 4','Anchor Kick, long reach']],
-   sp:{kind:'proj',name:'Djerba Net',super:'THE BIG CATCH',desc:'Casts a fishing net that drags the opponent in and holds them for a free combo.',s:.16,a:.05,r:.32,dmg:6,h:'mid',kb:0,stun:.8,pose:'cast',limb:'aF',proj:'net',pull:1,fx:'#e9dcc0'}},
+   sp:{kind:'proj',name:'Djerba Net',super:'THE BIG CATCH',desc:'Casts a fishing net that drags the opponent in and holds them for a free combo.',s:.16,a:.05,r:.32,dmg:8,h:'mid',kb:0,stun:.8,pose:'cast',limb:'aF',proj:'net',pull:1,fx:'#e9dcc0'}},
   {id:'dihya',name:'DIHYA',g:'f',from:'The Aurès',home:2,
    bio:'Berber warrior queen of the Aurès. A draped melhfa pinned with silver fibulae, a silver headband and her hair loose, as legend says she fought her last stand inside the amphitheatre of El Jem. The fastest fighter here.',hud:'#ff7a7a',
    col:'#9e2430',arm:'#c48a5c',fore:'#c48a5c',skin:'#c48a5c',pants:'#2b2420',shoe:'#4a3424',trim:'#c9c9d2',sash:'#c9c9d2',
-   hat:'silverband',fibula:1,bangle:1,hair:{type:'loose',col:INK},face:'tattoo',robe:{len:.8,col:'#9e2430',trim:'#c9c9d2'},size:1,speed:1.15,power:1,tech:'djump',bounce:2,throwName:'KAHINA\'S GRIP',
+   hat:'silverband',fibula:1,bangle:1,hair:{type:'loose',col:INK},face:'tattoo',robe:{len:.8,col:'#9e2430',trim:'#c9c9d2'},size:1,speed:1.15,power:1.18,tech:'djump',bounce:2,throwName:'KAHINA\'S GRIP',
    chain:{'lk>rk':'d_kick2','d_kick2>rk':'d_wind','rk>rk':'d_axe','lp>lp':'d_jab2','d_jab2>lk':'d_low','rp>rk':'d_crescent'},cmd:{f4:'d_knee'},
    list:[['↑ in air','Double jump'],['3 4 4','Mountain Wind'],['4 4','Aurès Axe (overhead: block standing)'],['1 1 3','Kahina Sweep (ends low)'],['2 4','Aurès Crescent spin kick'],['→ + 4','Falcon Knee, flying']],
    sp:{kind:'teleport',name:'Phantom Step',super:'KAHINA\'S WRATH',desc:'Vanishes and reappears behind the opponent with a kick.',s:.2,a:.1,r:.3,dmg:14,range:95,h:'mid',kb:240,stun:.45,pose:'kick',limb:'lF',launch:1,fx:'#ff7a7a'}},
   {id:'zied',name:'ZIED',g:'m',from:'Douz',home:3,
    bio:'Mrazig guide from Douz, gateway to the Sahara and its 500,000 palms. Cream robe, brown wool waistcoat and a white chech turban against the sand. His super is named after the chlouk, Tunisian Arabic for the sirocco.',hud:'#f3d9a4',
    col:'#ece3cc',vest:{col:'#6b4a2e',trim:'#c9a46a'},skin:'#9c5f3a',pants:'#d8ccb0',shoe:'#6b4628',trim:'#c9a46a',sash:'#6b4a2e',
-   hat:'chech',face:'stubble',robe:{len:1.4,col:'#ece3cc',trim:'#c9b38c'},size:1.02,speed:1.1,power:.98,tech:'airdash',bounce:1.2,throwName:'DUNE DROP',
+   hat:'chech',face:'stubble',robe:{len:1.4,col:'#ece3cc',trim:'#c9b38c'},size:1.02,speed:1.1,power:1.06,tech:'airdash',bounce:1.2,throwName:'DUNE DROP',
    chain:{'rk>rp':'z_palm','dlp>rk':'z_sweep2','onetwo>lk':'z_dust','rk>rk':'z_k2','z_k2>lk':'z_cutter','onetwo>rk':'z_wheel'},cmd:{f4:'z_mirage'},
    list:[['→ ← in air','Air dash'],['4 2','Sandstorm Palm'],['1 2 3','Dust Devil (ends low)'],['1 2 4','Sand Wheel (launches)'],['4 4 3','Dune Cutter (ends low)'],['↓1 then 4','Double sweep'],['→ + 4','Mirage Kick, slides in']],
    sp:{kind:'slide',name:'Dune Slide',super:'CHLOUK',desc:'A long low slide that sweeps the opponent off their feet. Block it crouching.',s:.08,a:.32,r:.32,dmg:13,range:70,h:'low',kb:220,stun:.45,pose:'slide',limb:'lF',launch:1,crouch:1,fx:'#efb877'}},
   {id:'salah',name:'SALAH',g:'m',from:'Medina of Tunis',home:5,
    bio:'Salah, the oldest regular at Café M\'Rabet, the oldest café in Tunis. Unbeaten at chkobba: he counts every fallen card and slaps them down hard. A brown wool burnous with the hood up over a grey jebba, white beard, round glasses, always a fan of cards in hand.',hud:'#8fd18b',
    col:'#77736b',skin:'#b98a62',pants:'#cfc6b2',shoe:'#d8c8a0',trim:'#a59d8c',sash:'#5c3d24',
-   hat:'hood',cape:{col:'#5c3d24',edge:'#d8c8a8'},face:'beard',beardCol:'#ece8de',browCol:'#e4e0d6',glasses:1,cards:1,hunch:10,robe:{len:1.55,col:'#77736b'},size:.98,speed:.94,power:1.02,tech:'shuffle',bounce:.7,throwName:'LAST TAKE',
+   hat:'hood',cape:{col:'#5c3d24',edge:'#d8c8a8'},face:'beard',beardCol:'#ece8de',browCol:'#e4e0d6',glasses:1,cards:1,hunch:10,robe:{len:1.55,col:'#77736b'},size:.98,speed:.94,power:0.91,tech:'shuffle',bounce:.7,throwName:'LAST TAKE',
    basic:{lp:'c_deal',rp:'c_back',lk:'c_shin',rk:'c_cape'},
    chain:{'c_deal>lp':'c_deal1b','c_deal1b>rp':'c_akala','c_deal>rp':'c_back2','c_back2>lk':'c_dinari','c_back>rk':'c_bermila','c_shin>lk':'c_shin2','c_shin2>rk':'c_karta'},cmd:{f1:'c_flick',d2:'c_dinari'},
    list:[['→→ ←←','Shuffle: blinks a short hop away in a puff of cards'],['1','Deal: flicks a card in your face'],['2','Backhand'],['3','Shin kick'],['4','Burnous whip: lashes out with the cloak'],['1 1 2','Akala: slaps you down like a card on the table (overhead)'],['2 4','Bermila: burnous twirl with orbiting cards (launches)'],['3 3 4','Karta: sweeps cards along the floor (ends low)'],['1 2 3 or ↓ + 2','Dinari: card flourish (launches)'],['→ + 1','Card throw, long reach']],
-   sp:{kind:'proj',name:'Sab\'a l-Hayya',super:'CHKOBBA!',desc:'Throws the 7 of dinari, the card worth a point on its own. The super sweeps the table with five cards.',s:.16,a:.05,r:.32,dmg:10,h:'mid',kb:150,stun:.36,pose:'cast',limb:'aF',proj:'card',fx:'#f6f1e7'}},
+   sp:{kind:'proj',name:'Sab\'a l-Hayya',super:'CHKOBBA!',desc:'Throws the 7 of dinari, the card worth a point on its own. The super sweeps the table with five cards.',s:.16,a:.05,r:.32,dmg:8,h:'mid',kb:150,stun:.36,pose:'cast',limb:'aF',proj:'card',fx:'#f6f1e7'}},
   {id:'hannibal',name:'HANNIBAL',g:'m',from:'Carthage',home:2,
    bio:'Hannibal, son of Hamilcar Barca. In 218 BC he crossed the Alps into Italy with North African war elephants, then beat Rome at the Trebia, Lake Trasimene and Cannae. He lost his right eye crossing the Apennines. Bronze armour, a round shield and a cloak in Carthage\'s purple.',hud:'#e0b45a',
    col:'#b8862e',arm:'#b07a52',fore:'#b07a52',skin:'#b07a52',pants:'#b07a52',greave:'#b8862e',shoe:'#6b4628',trim:'#e0b45a',sash:'#9e1b28',
    hat:'helmet',cape:{col:'#5b2a7a',edge:'#e8c66a',front:false},face:'beard',beardCol:'#241812',browCol:'#241812',scar:1,shield:1,sword:1,
-   robe:{len:.62,col:'#9e1b28',trim:'#e8c66a',strips:1},size:1.06,speed:.95,power:1.08,tech:'dash',bounce:1,throwName:'CANNAE',
+   robe:{len:.62,col:'#9e1b28',trim:'#e8c66a',strips:1},size:1.06,speed:.95,power:0.92,tech:'dash',bounce:1,throwName:'CANNAE',
    basic:{lp:'n_shield',rp:'n_slash',lk:'n_teep',rk:'n_knee'},
    chain:{'n_shield>rp':'n_slash2','n_slash2>rp':'n_trebia','n_slash>lp':'n_trasimene','n_teep>rk':'n_rhone','n_knee>rk':'n_knee2','n_knee2>rp':'n_barca'},cmd:{f2:'n_thrust',d2:'n_rhone'},
    list:[['→→ ←←','Dash step'],['1','Shield punch'],['2','Sword slash'],['3','Push kick'],['4','Rear knee'],['1 2 2','Trebia: spinning sword slash (launches)'],['2 1','Trasimene: ambush shield charge, can\'t be interrupted'],['3 4 or ↓ + 2','Rhône: leaping knee (launches)'],['4 4 2','Barca: overhead sword chop (block standing)'],['→ + 2','Long sword thrust'],['Throw','Cannae: envelops and throws you, after the double envelopment of 216 BC']],
-   sp:{kind:'proj',name:'Surus',super:'CROSSING THE ALPS',desc:'Calls Surus, his own war elephant, to charge from behind him. The super sends a stampede of three elephants that cannot be blocked.',s:.2,a:.05,r:.4,dmg:16,h:'mid',kb:260,stun:.5,pose:'command',limb:'aB',proj:'elephant',launch:1,fx:'#e8c66a'}},
+   sp:{kind:'proj',name:'Surus',super:'CROSSING THE ALPS',desc:'Calls Surus, his own war elephant, to charge from behind him. The super sends a stampede of three elephants that cannot be blocked.',s:.2,a:.05,r:.4,dmg:13,h:'mid',kb:260,stun:.5,pose:'command',limb:'aB',proj:'elephant',launch:1,fx:'#e8c66a'}},
   {id:'kmar',name:'KMAR',g:'f',from:'Tunis',home:1,
    bio:'Kmar, mother of five in an old Tunis neighbourhood. A wooden spoon in one hand, the msalha (floor squeegee) and its wet cloth never far away, and a slipper that has never missed. Floral house dress, apron, a knotted foulard and gold bangles.',hud:'#ff8fb8',
    col:'#c24e7a',skin:'#c08a62',pants:'#8d5a7a',shoe:'#d23a3a',trim:'#f3d2e0',sash:'#8e2a52',
    hat:'scarf',scarfCol:'#3b6fb0',earring:1,bangle:1,bangleCol:GOLD,apron:'#f4efe4',spoon:1,idlePose:'mom_idle',
-   robe:{len:1.6,col:'#c24e7a',dots:'#f3d2e0',trim:'#8e2a52'},size:.98,speed:1,power:1.05,tech:'dash',bounce:1,throwName:'EAR PULL',
+   robe:{len:1.6,col:'#c24e7a',dots:'#f3d2e0',trim:'#8e2a52'},size:.98,speed:1,power:1.07,tech:'dash',bounce:1,throwName:'EAR PULL',
    basic:{lp:'k_spoon',rp:'k_slap',lk:'k_stomp',rk:'k_broom'},
    chain:{'k_spoon>lp':'k_spoon2','k_spoon2>rp':'k_kaff','k_slap>rk':'k_sweep','k_stomp>rk':'k_smash','k_broom>rk':'k_spin'},cmd:{f1:'k_poke',d2:'k_kaff'},
    list:[['→→ ←←','Dash step'],['1','Wooden spoon bonk'],['2','Backhand slap'],['3','Toe stomp (low)'],['4','Msalha swing, long reach'],['1 1 2 or ↓ + 2','Kaff: the slap that spins you round (launches)'],['2 4','Msalha sweep across the floor (ends low)'],['3 4','Msalha smash (overhead: block standing)'],['4 4','Masha: spinning msalha, wet cloth flying (launches)'],['→ + 1','Long spoon poke'],['Throw','Ear pull']],
@@ -451,9 +455,9 @@ const MOVES={
   onetwo:{s:.05,a:.07,r:.16,dmg:6, range:90, h:'high',kb:60, stun:.34,pose:'cross',limb:'aB',lunge:90},
   grab:  {s:.1, a:.08,r:.4, dmg:0, range:84, h:'throw',pose:'grab',throw:1,lunge:170},
   // Hamma
-  h_hook: {s:.07,a:.08,r:.24,dmg:9, range:86, h:'mid', kb:160,stun:.42,pose:'hook', limb:'aF',name:'CAFÉ HOOK'},
-  h_spin: {s:.10,a:.14,r:.30,dmg:11,range:106,h:'mid', kb:260,stun:.5, pose:'rkick',limb:'lB',spin:1,launch:1,name:'CHECHIA SPIN'},
-  h_twin: {s:.08,a:.09,r:.24,dmg:9, range:106,h:'high',kb:60,stun:.4, pose:'rkick',limb:'lB',name:'TWIN KICKS',lunge:80},
+  h_hook: {s:.07,a:.08,r:.24,dmg:9, range:92, h:'mid', kb:160,stun:.42,pose:'hook', limb:'aF',name:'CAFÉ HOOK'},
+  h_spin: {s:0.09,a:.14,r:.30,dmg:11,range:106,h:'mid', kb:260,stun:.5, pose:'rkick',limb:'lB',spin:1,launch:1,name:'CHECHIA SPIN'},
+  h_twin: {s:.08,a:.09,r:.24,dmg:10, range:106,h:'high',kb:60,stun:.4, pose:'rkick',limb:'lB',name:'TWIN KICKS',lunge:80},
   h_elbow:{s:.10,a:.10,r:.25,dmg:8, range:80, h:'mid', kb:220,stun:.36,pose:'elbow',limb:'aF',lunge:320},
   // Brik
   b_jab2:  {s:.05,a:.06,r:.14,dmg:5, range:84, h:'high',kb:30, stun:.34,pose:'jab',  limb:'aF',lunge:60},
@@ -463,18 +467,18 @@ const MOVES={
   b_head:  {s:.14,a:.10,r:.30,dmg:12,range:86, h:'high',kb:250,stun:.45,pose:'headbutt',limb:'head',armor:1,lunge:330,name:'HEADBUTT'},
   // Alyssa
   a_kick2:{s:.08,a:.08,r:.20,dmg:6, range:104,h:'mid', kb:40, stun:.38,pose:'kick2',limb:'lF',lunge:140},
-  a_burst:{s:.12,a:.12,r:.35,dmg:12,range:120,h:'mid', kb:50, stun:.5, pose:'palm', limb:'aF',burst:'#b26bff',launch:1,lift:430,name:'TYRIAN BURST'},
+  a_burst:{s:0.11,a:.12,r:.35,dmg:12,range:120,h:'mid', kb:50, stun:.5, pose:'palm', limb:'aF',burst:'#b26bff',launch:1,lift:430,name:'TYRIAN BURST'},
   a_fan:  {s:.09,a:.09,r:.28,dmg:9, range:104,h:'low', kb:50, stun:.5, pose:'sweep',limb:'lB',crouch:1,name:'DIDO\'S FAN'},
   a_palm: {s:.10,a:.08,r:.26,dmg:7, range:90, h:'mid', kb:340,stun:.3, pose:'palm', limb:'aF',burst:'#e8c66a'},
   // Selma
-  s_oar:   {s:.14,a:.10,r:.30,dmg:12,range:122,h:'mid',kb:300,stun:.5, pose:'smash',limb:'aF',weapon:'oar',launch:1,name:'OAR SWING'},
+  s_oar:   {s:0.12,a:.10,r:.30,dmg:12,range:122,h:'mid',kb:300,stun:.5, pose:'smash',limb:'aF',weapon:'oar',launch:1,name:'OAR SWING'},
   s_tide1: {s:.07,a:.07,r:.18,dmg:5, range:94, h:'low',kb:30, stun:.38,pose:'lowkick',limb:'lF',crouch:1},
-  s_tide2: {s:.10,a:.12,r:.28,dmg:10,range:100,h:'mid',kb:50, stun:.5, pose:'kick2',limb:'lF',spin:1,hop:260,launch:1,lift:420,name:'LOW TIDE'},
+  s_tide2: {s:.10,a:.12,r:.28,dmg:11,range:100,h:'mid',kb:50, stun:.5, pose:'kick2',limb:'lF',spin:1,hop:260,launch:1,lift:420,name:'LOW TIDE'},
   s_anchor:{s:.14,a:.08,r:.28,dmg:10,range:118,h:'mid',kb:230,stun:.4, pose:'kick2',limb:'lF'},
   // Dihya
-  d_kick2:{s:.06,a:.07,r:.16,dmg:6, range:102,h:'mid', kb:40, stun:.36,pose:'rkick',limb:'lB',lunge:130},
-  d_wind: {s:.08,a:.16,r:.30,dmg:12,range:106,h:'mid', kb:260,stun:.5, pose:'kick2',limb:'lF',spin:1,hop:300,launch:1,name:'MOUNTAIN WIND'},
-  d_axe:  {s:.14,a:.08,r:.30,dmg:12,range:106,h:'over',kb:200,stun:.45,pose:'axe',  limb:'lB',name:'AURÈS AXE',lunge:140},
+  d_kick2:{s:.06,a:.07,r:.16,dmg:7, range:102,h:'mid', kb:40, stun:.36,pose:'rkick',limb:'lB',lunge:130},
+  d_wind: {s:.08,a:.16,r:.30,dmg:13,range:106,h:'mid', kb:260,stun:.5, pose:'kick2',limb:'lF',spin:1,hop:300,launch:1,name:'MOUNTAIN WIND'},
+  d_axe:  {s:.14,a:.08,r:.30,dmg:13,range:106,h:'over',kb:200,stun:.45,pose:'axe',  limb:'lB',name:'AURÈS AXE',lunge:140},
   d_knee: {s:.08,a:.16,r:.25,dmg:9, range:76, h:'mid', kb:210,stun:.4, pose:'knee', limb:'lF',lunge:340,hop:260},
   // Zied
   z_palm:  {s:.10,a:.10,r:.30,dmg:11,range:100,h:'mid',kb:300,stun:.5, pose:'palm', limb:'aF',burst:'#efb877',launch:1,name:'SANDSTORM PALM',lunge:150},
@@ -488,11 +492,11 @@ const MOVES={
   c_shin:  {s:.09,a:.08,r:.18,dmg:7, range:96, h:'mid', kb:60, stun:.34,pose:'shin', limb:'lF'},
   c_shin2: {s:.07,a:.08,r:.18,dmg:6, range:100,h:'mid', kb:40, stun:.36,pose:'shin', limb:'lF',lunge:90},
   c_cape:  {s:.12,a:.10,r:.26,dmg:10,range:108,h:'mid', kb:170,stun:.4, pose:'capewhip',limb:'cape',capeFlare:1},
-  c_akala: {s:.14,a:.09,r:.30,dmg:13,range:96, h:'over',kb:200,stun:.45,pose:'slapdown',limb:'aB',name:'AKALA',lunge:140,hop:110,card:1,cards:3,cardMode:'floor'},
-  c_bermila:{s:.10,a:.16,r:.30,dmg:12,range:104,h:'mid',kb:60, stun:.5, pose:'twirl',limb:'cape',spin:1,cardRing:1,launch:1,lift:430,name:'BERMILA',lunge:80},
-  c_karta: {s:.10,a:.10,r:.30,dmg:10,range:112,h:'low', kb:120,stun:.4, pose:'lowfan',limb:'aF',crouch:1,trip:1,name:'KARTA',lunge:90,cards:4,cardMode:'floor'},
+  c_akala: {s:.14,a:.09,r:.30,dmg:11,range:96, h:'over',kb:200,stun:.45,pose:'slapdown',limb:'aB',name:'AKALA',lunge:140,hop:110,card:1,cards:3,cardMode:'floor'},
+  c_bermila:{s:.10,a:.16,r:.30,dmg:11,range:104,h:'mid',kb:60, stun:.5, pose:'twirl',limb:'cape',spin:1,cardRing:1,launch:1,lift:430,name:'BERMILA',lunge:80},
+  c_karta: {s:.10,a:.10,r:.30,dmg:9,range:112,h:'low', kb:120,stun:.4, pose:'lowfan',limb:'aF',crouch:1,trip:1,name:'KARTA',lunge:90,cards:4,cardMode:'floor'},
   c_dinari:{s:.10,a:.14,r:.28,dmg:10,range:92, h:'mid', kb:40, stun:.5, pose:'flourish',limb:'aF',launch:1,lift:450,name:'DINARI',lunge:70,hop:170,cards:6,cardMode:'up'},
-  c_flick: {s:.10,a:.08,r:.24,dmg:7, range:132,h:'mid', kb:130,stun:.34,pose:'throwcard',limb:'aF',cards:2},
+  c_flick: {s:.10,a:.08,r:.24,dmg:7, range:118,h:'mid', kb:130,stun:.34,pose:'throwcard',limb:'aF',cards:2},
   k_spoon: {s:.05,a:.06,r:.13,dmg:5, range:92, h:'high',kb:40, stun:.3, pose:'spoontap', limb:'aF'},
   k_spoon2:{s:.05,a:.06,r:.13,dmg:5, range:94, h:'high',kb:30, stun:.34,pose:'spoontap2',limb:'aF',lunge:60},
   k_kaff:  {s:.10,a:.08,r:.28,dmg:12,range:90, h:'mid', kb:260,stun:.45,pose:'slapback', limb:'aB',spin:1,launch:1,lift:320,name:'KAFF',lunge:80},
@@ -502,18 +506,18 @@ const MOVES={
   k_sweep: {s:.10,a:.10,r:.30,dmg:10,range:132,h:'low', kb:120,stun:.4, pose:'broomlow', limb:'aB',weapon:'broom',crouch:1,trip:1,name:'MSALHA SWEEP'},
   k_spin:  {s:.10,a:.16,r:.30,dmg:12,range:124,h:'mid', kb:60, stun:.5, pose:'broomswing',limb:'aB',weapon:'broom',spin:1,launch:1,lift:420,name:'MASHA'},
   k_smash: {s:.15,a:.09,r:.32,dmg:13,range:120,h:'over',kb:200,stun:.45,pose:'broomover',limb:'aB',weapon:'broom',hop:100,lunge:100,name:'MSALHA SMASH'},
-  k_poke:  {s:.10,a:.08,r:.24,dmg:7, range:140,h:'mid', kb:150,stun:.34,pose:'spoonpoke',limb:'aF',lunge:160},
+  k_poke:  {s:.10,a:.08,r:.24,dmg:7, range:124,h:'mid', kb:150,stun:.34,pose:'spoonpoke',limb:'aF',lunge:160},
   n_shield:{s:.06,a:.06,r:.13,dmg:5, range:86, h:'high',kb:50, stun:.3, pose:'shieldjab',limb:'aF'},
-  n_slash: {s:.09,a:.08,r:.18,dmg:8, range:106,h:'mid', kb:80, stun:.34,pose:'slash',limb:'aB'},
+  n_slash: {s:.09,a:.08,r:.18,dmg:8, range:98,h:'mid', kb:80, stun:.34,pose:'slash',limb:'aB'},
   n_teep:  {s:.10,a:.08,r:.20,dmg:8, range:102,h:'mid', kb:140,stun:.34,pose:'teep', limb:'lF'},
   n_knee:  {s:.10,a:.09,r:.22,dmg:9, range:80, h:'mid', kb:90, stun:.36,pose:'rknee',limb:'lB',lunge:120},
-  n_slash2:{s:.07,a:.08,r:.18,dmg:7, range:108,h:'mid', kb:40, stun:.38,pose:'slash',limb:'aB',lunge:80},
-  n_trebia:{s:.10,a:.16,r:.30,dmg:12,range:112,h:'mid', kb:60, stun:.5, pose:'slash',limb:'aB',spin:1,launch:1,lift:430,name:'TREBIA',lunge:70},
+  n_slash2:{s:.07,a:.08,r:.18,dmg:7, range:100,h:'mid', kb:40, stun:.38,pose:'slash',limb:'aB',lunge:80},
+  n_trebia:{s:.10,a:.16,r:.30,dmg:11,range:112,h:'mid', kb:60, stun:.5, pose:'slash',limb:'aB',spin:1,launch:1,lift:430,name:'TREBIA',lunge:70},
   n_trasimene:{s:.10,a:.10,r:.30,dmg:11,range:96,h:'mid',kb:320,stun:.45,pose:'shieldbash',limb:'aF',lunge:220,armor:1,name:'TRASIMENE'},
   n_rhone: {s:.08,a:.12,r:.28,dmg:10,range:84, h:'mid', kb:40, stun:.5, pose:'rknee',limb:'lB',launch:1,lift:450,hop:220,lunge:120,name:'RHÔNE'},
   n_knee2: {s:.07,a:.08,r:.18,dmg:7, range:84, h:'mid', kb:40, stun:.36,pose:'rknee',limb:'lB',lunge:100},
-  n_barca: {s:.15,a:.09,r:.32,dmg:14,range:106,h:'over',kb:220,stun:.45,pose:'chop', limb:'aB',lunge:120,hop:120,name:'BARCA'},
-  n_thrust:{s:.12,a:.08,r:.26,dmg:9, range:138,h:'mid', kb:200,stun:.38,pose:'thrust',limb:'aB',lunge:220},
+  n_barca: {s:.15,a:.09,r:.32,dmg:12,range:106,h:'over',kb:220,stun:.45,pose:'chop', limb:'aB',lunge:120,hop:120,name:'BARCA'},
+  n_thrust:{s:.12,a:.08,r:.26,dmg:9, range:124,h:'mid', kb:200,stun:.38,pose:'thrust',limb:'aB',lunge:220},
   z_k2:    {s:.07,a:.08,r:.18,dmg:6, range:104,h:'mid',kb:40, stun:.36,pose:'kick', limb:'lF',lunge:110},
   z_cutter:{s:.09,a:.08,r:.28,dmg:9, range:106,h:'low',kb:120,stun:.4, pose:'sweep',limb:'lB',crouch:1,trip:1,name:'DUNE CUTTER',lunge:110},
   z_wheel: {s:.10,a:.14,r:.30,dmg:12,range:108,h:'mid',kb:60, stun:.5, pose:'rkick',limb:'lB',spin:1,launch:1,lift:420,name:'SAND WHEEL'},
@@ -521,7 +525,7 @@ const MOVES={
   h_back:  {s:.06,a:.07,r:.16,dmg:6, range:86, h:'high',kb:40, stun:.36,pose:'jab',  limb:'aF',lunge:80},
   h_sweep: {s:.12,a:.10,r:.32,dmg:10,range:108,h:'low', kb:120,stun:.4, pose:'sweep',limb:'lB',crouch:1,trip:1,name:'SOUK SWEEP'},
   h_rise:  {s:.10,a:.10,r:.26,dmg:10,range:94, h:'mid', kb:40, stun:.5, pose:'upper',limb:'aB',launch:1,lift:440,name:'MARSA RISE',lunge:150},
-  b_dock:  {s:.18,a:.10,r:.36,dmg:15,range:98, h:'over',kb:260,stun:.5, pose:'smash',limb:'aF',launch:1,name:'DOCK SLAM',lunge:120},
+  b_dock:  {s:.18,a:.10,r:.36,dmg:13,range:98, h:'over',kb:260,stun:.5, pose:'smash',limb:'aF',launch:1,name:'DOCK SLAM',lunge:120},
   b_stomp: {s:.12,a:.10,r:.32,dmg:11,range:102,h:'low', kb:120,stun:.4, pose:'lowkick',limb:'lF',crouch:1,trip:1,name:'ANCHOR STOMP',lunge:90},
   a_byrsa: {s:.09,a:.09,r:.28,dmg:11,range:110,h:'mid', kb:320,stun:.45,pose:'kick', limb:'lF',name:'BYRSA KICK',lunge:120},
   a_wheel: {s:.10,a:.14,r:.30,dmg:12,range:110,h:'mid', kb:60, stun:.5, pose:'rkick',limb:'lB',spin:1,launch:1,lift:420,name:'TANIT WHEEL',lunge:90},
@@ -530,7 +534,7 @@ const MOVES={
   s_wave:  {s:.08,a:.10,r:.28,dmg:10,range:110,h:'mid', kb:220,stun:.45,pose:'kick2',limb:'lF',hop:200,name:'WAVE KICK',lunge:110},
   d_jab2:  {s:.04,a:.06,r:.12,dmg:4, range:86, h:'high',kb:30, stun:.34,pose:'jab',  limb:'aF',lunge:80},
   d_low:   {s:.08,a:.08,r:.26,dmg:8, range:104,h:'low', kb:110,stun:.4, pose:'lowkick',limb:'lF',crouch:1,trip:1,name:'KAHINA SWEEP',lunge:90},
-  d_crescent:{s:.09,a:.12,r:.28,dmg:11,range:108,h:'high',kb:240,stun:.45,pose:'rkick',limb:'lB',spin:1,name:'AURÈS CRESCENT',lunge:90},
+  d_crescent:{s:.09,a:.12,r:.28,dmg:12,range:108,h:'high',kb:240,stun:.45,pose:'rkick',limb:'lB',spin:1,name:'AURÈS CRESCENT',lunge:90},
 };
 /* Poses. Angles in degrees for [upper, lower] limb segments:
    0 = straight down, 90 = forward, 180 = straight up. */
@@ -997,7 +1001,7 @@ function newMatch(defA,defB,stageIdx){
   $('n1').textContent=defA.name;$('n1').style.color=defA.hud;$('n2').textContent=defB.name;$('n2').style.color=defB.hud;
   $('y1').textContent=mode==='net'&&myIndex()===0?'YOU':'';$('y2').textContent=mode==='net'&&myIndex()===1?'YOU':mode==='training'?'DUMMY':mode==='net'?'':'CPU';
   document.documentElement.style.setProperty('--p1',defA.hud);document.documentElement.style.setProperty('--p2',defB.hud);
-  $('hud').hidden=false;$('pad').hidden=false;$('card').hidden=true;$('netlbl').hidden=mode!=='net';$('pausebtn').hidden=false;
+  $('hud').hidden=false;$('pad').hidden=false;$('card').hidden=true;$('netlbl').hidden=mode!=='net';$('netlbl').textContent=NET.online?'ONLINE':'WI-FI';$('pausebtn').hidden=false;
   $('trainInfo').hidden=mode!=='training';train.hits=train.dmg=0;renderTrain();
   releaseAll();paused=false;cam.x=SW/2;cam.z=1;
   round=0;NET.inMatch=true;
@@ -1466,7 +1470,7 @@ const cap=s=>s.charAt(0)+s.slice(1).toLowerCase();
    The host runs the whole fight; the guest sends button presses and
    draws the host's snapshots.
    ===================================================================== */
-const NET={role:null,pc:null,ctl:null,st:null,evq:[],inMatch:false,guestPick:null,myPick:null,stream:null,scanTimer:0,lastSnap:0};
+const NET={online:0,peer:null,rtt:0,role:null,pc:null,ctl:null,st:null,evq:[],inMatch:false,guestPick:null,myPick:null,stream:null,scanTimer:0,lastSnap:0};
 const b64u={enc:u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},
   dec:s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}};
 async function packDesc(desc){
@@ -1491,8 +1495,9 @@ async function primeCamera(){
 function netSend(o){try{if(NET.ctl&&NET.ctl.readyState==='open')NET.ctl.send(JSON.stringify(o))}catch(_){}}
 function netClose(){
   stopScan();
-  try{NET.ctl&&NET.ctl.close()}catch(_){}try{NET.st&&NET.st.close()}catch(_){}try{NET.pc&&NET.pc.close()}catch(_){}
-  Object.assign(NET,{role:null,pc:null,ctl:null,st:null,evq:[],inMatch:false,guestPick:null,myPick:null});
+  try{NET.ctl&&NET.ctl.close()}catch(_){}try{NET.st&&NET.st.close()}catch(_){}try{NET.pc&&NET.pc.close()}catch(_){}try{NET.peer&&NET.peer.destroy()}catch(_){}
+  clearInterval(NET.pingT);clearTimeout(NET.joinT);
+  Object.assign(NET,{online:0,peer:null,rtt:0,role:null,pc:null,ctl:null,st:null,evq:[],inMatch:false,guestPick:null,myPick:null});
 }
 function newPC(){
   const pc=new RTCPeerConnection({iceServers:[]});NET.pc=pc;
@@ -1506,11 +1511,15 @@ function wireChannels(){
   NET.st.onmessage=e=>{if(NET.role==='guest')applySnap(JSON.parse(e.data))};
 }
 let connectedOnce=false;
-function onConnected(){if(connectedOnce)return;connectedOnce=true;stopScan();play('bell');netSelectFighter()}
+function onConnected(){if(connectedOnce)return;connectedOnce=true;stopScan();play('bell');clearTimeout(NET.joinT);
+  if(NET.online){clearInterval(NET.pingT);NET.heard=performance.now();
+    // heartbeat: a phone that goes quiet for 6 seconds has gone (mobile networks don't always say so)
+    NET.pingT=setInterval(()=>{if(performance.now()-NET.heard>6000){lostConnection();return}netSend({t:'ping',at:performance.now()})},1000)}
+  netSelectFighter()}
 function lostConnection(){
-  if(!NET.role)return;netClose();phase='menu';p1=p2=null;mode='cpu';
+  if(!NET.role)return;const was=NET.online;netClose();phase='menu';p1=p2=null;mode='cpu';
   hideMatchUI();
-  showPanel(`<h2>CONNECTION LOST</h2><p>The other phone left or the Wi-Fi dropped. Make sure both phones stay on the same Wi-Fi or hotspot, then pair again.</p><div class="row"><button class="go" id="go">Main menu</button></div>`);
+  showPanel(`<h2>CONNECTION LOST</h2><p>${was?'The other phone left or lost its internet connection. Check both phones have mobile data or Wi-Fi, then make a new room.':'The other phone left or the Wi-Fi dropped. Make sure both phones stay on the same Wi-Fi or hotspot, then pair again.'}</p><div class="row"><button class="go" id="go">Main menu</button></div>`);
   $('go').onclick=menu;
 }
 async function hostStart(){
@@ -1552,7 +1561,57 @@ async function joinStart(){
     return true;
   },()=>{netClose();netMenu()});
 }
-function copyText(t,ta){try{navigator.clipboard.writeText(t).catch(()=>{ta.select()})}catch(_){ta.select()}}
+
+/* ---- ONLINE: play over mobile data or any internet, with a 5-letter room code.
+   A free public matchmaking server (PeerJS) only introduces the two phones; the
+   match itself is a direct phone-to-phone link, relayed through a TURN server
+   when the mobile network blocks a direct one. The host still runs the fight. */
+const ROOM_ABC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',ROOM_PREFIX='rooftoprumble-v1-';
+const PEER_OPTS=()=>Object.assign({debug:0,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'}]}},window.__PEEROPTS||{});
+const CAN_ONLINE=CAN_NET&&typeof Peer!=='undefined';
+function roomCode(){let c='';const r=new Uint32Array(5);crypto.getRandomValues(r);for(const v of r)c+=ROOM_ABC[v%ROOM_ABC.length];return c}
+function wrapConn(c){const w={c,get readyState(){return c.open?'open':'connecting'},send:d=>{try{c.send(d)}catch(_){}},close:()=>{try{c.close()}catch(_){}}};
+  c.on('data',d=>w.onmessage&&w.onmessage({data:d}));c.on('open',()=>w.onopen&&w.onopen());
+  c.on('close',()=>{if(NET.role&&(NET.ctl===w||NET.st===w))lostConnection()});c.on('error',()=>{});return w}
+function peerError(e){
+  const why={'network':'This phone can\'t reach the internet. Turn on mobile data or Wi-Fi and try again.','server-error':'The matchmaking server didn\'t answer. Try again in a moment.',
+    'socket-error':'The matchmaking server didn\'t answer. Try again in a moment.','peer-unavailable':'No room with that code. Check the letters with your friend; the host must keep the room screen open.',
+    'browser-incompatible':'This phone\'s web view can\'t do online matches.'}[e&&e.type]||'Something went wrong connecting. Try again.';
+  netClose();showPanel(`<h2>COULDN'T CONNECT</h2><p class="warn">${why}</p><div class="row"><button class="go" id="back">Back</button></div>`);$('back').onclick=netMenu}
+function onlineHost(tries=0){
+  netClose();connectedOnce=false;NET.role='host';mode='net';NET.online=1;
+  showPanel(`<h2>ONLINE ROOM</h2><p class="status" id="st">Opening a room…</p><div class="row"><button class="go ghost" id="back">Cancel</button></div>`);$('back').onclick=()=>{netClose();netMenu()};
+  const code=roomCode(),peer=new Peer(ROOM_PREFIX+code,PEER_OPTS());NET.peer=peer;
+  peer.on('open',()=>{if(NET.peer!==peer)return;
+    showPanel(`<h2>ONLINE ROOM</h2><p>Send this code to your friend. On their phone: VS FRIEND → Join online room.</p>
+      <div class="roomcode" id="rc">${code}</div>
+      <div class="row"><button class="go ghost" id="share" type="button">Share code</button><button class="go ghost" id="back">Cancel</button></div>
+      <p class="status" id="st">Waiting for your friend… keep this screen open.</p>`);
+    $('back').onclick=()=>{netClose();netMenu()};
+    $('share').onclick=()=>{const t=`Join my Rooftop Rumble room: ${code}`;if(navigator.share)navigator.share({text:t}).catch(()=>{});else copyText(code,null),setStatus('Code copied.')}});
+  peer.on('connection',conn=>{if(NET.peer!==peer)return;
+    if(conn.label==='ctl'){if(NET.ctl){conn.close();return}NET.ctl=wrapConn(conn)}else{if(NET.st){conn.close();return}NET.st=wrapConn(conn)}
+    setStatus('Your friend is connecting…');if(NET.ctl&&NET.st)wireChannels()});
+  peer.on('error',e=>{if(NET.peer!==peer)return;if(e.type==='unavailable-id'&&tries<4)return onlineHost(tries+1);peerError(e)});
+}
+function onlineJoin(){
+  netClose();mode='net';
+  showPanel(`<h2>JOIN ONLINE ROOM</h2><p>Type the 5-letter code from the host's phone.</p>
+    <input class="roomin" id="room" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" placeholder="ABCDE">
+    <p class="status" id="st"></p><div class="row"><button class="go ghost" id="back">Back</button><button class="go" id="go">Join</button></div>`);
+  const inp=$('room');inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5)});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});setTimeout(()=>inp.focus(),50);
+  $('back').onclick=()=>{netClose();netMenu()};
+  $('go').onclick=()=>{const code=inp.value.trim();if(code.length!==5){setStatus('The code has 5 letters.');return}
+    connectedOnce=false;NET.role='guest';NET.online=1;setStatus('Finding the room…');$('go').disabled=true;
+    const peer=new Peer(PEER_OPTS());NET.peer=peer;
+    peer.on('open',()=>{if(NET.peer!==peer)return;const id=ROOM_PREFIX+code;
+      NET.ctl=wrapConn(peer.connect(id,{label:'ctl',reliable:true,serialization:'raw'}));
+      NET.st=wrapConn(peer.connect(id,{label:'st',reliable:false,serialization:'raw'}));wireChannels();setStatus('Connecting to the host…');
+      NET.joinT=setTimeout(()=>{if(NET.peer===peer&&!connectedOnce)peerError({type:'peer-unavailable'})},12000)});
+    peer.on('error',e=>{if(NET.peer===peer)peerError(e)})};
+}
+function copyText(t,ta){try{navigator.clipboard.writeText(t).catch(()=>{ta&&ta.select()})}catch(_){ta&&ta.select()}}
 function setStatus(t){const s=$('st');if(s)s.textContent=t}
 function drawQR(canvas,text){
   const q=qrcode(0,'L');q.addData(text,'Byte');q.make();
@@ -1585,6 +1644,7 @@ function stopScan(){clearTimeout(NET.scanTimer);if(NET.stream){NET.stream.getTra
 
 // ---- lobby over the connection
 function onCtl(m){
+  NET.heard=performance.now();
   switch(m.t){
     case 'k':if(NET.role==='host'){if(m.d)press(REMOTE,m.k);else release(REMOTE,m.k)}break;
     case 'pick':NET.guestPick=m.c;if(NET.role==='host'&&NET.myPick!=null&&phase==='lobby')netSelectStage();else setStatus(`Your friend picked ${CHARS[m.c].name}.`);break;
@@ -1593,6 +1653,8 @@ function onCtl(m){
     case 'select':netSelectFighter();break;
     case 'result':showResult();break;
     case 'bye':lostConnection();break;
+    case 'ping':netSend({t:'pong',at:m.at});break;
+    case 'pong':NET.rtt=Math.round(performance.now()-m.at);break;
   }
 }
 function netSelectFighter(){
@@ -1680,7 +1742,7 @@ function menu(){
     <button class="mode" id="m_arcade" type="button"><b>ARCADE</b><small>Beat all eight rivals, one stage at a time, to become champion.</small></button>
     <button class="mode" id="m_cpu" type="button"><b>VS CPU</b><small>One match against a random rival, on the stage you pick.</small></button>
     <button class="mode" id="m_train" type="button"><b>TRAINING</b><small>Practise strings and juggles on a dummy. Shows combo damage.</small></button>
-    <button class="mode${CAN_NET?'':' dis'}" id="m_friend" type="button"><b>VS FRIEND</b><small>${CAN_NET?'Two phones on the same Wi-Fi or hotspot. Pair with a QR code.':'Wi-Fi matches work in the Android app.'}</small></button>
+    <button class="mode${CAN_NET?'':' dis'}" id="m_friend" type="button"><b>VS FRIEND</b><small>${CAN_NET?'Two phones: online with a room code, or on the same Wi-Fi with a QR code.':'Online and Wi-Fi matches work in the Android app.'}</small></button>
   </div>
   ${CONTROLS}
   <div class="row"><button class="go ghost" id="m_set" type="button">Settings</button></div>`);screen='main';
@@ -1700,15 +1762,18 @@ function settings(){
   $('back').onclick=menu;$('back').focus();
 }
 function netMenu(){
-  mode='net';phase='menu';
-  showPanel(`<h2>VS FRIEND · WI-FI</h2>
-  <p>Put both phones on the same Wi-Fi, or turn on a hotspot on one phone and connect the other to it. No internet needed.</p>
+  netClose();mode='net';phase='menu';
+  showPanel(`<h2>VS FRIEND</h2>
+  <p>Online works anywhere both phones have mobile data or internet. Wi-Fi works with no internet when you are in the same place.</p>
   <div class="modes">
-    <button class="mode" id="host" type="button"><b>HOST</b><small>You pick the stage. Your phone shows the first code.</small></button>
-    <button class="mode" id="join" type="button"><b>JOIN</b><small>Scan the host's code, then show yours back.</small></button>
+    <button class="mode${CAN_ONLINE?'':' dis'}" id="ohost" type="button"><b>ONLINE · CREATE ROOM</b><small>Get a 5-letter code and send it to your friend. You pick the stage.</small></button>
+    <button class="mode${CAN_ONLINE?'':' dis'}" id="ojoin" type="button"><b>ONLINE · JOIN ROOM</b><small>Type the code your friend sent you.</small></button>
+    <button class="mode" id="host" type="button"><b>WI-FI · HOST</b><small>Same Wi-Fi or hotspot, no internet. Your phone shows a QR code.</small></button>
+    <button class="mode" id="join" type="button"><b>WI-FI · JOIN</b><small>Scan the host's QR code, then show yours back.</small></button>
   </div>
   <div class="row"><button class="go ghost" id="back">Back</button></div>`);
   $('host').onclick=hostStart;$('join').onclick=joinStart;$('back').onclick=menu;
+  $('ohost').onclick=()=>{if(CAN_ONLINE)onlineHost()};$('ojoin').onclick=()=>{if(CAN_ONLINE)onlineJoin()};
 }
 function moveListHTML(d){
   const rows=[...(d.basic?UNIV_LIST.filter(r=>r[0]!=='1 2'&&r[0]!=='↓ + 2'):UNIV_LIST),...d.list,['S','Special: '+d.sp.name],['S, full meter','SUPER: '+d.sp.super],['S + GRAB, low health','LAST BREATH: '+ARTS[d.id].name+'. '+ARTS[d.id].desc]];
@@ -2421,6 +2486,7 @@ function draw(dt){
 const hudC={};function setW(id,v){v=Math.round(v*2)/2;if(hudC[id]!==v){hudC[id]=v;$(id).style.width=v+'%'}}
 function hud(){
   if(!p1||!p2||$('hud').hidden)return;
+  if(NET.online&&mode==='net'){const l='ONLINE '+(NET.rtt?NET.rtt+'MS':'');if(hudC.nl!==l){hudC.nl=l;$('netlbl').textContent=l}}
   {const on=!!cineView();if(hudC.cv!==on){hudC.cv=on;document.body.classList.toggle('cine',on)}}
   {const me=mode==='net'&&myIndex()===1?p2:p1,show=canArt(me)&&!cine;if(hudC.xb!==show){hudC.xb=show;$('xbtn').hidden=!show}}
   const tm=mode==='training'?'∞':String(Math.ceil(timer));if(hudC.tm!==tm){hudC.tm=tm;$('timer').textContent=tm}

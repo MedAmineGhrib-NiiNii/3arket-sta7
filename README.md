@@ -60,6 +60,12 @@ npx cap open android      # opens Android Studio
 
 In Android Studio: **Build → Build App Bundle(s) / APK(s) → Build APK(s)**, or press Run with your phone plugged in (USB debugging on).
 
+## Playing online (mobile data)
+
+VS FRIEND → **Online · Create room** gives the host a 5-letter room code to send to a friend (the Share button opens WhatsApp, Messenger and so on). The friend picks **Online · Join room** and types the code. Both phones only need mobile data or any internet connection.
+
+The free public PeerJS server only introduces the two phones. The match then runs on a direct phone-to-phone link, or through PeerJS's free relay (TURN) server when a mobile network blocks direct links. The host's phone still runs the whole fight. The ping in milliseconds shows under the timer. Those free servers have no uptime guarantee; if online pairing fails, the Wi-Fi/hotspot mode still works with no internet at all.
+
 ## Playing with a friend over Wi-Fi
 
 1. Both phones install the app.
