@@ -17,6 +17,10 @@ A Tunisian 1v1 fighting game with Tekken-style controls: nine fighters with thei
 
 Everyone has **1 2** (One-Two), **↓+2** (launcher: juggle them in the air with 1 or 4) and **↓+4** (sweep). Each fighter's own strings, direction moves and movement trick are in the move list on the fighter select screen and in the pause menu.
 
+## Language
+
+The game speaks Tunisian Derja by default, written in Latin letters with numbers the way people type it online (3 = ع, 7 = ح, 9 = ق, 5 = خ). Spellings follow the most common forms in the TUNIZI corpus of 100,000 Tunisian comments (barcha, mta3, bech, mouch, ken, tawa). English is one tap away in Settings. All the Derja text lives in `src/derja.js`, keyed by the English it replaces, so it is easy to correct a word.
+
 ## Last Breath (آخر نفس)
 
 Once per round, when your health drops to 25% or less, press **S + GRAB** together (or the red **LAST BREATH** button, or **H** on a keyboard). Each fighter's move is slow or easy to read, and leaves you wide open if it misses; if it lands, it plays a short cinematic and deals about a third of a health bar.

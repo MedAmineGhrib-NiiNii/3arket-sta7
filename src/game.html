@@ -1,6 +1,6 @@
 <title>Rooftop Rumble</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&family=Jersey+10&display=swap">
 <style>
 /* Layout: letterboxed 800x450 stage on a full-bleed canvas; fighting-game HUD on top; touch pad at the bottom; one scrollable card for menus, lobby, select screens and results. Single night-blue theme by choice. */
 :root{
@@ -15,7 +15,7 @@
   --p1:#7fb6ff;
   --p2:#ff9a52;
   --display:"Press Start 2P",ui-monospace,monospace;
-  --body:"Pixelify Sans",ui-monospace,monospace;
+  --body:"Jersey 10","Pixelify Sans",ui-monospace,monospace;
   --arabic:"Aref Ruqaa",serif;
   color-scheme:dark;
 }
@@ -131,7 +131,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 .btns .x{font-size:9px;line-height:1.1;border-color:var(--hurt);background:color-mix(in srgb,var(--hurt) 45%,transparent);animation:lbpulse .5s ease-in-out infinite alternate;will-change:opacity}
 .btns .x small{color:var(--fg)}
 @keyframes lbpulse{to{opacity:.6}}
-.meter.art::after{content:'LAST BREATH';position:absolute;top:9px;left:0;font-family:var(--display);font-size:7px;color:var(--hurt);white-space:nowrap;animation:glow .3s steps(2) infinite alternate}
+.meter.art::after{content:attr(data-lb);position:absolute;top:9px;left:0;font-family:var(--display);font-size:7px;color:var(--hurt);white-space:nowrap;animation:glow .3s steps(2) infinite alternate}
 .r .meter.art::after{left:auto;right:0}
 .btns .s{border-color:var(--hurt)}
 @media (max-height:520px){h1{font-size:clamp(20px,6vh,30px)}.ar{font-size:22px}h2{font-size:15px}.panelx{padding:20px 16px 16px;gap:10px}.mode{padding:10px 12px}.mode b{font-size:14px}.mode small{font-size:14px}.panelx p{font-size:15px}}
@@ -667,6 +667,7 @@ const chainOf=(f,b)=>f.def.chain[f.atkName+'>'+b]||UNIV[f.atkName+'>'+b];
 /* =====================================================================
    STAGES
    ===================================================================== */
+/*@@DERJA@@*/
 /*@@STAGES@@*/
 
 /* =====================================================================
@@ -675,12 +676,24 @@ const chainOf=(f,b)=>f.def.chain[f.atkName+'>'+b]||UNIV[f.atkName+'>'+b];
 let p1=null,p2=null,round=0,timer=60,phase='menu',phaseT=0,cpuLevel=1,superFreeze=0,superBy=null,projs=[],stage=STAGES[0];
 let mode='cpu',pickChar=0,pickStage=0,lastPicks=null,paused=false,screen='';
 // settings and last picks, kept on this phone between sessions
-const SET={sound:1,buzz:1,pad:1,lefty:0,char:0,stage:0};
+const SET={lang:'tn',sound:1,buzz:1,pad:1,lefty:0,char:0,stage:0};
 try{Object.assign(SET,JSON.parse(localStorage.getItem('rr-settings')||'{}'))}catch(_){}
 function saveSet(){try{localStorage.setItem('rr-settings',JSON.stringify(SET))}catch(_){}}
 pickChar=Math.min(CHARS.length-1,SET.char|0);pickStage=Math.min(STAGES.length-1,SET.stage|0);
 function applySet(){const pd=$('pad');if(pd){pd.style.setProperty('--ps',SET.pad);pd.classList.toggle('lefty',!!SET.lefty)}}
 applySet();
+// Every piece of on-screen text is written in English in the code and translated on the way to the
+// screen: new or changed text nodes are swapped for their Derja version (src/derja.js).
+const ORIG=new WeakMap(),SETV=new WeakMap();
+function trText(n){const p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;const v=n.nodeValue;if(SETV.get(n)===v)return;
+  ORIG.set(n,v);const t=T(v);SETV.set(n,t);if(t!==v)n.nodeValue=t}
+function trTree(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode()))trText(n)}
+function relang(){LANG=SET.lang==='en'?'en':'tn';const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+  while((n=w.nextNode())){if(!ORIG.has(n))continue;const t=T(ORIG.get(n));SETV.set(n,t);n.nodeValue=t}
+  trTree(document.body);for(const id of ['p1m','p2m'])$(id).dataset.lb=T('LAST BREATH');document.documentElement.lang=LANG==='tn'?'aeb-Latn':'en'}
+new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')trText(m.target);else for(const a of m.addedNodes){if(a.nodeType===3)trText(a);else if(a.nodeType===1)trTree(a)}}})
+  .observe(document.body,{subtree:true,childList:true,characterData:true});
+relang();
 const arc={list:[],idx:0};
 const train={dummy:'stand',meter:true,hits:0,dmg:0};
 const DUMMY_MODES={stand:'Stand',block:'Block',cblock:'Crouch block',jump:'Jump'};
@@ -1449,11 +1462,11 @@ function menu(){
   $('m_arcade').focus();
 }
 function settings(){
-  const lab={sound:v=>'Sound: '+(v?'On':'Off'),buzz:v=>'Vibration: '+(v?'On':'Off'),pad:v=>'Button size: '+(v<.95?'Small':v>1.05?'Large':'Normal'),lefty:v=>'D-pad on the '+(v?'right':'left')};
+  const lab={lang:v=>v==='en'?'Language: English':'Lougha: Tounsi',sound:v=>'Sound: '+(v?'On':'Off'),buzz:v=>'Vibration: '+(v?'On':'Off'),pad:v=>'Button size: '+(v<.95?'Small':v>1.05?'Large':'Normal'),lefty:v=>'D-pad on the '+(v?'right':'left')};
   showPanel(`<h2>SETTINGS</h2><div class="setl">${Object.keys(lab).map(k=>`<button class="go ghost" id="s_${k}" type="button">${lab[k](SET[k])}</button>`).join('')}</div>
   <p>Settings stay on this phone.</p><div class="row"><button class="go" id="back">Done</button></div>`);
-  const flip={sound:v=>v?0:1,buzz:v=>{v=v?0:1;if(v&&navigator.vibrate)try{navigator.vibrate(30)}catch(_){};return v},pad:v=>v<.95?1:v>1.05?.85:1.15,lefty:v=>v?0:1};
-  for(const k in lab)$('s_'+k).onclick=()=>{SET[k]=flip[k](SET[k]);saveSet();applySet();$('s_'+k).textContent=lab[k](SET[k]);if(k==='sound'&&SET.sound)SFX.hit()};
+  const flip={lang:v=>v==='en'?'tn':'en',sound:v=>v?0:1,buzz:v=>{v=v?0:1;if(v&&navigator.vibrate)try{navigator.vibrate(30)}catch(_){};return v},pad:v=>v<.95?1:v>1.05?.85:1.15,lefty:v=>v?0:1};
+  for(const k in lab)$('s_'+k).onclick=()=>{SET[k]=flip[k](SET[k]);saveSet();applySet();$('s_'+k).textContent=lab[k](SET[k]);if(k==='sound'&&SET.sound)SFX.hit();if(k==='lang'){relang();settings()}};
   $('back').onclick=menu;$('back').focus();
 }
 function netMenu(){
@@ -2175,7 +2188,7 @@ function draw(dt){
   m.setTransform(dpr*S,0,0,dpr*S,dpr*OX,dpr*OY);m.textAlign='center';m.textBaseline='middle';
   for(const t of texts){const pop=1+.35*clamp(1-(t.t0-t.t)/.12,0,1),x=t.x?clamp(t.x,140,SW-140):SW/2,sz=Math.max(12,Math.round(t.size*.2)*2);
     m.save();m.translate(Math.round(x),Math.round(t.y));m.scale(pop,pop);m.globalAlpha=Math.min(1,t.t*4);m.font=`${sz}px "Press Start 2P",monospace`;
-    m.fillStyle=OUTLINE;m.fillText(t.txt,4,4);m.lineWidth=Math.max(3,sz/6);m.strokeStyle=OUTLINE;m.lineJoin='miter';m.strokeText(t.txt,0,0);m.fillStyle=t.col;m.fillText(t.txt,0,0);m.restore()}
+    const tx=T(t.txt);m.fillStyle=OUTLINE;m.fillText(tx,4,4);m.lineWidth=Math.max(3,sz/6);m.strokeStyle=OUTLINE;m.lineJoin='miter';m.strokeText(tx,0,0);m.fillStyle=t.col;m.fillText(tx,0,0);m.restore()}
   m.globalAlpha=1;
 }
 const hudC={};function setW(id,v){v=Math.round(v*2)/2;if(hudC[id]!==v){hudC[id]=v;$(id).style.width=v+'%'}}

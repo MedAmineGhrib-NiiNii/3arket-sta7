@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#0f1d38">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 <title>Rooftop Rumble</title>
-<style>@font-face{font-family:'Press Start 2P';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/press-start-2p-latin-400-normal.woff2) format('woff2')}@font-face{font-family:'Pixelify Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/pixelify-sans-latin-400-normal.woff2) format('woff2')}@font-face{font-family:'Pixelify Sans';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/pixelify-sans-latin-700-normal.woff2) format('woff2')}@font-face{font-family:'Aref Ruqaa';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/aref-ruqaa-arabic-700-normal.woff2) format('woff2')}</style>
+<style>@font-face{font-family:'Press Start 2P';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/press-start-2p-latin-400-normal.woff2) format('woff2')}@font-face{font-family:'Pixelify Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/pixelify-sans-latin-400-normal.woff2) format('woff2')}@font-face{font-family:'Pixelify Sans';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/pixelify-sans-latin-700-normal.woff2) format('woff2')}@font-face{font-family:'Aref Ruqaa';font-weight:700;font-style:normal;font-display:swap;src:url(fonts/aref-ruqaa-arabic-700-normal.woff2) format('woff2')}@font-face{font-family:'Jersey 10';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/jersey-10-latin-400-normal.woff2) format('woff2')}</style>
 <style>
 /* Layout: letterboxed 800x450 stage on a full-bleed canvas; fighting-game HUD on top; touch pad at the bottom; one scrollable card for menus, lobby, select screens and results. Single night-blue theme by choice. */
 :root{
@@ -19,7 +19,7 @@
   --p1:#7fb6ff;
   --p2:#ff9a52;
   --display:"Press Start 2P",ui-monospace,monospace;
-  --body:"Pixelify Sans",ui-monospace,monospace;
+  --body:"Jersey 10","Pixelify Sans",ui-monospace,monospace;
   --arabic:"Aref Ruqaa",serif;
   color-scheme:dark;
 }
@@ -135,7 +135,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 .btns .x{font-size:9px;line-height:1.1;border-color:var(--hurt);background:color-mix(in srgb,var(--hurt) 45%,transparent);animation:lbpulse .5s ease-in-out infinite alternate;will-change:opacity}
 .btns .x small{color:var(--fg)}
 @keyframes lbpulse{to{opacity:.6}}
-.meter.art::after{content:'LAST BREATH';position:absolute;top:9px;left:0;font-family:var(--display);font-size:7px;color:var(--hurt);white-space:nowrap;animation:glow .3s steps(2) infinite alternate}
+.meter.art::after{content:attr(data-lb);position:absolute;top:9px;left:0;font-family:var(--display);font-size:7px;color:var(--hurt);white-space:nowrap;animation:glow .3s steps(2) infinite alternate}
 .r .meter.art::after{left:auto;right:0}
 .btns .s{border-color:var(--hurt)}
 @media (max-height:520px){h1{font-size:clamp(20px,6vh,30px)}.ar{font-size:22px}h2{font-size:15px}.panelx{padding:20px 16px 16px;gap:10px}.mode{padding:10px 12px}.mode b{font-size:14px}.mode small{font-size:14px}.panelx p{font-size:15px}}
@@ -675,6 +675,203 @@ const chainOf=(f,b)=>f.def.chain[f.atkName+'>'+b]||UNIV[f.atkName+'>'+b];
 /* =====================================================================
    STAGES
    ===================================================================== */
+/* =====================================================================
+   DERJA (Tunisian Arabic, written in Latin letters with numbers the way
+   it is typed online: 3 = ع, 7 = ح, 9 = ق, 5 = خ). Spellings follow the
+   most common forms in the TUNIZI corpus of 100,000 Tunisian comments:
+   barcha, mta3, bech, mouch, ken, tawa, fama, 5ater, brabi, behi, zeda.
+   English text is the key; anything missing here stays in English.
+   ===================================================================== */
+const TN={
+  // ---- main menu
+  'Nine fighters from across Tunisia\'s history and its living rooms. Tekken-style strings, launchers, juggles and throws.':'Tes3a m9atlin mel tari5 mta3 Tounes w mel dyar mte3na. Combos kima Tekken, tayyir fil hwa w tay7at.',
+  'ARCADE':'BTOULA','VS CPU':'DHED EL MACHINA','TRAINING':'TAMRIN','VS FRIEND':'DHED SA7BEK',
+  'Beat all eight rivals, one stage at a time, to become champion.':'Arba7 3al tmenya wa7ed wa7ed, mar7la b mar7la, w walli batal.',
+  'One match against a random rival, on the stage you pick.':'Match wa7ed dhed m9atel 3achwe2i, fil blasa elli t5tarha.',
+  'Practise strings and juggles on a dummy. Shows combo damage.':'Tmarren 3al combos 3la dummy. Ywarrik 9addech ydhorr kol combo.',
+  'Two phones: online with a room code, or on the same Wi-Fi with a QR code.':'Zouz telifounet: online b code mta3 room, walla 3al nafs el Wi-Fi b QR code.',
+  'Online and Wi-Fi matches work in the Android app.':'El l3ab online w 3al Wi-Fi ye5dem ken fil application Android.',
+  'Settings':'E3dadet','SETTINGS':'E3DADET',
+  // ---- controls help
+  'Move, jump, crouch (or WASD / ZQSD). Hold away from your opponent to block.':'Ta7arrek, o9fez, o93ed (walla WASD / ZQSD). Ched lel lteli b3id 3al 5asm bech tsodd.',
+  '1 2 3 4: left punch, right punch, left kick, right kick. Chain them into strings.':'1 2 3 4: bounya isar, bounya imin, rafsa isar, rafsa imin. Rakkebhom combos.',
+  'Special (half meter; SUPER at full) / throw. U+J together also throws.':'Special (nos jauge; SUPER ki tetmla) / tay7a. U+J m3a ba3dhhom zeda tay7a.',
+  'Pause and move list':'Pause w lista mta3 el 7arakat',
+  'Move, jump, crouch. Hold away from your opponent to block.':'Ta7arrek, o9fez, o93ed. Ched lel lteli b3id 3al 5asm bech tsodd.',
+  'Left punch, right punch, left kick, right kick. Chain them into strings.':'Bounya isar, bounya imin, rafsa isar, rafsa imin. Rakkebhom combos.',
+  'Special (half meter; SUPER at full) / throw':'Special (nos jauge; SUPER ki tetmla) / tay7a',
+  // ---- settings
+  'Settings stay on this phone.':'El e3dadet yo93dou fi hal telifoun.','Done':'Kammalt',
+  'On':'Ya5dem','Off':'Msakker','Small':'S8ar','Normal':'3adi','Large':'Kbar','left':'lisar','right':'limin',
+  // ---- fighter / stage select
+  'CHOOSE YOUR FIGHTER':'E5TAR EL M9ATEL MTE3EK','PICK YOUR FIGHTER':'E5TAR EL M9ATEL MTE3EK',
+  'TRAINING · PICK A FIGHTER':'TAMRIN · E5TAR M9ATEL','ARCADE · PICK A FIGHTER':'BTOULA · E5TAR M9ATEL',
+  'Back':'Raja3','Choose stage':'E5tar el blasa','Start arcade':'Ebda el btoula','Ready':'7adher','Leave':'O5rej',
+  'CHOOSE A STAGE':'E5TAR EL BLASA','Fight':'Yalla 3arka','RANDOM':'3ACHWE2I','Let fate pick the place.':'5alli el mektoub y5tar el blasa.',
+  // ---- pause / training
+  'PAUSED':'PAUSE','MOVE LIST':'LISTA MTA3 EL 7ARAKAT','The match keeps running while this is open.':'El match ma ye7besch wenti 7alla hedhi.',
+  'Quit to menu':'Raja3 lel menu','Leave match':'O5rej mel match','Resume':'Kammel','Reset positions':'Raja3 el blayes',
+  'Always full':'Dima malyena','Stand':'Wa9ef','Block':'Ysodd','Crouch block':'Ysodd 9a3ed','Jump':'Yo9fez',
+  // ---- results
+  'CHAMPION OF TUNISIA':'BATAL TOUNES','WINS':'RBE7',
+  'All eight rivals beaten. From the souks to the Sahara and the oldest café in Tunis, the rooftops are yours.':'Rba7t el tmenya lkol. Mel swe9 lel sa7ra w lel a9dem 9ahwa fi Tounes, el sto7a lkol mte3ek.',
+  'Main menu':'El menu','Play again':'3awed el3eb','Quit':'O5rej','Next fight':'El 3arka elli ba3dha','Continue':'Kammel',
+  'Change fighter':'Baddel el m9atel','Change fighters':'Baddlou el m9atlin','Rematch':'3awed',
+  'Mriguel! Well fought.':'Mriguel! 3arka behya.','Waiting for the host…':'Nestannaw fil host…',
+  // ---- VS FRIEND
+  'VS FRIEND':'DHED SA7BEK',
+  'Online works anywhere both phones have mobile data or internet. Wi-Fi works with no internet when you are in the same place.':'Online ye5dem win ma kenet ken fama 3and zouz internet walla data. El Wi-Fi ye5dem bla internet ki tkounou fi nafs el blasa.',
+  'ONLINE · CREATE ROOM':'ONLINE · A3MEL ROOM','Get a 5-letter code and send it to your friend. You pick the stage.':'5oudh code b 5 7rouf w ab3ath-hou l sa7bek. Enti t5tar el blasa.',
+  'ONLINE · JOIN ROOM':'ONLINE · OD5OL L ROOM','Type the code your friend sent you.':'Ekteb el code elli ba3thou sa7bek.',
+  'WI-FI · HOST':'WI-FI · HOST','Same Wi-Fi or hotspot, no internet. Your phone shows a QR code.':'Nafs el Wi-Fi walla hotspot, bla internet. Telifounek ywarri QR code.',
+  'WI-FI · JOIN':'WI-FI · OD5OL','Scan the host\'s QR code, then show yours back.':'Scanni el QR mta3 el host, ba3d warrih el QR mte3ek.',
+  'ONLINE ROOM':'ROOM ONLINE','Opening a room…':'9a3ed n7ell fi room…','Cancel':'Batel',
+  'Send this code to your friend. On their phone: VS FRIEND → Join online room.':'Ab3ath el code hedha l sa7bek. Fi telifounou: DHED SA7BEK → Od5ol l room.',
+  'Share code':'Ab3ath el code','Waiting for your friend… keep this screen open.':'Nestannaw fi sa7bek… 5alli hal ecran m7loul.',
+  'Code copied.':'El code tcopia.','Your friend is connecting…':'Sa7bek 9a3ed yod5el…',
+  'JOIN ONLINE ROOM':'OD5OL L ROOM ONLINE','Type the 5-letter code from the host\'s phone.':'Ekteb el code b 5 7rouf elli fi telifoun el host.',
+  'Join':'Od5ol','The code has 5 letters.':'El code fih 5 7rouf.','Finding the room…':'9a3ed nlawej 3al room…','Connecting to the host…':'9a3ed net9abbel m3a el host…',
+  'COULDN\'T CONNECT':'MA NAJAMNECH NET9ABLOU',
+  'This phone can\'t reach the internet. Turn on mobile data or Wi-Fi and try again.':'Hal telifoun ma 3andouch internet. Cha3el el data walla el Wi-Fi w 3awed.',
+  'The matchmaking server didn\'t answer. Try again in a moment.':'El serveur ma jewebch. 3awed ba3d chwaya.',
+  'No room with that code. Check the letters with your friend; the host must keep the room screen open.':'Ma fama 7atta room b hal code. Thabbet fil 7rouf m3a sa7bek; el host lezmou y5alli ecran el room m7loul.',
+  'This phone\'s web view can\'t do online matches.':'Hal telifoun ma ynajjamch yal3eb online.',
+  'Something went wrong connecting. Try again.':'Fama 7aja ma mchetch fil connexion. 3awed.',
+  'HOST A MATCH':'HOST MATCH','Preparing your code…':'9a3ed n7adhar el code mte3ek…',
+  'NO WI-FI FOUND':'MA FAMA 7ATTA WI-FI',
+  'This phone is not on a Wi-Fi network. Join a Wi-Fi network, or turn on your hotspot and connect your friend to it, then try again.':'Hal telifoun mouch 3al Wi-Fi. Od5ol l Wi-Fi, walla chal3el el hotspot w 5alli sa7bek yod5el 3lih, ba3d 3awed.',
+  'STEP 1 · LET YOUR FRIEND SCAN THIS':'MAR7LA 1 · 5ALLI SA7BEK YSCANNI HEDHA',
+  'Both phones on the same Wi-Fi, or your friend joins your phone\'s hotspot. On their phone: VS FRIEND → Join.':'Zouz telifounet 3al nafs el Wi-Fi, walla sa7bek yod5el 3al hotspot mte3ek. Fi telifounou: DHED SA7BEK → Od5ol.',
+  'No camera? Send this code instead':'Ma fama camera? Ab3ath el code hedha','Copy code':'Copy el code','Step 2 · Scan their code':'Mar7la 2 · Scanni el code mte3ou',
+  'STEP 2 · SCAN YOUR FRIEND\'S CODE':'MAR7LA 2 · SCANNI EL CODE MTA3 SA7BEK','Point the camera at the code on your friend\'s phone.':'Wajjah el camera lel code elli fi telifoun sa7bek.',
+  'JOIN · SCAN THE HOST\'S CODE':'OD5OL · SCANNI EL CODE MTA3 EL HOST','On the host phone: VS FRIEND → Host. Then point your camera at its code.':'Fi telifoun el host: DHED SA7BEK → Host. Ba3d wajjah el camera lel code mte3ou.',
+  'Making your reply code…':'9a3ed na3mel el code mte3ek…','NOW LET THE HOST SCAN THIS':'TAWA 5ALLI EL HOST YSCANNI HEDHA',
+  'On the host phone, tap "Step 2 · Scan their code" and point it here.':'Fi telifoun el host, enzel 3la "Mar7la 2 · Scanni el code mte3ou" w wajjhou lehna.',
+  'Starting camera…':'9a3ed n7ell el camera…','Looking for a code…':'9a3ed nlawej 3la code…','No camera? Paste the code':'Ma fama camera? 7ott el code','Use this code':'5oudh hal code',
+  'Camera not available. Open "No camera?" and paste the code.':'El camera mouch mawjouda. 7ell "Ma fama camera?" w 7ott el code.',
+  'That code did not work. Try again.':'El code ma 5demch. 3awed.','That is not a Rooftop Rumble code.':'Hedha mouch code mta3 Rooftop Rumble.',
+  'That is the host code. Scan the code your friend\'s phone shows after joining.':'Hedha el code mta3 el host. Scanni el code elli ywarrih telifoun sa7bek ba3d ma yod5el.',
+  'That is a join code. Scan the code on the host\'s phone.':'Hedha code mta3 dou5oul. Scanni el code elli fi telifoun el host.',
+  'Connecting…':'9a3ed net9abbel…','READY':'7ADHRIN','Waiting for the host to choose a stage…':'Nestannaw el host y5tar el blasa…',
+  'Waiting for your friend to pick a fighter…':'Nestannaw sa7bek y5tar m9atel…','CONNECTION LOST':'EL CONNEXION T9OTT3ET',
+  'The other phone left or lost its internet connection. Check both phones have mobile data or Wi-Fi, then make a new room.':'El telifoun el e5er 5raj walla ta7lou el internet. Thabbet elli zouz 3andhom data walla Wi-Fi, ba3d a3mel room jdida.',
+  'The other phone left or the Wi-Fi dropped. Make sure both phones stay on the same Wi-Fi or hotspot, then pair again.':'El telifoun el e5er 5raj walla el Wi-Fi ta7. Thabbet elli zouz 3al nafs el Wi-Fi walla hotspot, w 3awed rabbet.',
+  // ---- HUD and touch pad
+  'L PUNCH':'BOUNYA','R PUNCH':'BOUNYA','L KICK':'RAFSA','R KICK':'RAFSA','GRAB':'CHED','LAST':'A5ER','BREATH':'NAFES','LAST BREATH':'A5ER NAFES',
+  'YOU':'ENTI','CPU':'MACHINA','DUMMY':'DUMMY',
+  // ---- in-fight call-outs
+  'TIME':'WFE EL WA9T','PERFECT':'NDHIF!','COUNTER HIT':'KONTRA!','RAGE':'GHACHCH!','BREAK!':'FLET!','ARMOR':'SOLB!','BLOCKED':'SADD!',
+  'READ YOU!':'9RITEK!','CAUGHT':'CHADDHA!','FINAL ROUND':'A5ER ROUND',
+  // ---- universal moves
+  'One-Two':'Wa7da-Thnin','Launcher. Juggle them in the air with 1 or 4':'Ytayyer. Kammel 3lih fil hwa b 1 walla 4',
+  'Low kick / sweep':'Rafsa louta / kanssa','Throw':'Tay7a','1+3 or GRAB':'1+3 walla CHED','Throw. Press 1 or 2 when grabbed to break':'Tay7a. Enzel 1 walla 2 ki ychedk bech tfelt',
+  'Hold →':'Ched →','Hold ↑ in air':'Ched ↑ fil hwa','↑ in air':'↑ fil hwa','→ ← in air':'→ ← fil hwa','↓1 then 4':'↓1 ba3d 4','S, full meter':'S, jauge malyena',
+  'S + GRAB, low health':'S + CHED, ki ta7 el sa7a',
+  // ---- move list descriptions
+  'Dash step':'Dash','Café Hook':'Crochet mta3 el 9ahwa','Chechia Spin (knockdown)':'Dawra mta3 chechia (ytay7)','Twin Kicks into Marsa Rise (launches)':'Zouz rafsat w ba3d Marsa Rise (ytayyer)',
+  'Backfist into Souk Sweep (ends low)':'Dhahr el yed w ba3d Kanssa mta3 souk (tkammel louta)','Brass Elbow lunge':'Kou3 mta3 n7as yondfa3',
+  'Builds into a charging run':'Yejri w yzid yejri','Brik Flip: leaping overhand right (block standing)':'Brik Flip: yo9fez w yadhrab mel fou9 (sodd wa9ef)',
+  '... into Dock Slam':'... w ba3d Dock Slam','Port Crane Kick (launches)':'Rafsa mta3 grue el marsa (ttayyer)','Hammer Fist':'Bounya kima el martou',
+  'Anchor Stomp (ends low)':'Dabza mta3 ancre (tkammel louta)','Headbutt, charges in and can\'t be interrupted':'Dabza bel ras, yhajjem w ma yet9atta3ch',
+  'Float down slowly':'Tahbet b chwaya','Tyrian Burst (launches)':'Tyrian Burst (ttayyer)','Dido\'s Fan (ends low)':'Mrou7a mta3 Dido (tkammel louta)',
+  '... into Tanit Wheel (launches)':'... w ba3d Rouda mta3 Tanit (ttayyer)','Byrsa Kick, huge push':'Rafsa mta3 Byrsa, tod5ef barcha','Royal Palm':'Kaff malaki',
+  'Dodge roll, passes through attacks':'Tetlaffef, t3addi mel darbat','Oar Swing':'Darba bel 9adhef','Low Tide (low, then launch)':'Low Tide (louta, ba3d ttayyer)',
+  'Octopus Grip (ends low)':'Chedda mta3 9arnit (tkammel louta)','Wave Kick':'Rafsa kima el mouja','Anchor Kick, long reach':'Rafsa mta3 ancre, twsel b3id',
+  'Double jump':'Zouz 9afzat','Mountain Wind':'Ri7 el jbel','Aurès Axe (overhead: block standing)':'Fes el Aurès (mel fou9: sodd wa9ef)',
+  'Kahina Sweep (ends low)':'Kanssa mta3 el Kahina (tkammel louta)','Aurès Crescent spin kick':'Rafsa tdour kima el hlel','Falcon Knee, flying':'Rokba mta3 sa9r, tayra',
+  'Air dash':'Dash fil hwa','Sandstorm Palm':'Kaff el 3aja','Dust Devil (ends low)':'Zawba3a (tkammel louta)','Sand Wheel (launches)':'Rouda mta3 rmel (ttayyer)',
+  'Dune Cutter (ends low)':'9atta3 el kthib (tkammel louta)','Double sweep':'Zouz kansat','Mirage Kick, slides in':'Rafsa mta3 sarab, tezle9 l9eddem',
+  'Shuffle: blinks a short hop away in a puff of cards':'Shuffle: yetna9el chwaya fi s7abet cartas','Deal: flicks a card in your face':'Deal: yenchfek carta fi wejhek',
+  'Backhand':'Dhahr el yed','Shin kick':'Rafsa bel sa9','Burnous whip: lashes out with the cloak':'Darba bel bornous',
+  'Akala: slaps you down like a card on the table (overhead)':'Akala: yrakkezek kima carta 3al tawla (mel fou9)',
+  'Bermila: burnous twirl with orbiting cards (launches)':'Bermila: ydour bel bornous w el cartas tdour (ttayyer)',
+  'Karta: sweeps cards along the floor (ends low)':'Karta: ykannes el cartas 3al ga3a (tkammel louta)','Dinari: card flourish (launches)':'Dinari: lo3ba bel cartas (ttayyer)',
+  'Card throw, long reach':'Ytayyech carta, twsel b3id','Shield punch':'Bounya bel dar9a','Sword slash':'Darba bel sif','Push kick':'Rafsa tod5ef','Rear knee':'Rokba mel lteli',
+  'Trebia: spinning sword slash (launches)':'Trebia: darba bel sif w ydour (ttayyer)','Trasimene: ambush shield charge, can\'t be interrupted':'Trasimene: yhajjem bel dar9a, ma yet9atta3ch',
+  'Rhône: leaping knee (launches)':'Rhône: rokba w howa yo9fez (ttayyer)','Barca: overhead sword chop (block standing)':'Barca: darba bel sif mel fou9 (sodd wa9ef)',
+  'Long sword thrust':'Ta3na bel sif, twsel b3id','Cannae: envelops and throws you, after the double envelopment of 216 BC':'Cannae: y7awtek w ytay7ek, kima el 7isar el mzouz mta3 216 9bal el milad',
+  'Wooden spoon bonk':'Darba bel mghorfa','Backhand slap':'Kaff b dhahr el yed','Toe stomp (low)':'Dabza 3al sbe3 (louta)','Msalha swing, long reach':'Darba bel msal7a, twsel b3id',
+  'Kaff: the slap that spins you round (launches)':'Kaff: el kaff elli ydawwrek (ytayyer)','Msalha sweep across the floor (ends low)':'Ykannes bel msal7a 3al ga3a (tkammel louta)',
+  'Msalha smash (overhead: block standing)':'Darba kbira bel msal7a (mel fou9: sodd wa9ef)','Masha: spinning msalha, wet cloth flying (launches)':'Masha: el msal7a tdour w el char7a mbalra tteir (ttayyer)',
+  'Long spoon poke':'Tan9ira bel mghorfa, twsel b3id','Ear pull':'Chedda mel wedhen',
+  // ---- specials and supers
+  'Bou Said Uppercut':'Uppercut Bou Said','Harissa Rush':'Hjoum el harissa','Oxhide Lash':'Sir el jeld','Djerba Net':'Chbka mta3 Jerba','Phantom Step':'5atwa mta3 jen','Dune Slide':'Zle9a 3al kthib',
+  'SKYBREAKER':'YCHE99 EL SMA','HARISSA INFERNO':'NAR EL HARISSA','THE BIG CATCH':'EL SAYDA EL KBIRA','KAHINA\'S WRATH':'GHADHB EL KAHINA','CROSSING THE ALPS':'9ATA3 EL ALPES',
+  'A rising uppercut that launches the opponent.':'Uppercut tetla3 w ttayyer el 5asm.','A burning shoulder charge that shrugs off hits.':'Hjoum bel ktef ya7re9, ma yeta2atherch bel darbat.',
+  'Lashes out with a long strip cut from an oxhide, from the legend of how she won the hill of Byrsa. The super throws hide strips around the opponent anywhere on screen and binds them.':'Todhrab b sir twil ma9sous men jeld 3ejel, men 7kéyet kifech rab7et kodiet Byrsa. El super ytayyech syour 3al 5asm win ma ken w yrabtou.',
+  'Casts a fishing net that drags the opponent in and holds them for a free combo.':'Tlawa7 chbka mta3 sayd tjarr el 5asm w tchedou, combo bbleech.',
+  'Vanishes and reappears behind the opponent with a kick.':'Tetla7 w todhhor mel lteli b rafsa.','A long low slide that sweeps the opponent off their feet. Block it crouching.':'Zle9a twila louta tay7 el 5asm. Soddha 9a3ed.',
+  'Throws the 7 of dinari, the card worth a point on its own. The super sweeps the table with five cards.':'Ytayyech sab3a dinari, el carta elli b point wa7adha. El super ykannes el tawla b 5 cartas.',
+  'Calls Surus, his own war elephant, to charge from behind him. The super sends a stampede of three elephants that cannot be blocked.':'Y3ayyet l Surus, el fil mte3ou mta3 el 7arb, yhajjem mel lteli. El super yab3ath thletha fyela ma yetsaddouch.',
+  'Throws her slipper. It flies out, turns, and comes back to her hand, so it can hit on the way back too. The super rains slippers down from above.':'Ttayyech chlaka. Tteir, tdour w traja3 l yedha, ynajjem todhrab w hiya rajj3a zeda. El super tsabb chlaket mel sma.',
+  // ---- throws
+  'CAFÉ TOSS':'TAY7A MTA3 9AHWA','PORT SLAM':'TAY7A MTA3 MARSA','ROYAL BANISHMENT':'NAFI MALAKI','NET TOSS':'TAY7A BEL CHBKA','KAHINA\'S GRIP':'CHEDDET EL KAHINA','DUNE DROP':'TAY7A 3AL KTHIB','LAST TAKE':'A5ER 9AT3A','EAR PULL':'CHEDDA MEL WEDHEN',
+  // ---- move call-outs
+  'CAFÉ HOOK!':'CROCHET EL 9AHWA!','CHECHIA SPIN!':'DAWRET CHECHIA!','TWIN KICKS!':'ZOUZ RAFSAT!','SOUK SWEEP!':'KANSSET SOUK!','BRIK FLIP!':'BRIK FLIP!','DOCK SLAM!':'DABZET EL MARSA!',
+  'PORT CRANE KICK!':'RAFSET EL GRUE!','ANCHOR STOMP!':'DABZET ANCRE!','HEADBUTT!':'DABZA BEL RAS!','TYRIAN BURST!':'TYRIAN BURST!','TANIT WHEEL!':'ROUDET TANIT!','BYRSA KICK!':'RAFSET BYRSA!',
+  'OAR SWING!':'DARBET 9ADHEF!','LOW TIDE!':'EL BA7AR HBET!','OCTOPUS GRIP!':'CHEDDET 9ARNIT!','WAVE KICK!':'RAFSET MOUJA!','MOUNTAIN WIND!':'RI7 EL JBEL!','AURÈS AXE!':'FES EL AURÈS!',
+  'KAHINA SWEEP!':'KANSSET EL KAHINA!','AURÈS CRESCENT!':'HLEL EL AURÈS!','SANDSTORM PALM!':'KAFF EL 3AJA!','DUST DEVIL!':'ZAWBA3A!','SAND WHEEL!':'ROUDET RMEL!','DUNE CUTTER!':'9ATTA3 EL KTHIB!',
+  'LAUNCHER!':'TAYYARA!','BARRA AQRA!':'BARRA A9RA!','TYRIAN BURST!':'TAFJIRA ORJOUANIA!','MARSA RISE!':'TLA3A MTA3 EL MARSA!','DIDO\'S FAN!':'MROU7ET DIDO!','HEADBUTT':'DABZA BEL RAS','MSALHA SMASH!':'DARBET MSAL7A!','MSALHA SWEEP!':'KANSSET MSAL7A!',
+  'BOU SAID UPPERCUT':'UPPERCUT BOU SAID','HARISSA RUSH':'HJOUM EL HARISSA','OXHIDE LASH':'SIR EL JELD','DJERBA NET':'CHBKA MTA3 JERBA','PHANTOM STEP':'5ATWA MTA3 JEN','DUNE SLIDE':'ZLE9A 3AL KTHIB',
+  // ---- Last Breath
+  'BAB SIDI BOU SAID':'BAB SIDI BOU SAID','LA GOULETTE ANCHOR':'ANCRE 7ALG EL WED','FIRE OF TANIT':'NAR TANIT','GUELLALA JAR':'5ABIA MTA3 GUELLALA','SCORCHED EARTH':'EL ARDH EL MA7ROU9A','CHLOUK STORM':'3AJET CHLOUK',
+  'Charges in; on contact he hammers the opponent through a giant blue Sidi Bou Said door. Can be blocked.':'Yhajjem; ki yousel ydhrab el 5asm w y3addih men bab zar9a kbira mta3 Sidi Bou Said. Tetsadd.',
+  'Hurls a ship\'s anchor that crashes down a fixed distance ahead. Cannot be blocked, so don\'t stand there.':'Ylawa7 ancre mta3 babbour ta7 b3id 3lih b chwaya. Ma tetsaddech, ma to93odch ghadi.',
+  'Marks the ground under the opponent with the sign of Tanit, which bursts into flame a moment later. Step off it.':'Tmarki el ga3a ta7t el 5asm b 3alamet Tanit, w ba3d chwaya techta3el nar. O5rej menha.',
+  'Lobs a huge Djerba clay jar onto the opponent and traps them inside. Cannot be blocked, but it is slow: move.':'Ttayyech 5abia kbira mta3 Jerba 3al 5asm w t7absou fiha. Ma tetsaddech, ama bta2a: ta7arrek.',
+  'Sprints the length of the arena on a trail of fire. Hits low: jump it or block crouching.':'Tejri el arena lkol w nar mel lteli. Todhrab louta: o9fezha walla soddha 9a3ed.',
+  'Sends a slow sirocco twister along the ground. Block it, or jump over it.':'Yab3ath zawba3et chlouk bta2a 3al ga3a. Soddha walla o9fez 3leha.',
+  'A card-sharp\'s stance: strike him during it and he sweeps the whole table. Wait it out and he lunges in to deal anyway; block that.':'9a3da mta3 m3allem cartas: ken todhorbou fiha ykannes el tawla lkol. Ken tostanna yhajjem w yfarra9 zeda; soddha.',
+  'Two ranks of soldiers close in from both sides of the opponent, the double envelopment of 216 BC. Jump or get out before they meet.':'Zouz sfouf 3asker ysakrou 3al 5asm men zouz jihat, el 7isar el mzouz mta3 216 9bal el milad. O9fez walla o5rej 9bal ma yetla9aw.',
+  'Grabs the opponent by the ear for a slipper lecture. Very short range; crouching or jumping avoids it.':'Tched el 5asm men wedhnou w ta3tih dars bel chlaka. 9rib barcha; ken to93ed walla to9fez tfelt.',
+  // ---- stages
+  'Tunis':'Tounes','Carthage':'9artej','Djerba':'Jerba','Medina of Tunis':'L\'Mdina, Tounes','Douz Dunes':'Kthob Douz','Djerba Harbor':'Marsa Jerba','The Aurès':'El Aurès','La Goulette':'7alg el Wed',
+  'Blue and white since the 1920s, bougainvillea on the walls':'Zra9 w byadh men 3achrinet, w el bougainvillier 3al 7yout',
+  'Souk Ech-Chaouachine, chechia makers since 1691':'Souk ech-Chaouachine, sna3 el chechia men 1691',
+  'Amphitheatre for 35,000, built around 238 AD. Dihya\'s last stand.':'Amphithéâtre ychedd 35,000, mabni 7wali 238 ba3d el milad. A5er 3arka mta3 Dihya.',
+  'Gateway to the Sahara. Salukis race at the festival.':'Bab el sa7ra. El sloughi yetsab9ou fil festival.',
+  'Fishing boats, gulls and clay octopus pots':'Flouka mta3 sayd, gaouar w 5wabi mta3 9arnit',
+  'The oldest café in Tunis, early 1600s. Chkobba on the banquette.':'A9dem 9ahwa fi Tounes, men 1600. Chkobba 3al banka.',
+  // ---- fighter bios
+  'Sidi Bou Said regular in a white jebba with a blue farmla waistcoat, red chechia from the Souk Ech-Chaouachine and yellow balgha slippers. Mint tea with pine nuts at Café des Nattes. Balanced and quick.':'Weld Sidi Bou Said, labes jebba bidha w farmla zar9a, chechia 7amra men Souk ech-Chaouachine w balgha sfara. Tey b na3na3 w zgougou fi Café des Nattes. Mwazen w 5fif.',
+  'Mokhtar, called "Brik" on the docks of La Goulette, after the egg-and-tuna pastry: crispy outside, soft inside. Khaki work blouza, off-white chechia, a striped fouta for a belt. Slow, heavy, hard to stop.':'Mokhtar, y3ayytoulou "Brik" fil marsa mta3 7alg el Wed, kima el brik bel 3dham w el ton: 9armach men barra, rteb men dekhel. Blouza mta3 5edma, chechia bidha w fouta m5attta 7zem. Bta2, t9il, sa3b bech tw9fou.',
+  'Elissa (Dido), founding queen of Carthage. Offered only as much land as an oxhide could cover, she cut the hide into thin strips and circled the hill of Byrsa with them. She fights with those strips. Dressed in Tyrian purple, the dye Carthage and Djerba were famous for. Fights under the sign of Tanit.':'Elissa (Dido), el malka elli bnet Carthage. 3atawha ken ardh 9ad jeld 3ejel, 9atta3et el jeld syour rgo9 w dawret bihom kodiet Byrsa. Bel syour hedhom t9atel. Labsa el orjouani elli kenet machhoura bih Carthage w Jerba. T9atel ta7t 3alamet Tanit.',
+  'Fisherwoman from Houmt Souk on Djerba. Wears the m\'dhalla palm-leaf hat against the sun and the fouta zarga, the dark blue wrap with red stripes. Slippery up close; never lost a catch.':'Sayyda men 7oumet Souk fi Jerba. Labsa el mdhalla mta3 el sa3af dhed el chams w el fouta zar9a b 5tout 7mor. Tezle9 ki tet9arrablha; 3omorha ma dhayy3et sayda.',
+  'Berber warrior queen of the Aurès. A draped melhfa pinned with silver fibulae, a silver headband and her hair loose, as legend says she fought her last stand inside the amphitheatre of El Jem. The fastest fighter here.':'Malka m9atla amazighia mel Aurès. Melhfa mchedda b 5lel fadha, 3sseba mta3 fadha w cha3rha msayyeb, kima t9oul el 7kaya elli 3mlet a5er 3arka fi amphithéâtre el Jem. Asra3 m9atel lehna.',
+  'Mrazig guide from Douz, gateway to the Sahara and its 500,000 palms. Cream robe, brown wool waistcoat and a white chech turban against the sand. His super is named after the chlouk, Tunisian Arabic for the sirocco.':'Guide mrazgui men Douz, bab el sa7ra w 500,000 n5la. Jebba beige, sedria souf ma7lia w chech abyadh dhed el rmel. El super mte3ou esmou chlouk, ri7 el sa7ra.',
+  'Salah, the oldest regular at Café M\'Rabet, the oldest café in Tunis. Unbeaten at chkobba: he counts every fallen card and slaps them down hard. A brown wool burnous with the hood up over a grey jebba, white beard, round glasses, always a fan of cards in hand.':'Salah, a9dem 7rif fi Café M\'Rabet, a9dem 9ahwa fi Tounes. 7atta 7ad ma ghlbou fil chkobba: y7seb kol carta ta7et w yrakkez el cartas b 9wa. Bornous souf ma7li w el 9ob 3la rasou fou9 jebba rmadia, l7ia bidha, mreyet mdawrin, w dima cartas f yeddou.',
+  'Hannibal, son of Hamilcar Barca. In 218 BC he crossed the Alps into Italy with North African war elephants, then beat Rome at the Trebia, Lake Trasimene and Cannae. He lost his right eye crossing the Apennines. Bronze armour, a round shield and a cloak in Carthage\'s purple.':'Hannibal, weld Hamilcar Barca. Fi 218 9bal el milad 9ta3 el Alpes l Italia b fyela mta3 7arb men chmel Ifri9ia, w ghlb Roma fil Trebia, b7ayret Trasimene w Cannae. Dhayya3 3inou limin w howa 9ate3 el Apennins. Dir3 n7as, dar9a mdawra w bornous b orjouani Carthage.',
+  'Kmar, mother of five in an old Tunis neighbourhood. A wooden spoon in one hand, the msalha (floor squeegee) and its wet cloth never far away, and a slipper that has never missed. Floral house dress, apron, a knotted foulard and gold bangles.':'Kmar, omm 5amsa fi 7ouma 9dima fi Tounes. Mghorfa mta3 3oud fi yed, el msal7a w char7tha mbalra dima 9rib, w chlaka 3omorha ma ghaltet. Robe mta3 dar mwarda, tablier, foulard mrabbet w smayem dheb.',
+};
+// sentences with numbers or names inside
+const TN_PAT=[
+  [/^(\d+) HIT COMBO$/,m=>m[1]+' DARBAT'],[/^(\d+) HIT JUGGLE$/,m=>m[1]+' DARBAT FIL HWA'],
+  [/^ROUND (\d+)$/,m=>'ROUND '+m[1]],[/^STAGE (\d+) OF (\d+)$/,m=>'MAR7LA '+m[1]+' MEN '+m[2]],
+  [/^Dummy: (.+)$/,m=>'Dummy: '+T(m[1])],[/^Meter: (.+)$/,m=>'Jauge: '+(m[1]==='Normal'?'3adia':T(m[1]))],
+  [/^Sound: (.+)$/,m=>'Sout: '+T(m[1])],[/^Vibration: (.+)$/,m=>'Rja7a: '+T(m[1])],[/^Button size: (.+)$/,m=>'9ad el boutonet: '+T(m[1])],
+  [/^D-pad on the (.+)$/,m=>'El D-pad 3al '+T(m[1])],
+  [/^Your friend picked (.+)\.$/,m=>'Sa7bek 5tar '+m[1]+'.'],
+  [/^Special: (.+)$/,m=>'Special: '+T(m[1])],[/^SUPER: (.+)$/,m=>'SUPER: '+T(m[1])],
+  [/^LAST BREATH: (.+?)\. (.+)$/,m=>'A5ER NAFES: '+T(m[1])+'. '+T(m[2])],
+  [/^DUMMY: (.+) · LAST COMBO:$/,m=>'DUMMY: '+T(m[1].charAt(0)+m[1].slice(1).toLowerCase()).toUpperCase()+' · A5ER COMBO:'],
+  [/^(.+) · (.+)$/,m=>T(m[1])+' · '+T(m[2])],
+  [/^Stage (\d+) of (\d+) cleared\. Next up:$/,m=>'Kammalt el mar7la '+m[1]+' men '+m[2]+'. Elli ba3dou:'],
+  [/^from (.+), at (.+)\.$/,m=>'men '+T(m[1])+', fi '+T(m[2])+'.'],
+  [/^(.+) stops you at stage (\d+) of (\d+)\. Continue\?$/,m=>m[1]+' w9fek fil mar7la '+m[2]+' men '+m[3]+'. Tkammel?'],
+  [/^(.+) takes it (\d+)–(\d+)\. Yezzi, go again\.$/,m=>m[1]+' rbe7 '+m[2]+'–'+m[3]+'. Yezzi, 3awed.'],
+  [/^HITS,$/,()=>'DARBAT,'],[/^DMG$/,()=>'DARR'],
+  [/^ONLINE (\d+)MS$/,m=>'ONLINE '+m[1]+'MS'],
+];
+let LANG='tn';
+function T(s){
+  if(LANG!=='tn'||typeof s!=='string')return s;
+  const m=s.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];if(!core)return s;
+  let r=TN[core];
+  if(r===undefined&&core.endsWith('!')&&TN[core.slice(0,-1)]!==undefined)r=TN[core.slice(0,-1)]+'!';
+  if(r===undefined)for(const[re,f] of TN_PAT){const mm=core.match(re);if(mm){r=f(mm);break}}
+  return r===undefined?s:m[1]+r+m[3];
+}
+
 const STAGES=[
   {id:'sbs',name:'Sidi Bou Said',sub:'Blue and white since the 1920s, bougainvillea on the walls',draw:t=>{stageSBS(t);extraSBS(t)}},
   {id:'medina',name:'Medina of Tunis',sub:'Souk Ech-Chaouachine, chechia makers since 1691',draw:t=>{stageMedina(t);extraMedina(t)}},
@@ -980,12 +1177,24 @@ for(const st of STAGES){st.rim=RIM[st.id];const A=ATMOS[st.id],d0=st.draw;if(!A)
 let p1=null,p2=null,round=0,timer=60,phase='menu',phaseT=0,cpuLevel=1,superFreeze=0,superBy=null,projs=[],stage=STAGES[0];
 let mode='cpu',pickChar=0,pickStage=0,lastPicks=null,paused=false,screen='';
 // settings and last picks, kept on this phone between sessions
-const SET={sound:1,buzz:1,pad:1,lefty:0,char:0,stage:0};
+const SET={lang:'tn',sound:1,buzz:1,pad:1,lefty:0,char:0,stage:0};
 try{Object.assign(SET,JSON.parse(localStorage.getItem('rr-settings')||'{}'))}catch(_){}
 function saveSet(){try{localStorage.setItem('rr-settings',JSON.stringify(SET))}catch(_){}}
 pickChar=Math.min(CHARS.length-1,SET.char|0);pickStage=Math.min(STAGES.length-1,SET.stage|0);
 function applySet(){const pd=$('pad');if(pd){pd.style.setProperty('--ps',SET.pad);pd.classList.toggle('lefty',!!SET.lefty)}}
 applySet();
+// Every piece of on-screen text is written in English in the code and translated on the way to the
+// screen: new or changed text nodes are swapped for their Derja version (src/derja.js).
+const ORIG=new WeakMap(),SETV=new WeakMap();
+function trText(n){const p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;const v=n.nodeValue;if(SETV.get(n)===v)return;
+  ORIG.set(n,v);const t=T(v);SETV.set(n,t);if(t!==v)n.nodeValue=t}
+function trTree(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode()))trText(n)}
+function relang(){LANG=SET.lang==='en'?'en':'tn';const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+  while((n=w.nextNode())){if(!ORIG.has(n))continue;const t=T(ORIG.get(n));SETV.set(n,t);n.nodeValue=t}
+  trTree(document.body);for(const id of ['p1m','p2m'])$(id).dataset.lb=T('LAST BREATH');document.documentElement.lang=LANG==='tn'?'aeb-Latn':'en'}
+new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')trText(m.target);else for(const a of m.addedNodes){if(a.nodeType===3)trText(a);else if(a.nodeType===1)trTree(a)}}})
+  .observe(document.body,{subtree:true,childList:true,characterData:true});
+relang();
 const arc={list:[],idx:0};
 const train={dummy:'stand',meter:true,hits:0,dmg:0};
 const DUMMY_MODES={stand:'Stand',block:'Block',cblock:'Crouch block',jump:'Jump'};
@@ -1754,11 +1963,11 @@ function menu(){
   $('m_arcade').focus();
 }
 function settings(){
-  const lab={sound:v=>'Sound: '+(v?'On':'Off'),buzz:v=>'Vibration: '+(v?'On':'Off'),pad:v=>'Button size: '+(v<.95?'Small':v>1.05?'Large':'Normal'),lefty:v=>'D-pad on the '+(v?'right':'left')};
+  const lab={lang:v=>v==='en'?'Language: English':'Lougha: Tounsi',sound:v=>'Sound: '+(v?'On':'Off'),buzz:v=>'Vibration: '+(v?'On':'Off'),pad:v=>'Button size: '+(v<.95?'Small':v>1.05?'Large':'Normal'),lefty:v=>'D-pad on the '+(v?'right':'left')};
   showPanel(`<h2>SETTINGS</h2><div class="setl">${Object.keys(lab).map(k=>`<button class="go ghost" id="s_${k}" type="button">${lab[k](SET[k])}</button>`).join('')}</div>
   <p>Settings stay on this phone.</p><div class="row"><button class="go" id="back">Done</button></div>`);
-  const flip={sound:v=>v?0:1,buzz:v=>{v=v?0:1;if(v&&navigator.vibrate)try{navigator.vibrate(30)}catch(_){};return v},pad:v=>v<.95?1:v>1.05?.85:1.15,lefty:v=>v?0:1};
-  for(const k in lab)$('s_'+k).onclick=()=>{SET[k]=flip[k](SET[k]);saveSet();applySet();$('s_'+k).textContent=lab[k](SET[k]);if(k==='sound'&&SET.sound)SFX.hit()};
+  const flip={lang:v=>v==='en'?'tn':'en',sound:v=>v?0:1,buzz:v=>{v=v?0:1;if(v&&navigator.vibrate)try{navigator.vibrate(30)}catch(_){};return v},pad:v=>v<.95?1:v>1.05?.85:1.15,lefty:v=>v?0:1};
+  for(const k in lab)$('s_'+k).onclick=()=>{SET[k]=flip[k](SET[k]);saveSet();applySet();$('s_'+k).textContent=lab[k](SET[k]);if(k==='sound'&&SET.sound)SFX.hit();if(k==='lang'){relang();settings()}};
   $('back').onclick=menu;$('back').focus();
 }
 function netMenu(){
@@ -2480,7 +2689,7 @@ function draw(dt){
   m.setTransform(dpr*S,0,0,dpr*S,dpr*OX,dpr*OY);m.textAlign='center';m.textBaseline='middle';
   for(const t of texts){const pop=1+.35*clamp(1-(t.t0-t.t)/.12,0,1),x=t.x?clamp(t.x,140,SW-140):SW/2,sz=Math.max(12,Math.round(t.size*.2)*2);
     m.save();m.translate(Math.round(x),Math.round(t.y));m.scale(pop,pop);m.globalAlpha=Math.min(1,t.t*4);m.font=`${sz}px "Press Start 2P",monospace`;
-    m.fillStyle=OUTLINE;m.fillText(t.txt,4,4);m.lineWidth=Math.max(3,sz/6);m.strokeStyle=OUTLINE;m.lineJoin='miter';m.strokeText(t.txt,0,0);m.fillStyle=t.col;m.fillText(t.txt,0,0);m.restore()}
+    const tx=T(t.txt);m.fillStyle=OUTLINE;m.fillText(tx,4,4);m.lineWidth=Math.max(3,sz/6);m.strokeStyle=OUTLINE;m.lineJoin='miter';m.strokeText(tx,0,0);m.fillStyle=t.col;m.fillText(tx,0,0);m.restore()}
   m.globalAlpha=1;
 }
 const hudC={};function setW(id,v){v=Math.round(v*2)/2;if(hudC[id]!==v){hudC[id]=v;$(id).style.width=v+'%'}}
