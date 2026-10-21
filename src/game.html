@@ -190,6 +190,9 @@ details summary{cursor:pointer;color:var(--muted);font-size:16px}
 .pick.hasprog{position:relative}.pick.hasprog::after{content:attr(data-prog);position:absolute;top:6px;right:6px;font-family:var(--display);font-size:8px;color:var(--gold);background:var(--night);padding:3px 4px}
 .pick.done::after{background:var(--gold);color:var(--night)}
 @media (max-height:500px) and (orientation:landscape){.pick.hasprog::after{font-size:6px;padding:2px 3px;top:4px;right:4px}}
+#comic{position:fixed;inset:0;z-index:30;background:#1b120c;display:flex;flex-direction:column;gap:8px;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+#comiccv{flex:1 1 auto;min-height:0;width:100%;max-width:1200px;margin:0 auto;display:block;cursor:pointer;box-shadow:6px 6px 0 #000}
+.comicrow{flex:0 0 auto}.comicrow .go{min-width:7em}
 .svs{display:flex;align-items:center;justify-content:center;gap:16px}.svs canvas{width:clamp(70px,16vh,120px);height:auto;image-rendering:pixelated;background:var(--night)}.svs b{font-family:var(--display);font-size:18px;color:var(--gold)}
 .slines{display:grid;gap:8px;align-content:start;text-align:left;max-width:40rem;margin:0 auto;width:100%}
 .sline{display:grid;grid-template-columns:8.5em 1fr;gap:10px;font-size:19px;line-height:1.3;background:var(--night);padding:8px 12px}
@@ -1444,7 +1447,7 @@ function applySnap(s){
 /* =====================================================================
    SCREENS
    ===================================================================== */
-function showPanel(html){screen='';$('panel').innerHTML=html;$('card').hidden=false;$('card').scrollTop=0}
+function showPanel(html){closeComic();screen='';$('panel').innerHTML=html;$('card').hidden=false;$('card').scrollTop=0}
 function hideMatchUI(){$('hud').hidden=true;$('pad').hidden=true;$('pausebtn').hidden=true;$('trainInfo').hidden=true}
 function renderTrain(){$('trainInfo').innerHTML=`DUMMY: ${esc(DUMMY_MODES[train.dummy]).toUpperCase()} · LAST COMBO: <b>${train.hits}</b> HITS, <b>${train.dmg}</b> DMG`}
 function portrait(def){
@@ -1559,32 +1562,256 @@ function startCpu(){
 }
 function startTraining(){mode='training';newMatch(CHARS[pickChar],CHARS[(pickChar+1)%CHARS.length],pickStage);tone(1,1,.01,'sine',.0001)}
 
-/* ---- story mode flow ---- */
+/* ---- story mode flow, told as comic pages ---- */
 const story={id:null,i:0,boss:false};
 function storyProg(id){return (SET.story&&SET.story[id])||0}
 function startStory(){const d=CHARS[pickChar];story.id=d.id;const pr=storyProg(d.id);story.i=pr>=4?0:pr;storyScene(true)}
+const storyFight=()=>{const d=CHARS[pickChar],c=STORIES[d.id].ch[story.i];closeComic();mode='story';newMatch(d,NPCS[c[0]],c[1]);tone(1,1,.01,'sine',.0001)};
+function chapterSeg(i,first){
+  const d=CHARS[pickChar],S=STORIES[d.id],c=S.ch[i],e=NPCS[c[0]];
+  const segs=[];
+  if(first&&i===0)segs.push({lines:S.intro,hero:d,enemy:e,stage:d.home,shown:0});
+  segs.push({lines:c[3],hero:d,enemy:e,stage:c[1],shown:1,title:[i===S.ch.length-1?'FINAL CHAPTER':'CHAPTER '+(i+1),c[2]],clash:[i===S.ch.length-1?'FINAL CHAPTER':'CHAPTER '+(i+1),c[2]]});
+  return segs;
+}
 function storyScene(first){
-  phase='menu';hideMatchUI();mode='story';
-  const d=CHARS[pickChar],S=STORIES[d.id],c=S.ch[story.i],e=NPCS[c[0]];story.boss=story.i===S.ch.length-1;
-  const lines=[...(first&&story.i===0?S.intro:[]),...c[3]],who=w=>w==='h'?d:w==='e'?e:null;
-  const html=lines.map(([w,t])=>{const p=who(w);return`<div class="sline ${w}">${p?`<b style="color:${p.hud}">${esc(p.name)}</b>`:''}<span>${esc(t)}</span></div>`}).join('');
-  showPanel(`<h2><span>${story.boss?'FINAL CHAPTER':'CHAPTER '+(story.i+1)}</span> · <span>${esc(c[2])}</span></h2>
-    <div class="svs"><div class="sp1"></div><b>VS</b><div class="sp2"></div></div><div class="slines">${html}</div>
-    <div class="row"><button class="go ghost" id="back">Quit</button><button class="go" id="go">Fight</button></div>`);
-  for(const[sel,def,flip] of [['.sp1',d,0],['.sp2',e,1]]){if(!PORTRAITS.has(def.id))PORTRAITS.set(def.id,portrait(def));const cv=cloneCanvas(PORTRAITS.get(def.id));if(flip)cv.style.transform='scaleX(-1)';document.querySelector(sel).append(cv)}
-  $('back').onclick=menu;$('go').onclick=()=>{mode='story';newMatch(d,e,c[1]);tone(1,1,.01,'sine',.0001)};$('go').focus();
+  const S=STORIES[CHARS[pickChar].id];story.boss=story.i===S.ch.length-1;
+  openComic(chapterSeg(story.i,first),'Fight',storyFight);
 }
 function storyResult(won,w){
-  const d=CHARS[pickChar],S=STORIES[d.id];
+  const d=CHARS[pickChar],S=STORIES[d.id],c=S.ch[story.i],e=NPCS[c[0]];
   if(won){SET.story=Object.assign({},SET.story,{[d.id]:Math.max(storyProg(d.id),story.i+1)});saveSet();
+    const after=c[4]&&c[4].length?[{lines:c[4],hero:d,enemy:e,stage:c[1],shown:1,after:1}]:[];
     if(story.i>=S.ch.length-1){
-      showPanel(`<div class="ar">النهاية</div><h1><span style="color:${d.hud}">${d.name}</span><br>THE END</h1><p>${esc(S.end)}</p>
-        <div class="row"><button class="go ghost" id="back">Main menu</button><button class="go" id="go">Another story</button></div>`);
-      $('back').onclick=menu;$('go').onclick=()=>{mode='story';selectFighter(false)};$('go').focus();return}
-    story.i++;storyScene(false);return}
+      openComic([...after,{lines:S.end,hero:d,enemy:e,stage:c[1],shown:0,end:1}],'Main menu',menu,()=>{closeComic();mode='story';selectFighter(false)},'Another story');return}
+    story.i++;story.boss=story.i===S.ch.length-1;
+    openComic([...after,...chapterSeg(story.i,false)],'Fight',storyFight);return}
   showPanel(`<div class="ar">يزّي!</div><h1><span style="color:${w.def.hud}">${w.name}</span> WINS</h1><p>Get up and try again.</p>
     <div class="row"><button class="go ghost" id="back">Quit</button><button class="go" id="go">Try again</button></div>`);
-  $('back').onclick=menu;$('go').onclick=()=>{const c=S.ch[story.i];mode='story';newMatch(d,NPCS[c[0]],c[1])};$('go').focus();
+  $('back').onclick=menu;$('go').onclick=()=>{mode='story';newMatch(d,NPCS[c[0]],c[1])};$('go').focus();
+}
+
+/* Comic renderer. Lines become panels: a caption attaches to the next speech panel, a speaker gets a
+   close shot with a speech bubble, and every chapter ends on a VS splash. Backgrounds are the real
+   stages, the people are the real fighter sprites, posed. */
+const FIGS=new Map(),BGS=new Map();
+function figure(def,pose,face,kid){
+  const key=def.id+'|'+pose+'|'+face+'|'+(kid?1:0);if(FIGS.has(key))return FIGS.get(key);
+  const W=300,H=230,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),prev=ctx;
+  const D=kid?Object.assign({},def,{size:(def.size||1)*.62}):def;
+  const f=makeFighter(D,0,face,'cpu');
+  if(pose==='lie'){f.state='ko';f.t=1;f.pose=clonePose(POSES.lie);f.x=-face*55}
+  else f.pose=clonePose(pose==='win'?(POSES['win_'+def.id]||POSES.win):POSES[pose]||POSES[def.idlePose]||POSES.idle);
+  const L=document.createElement('canvas');L.width=W;L.height=H;const lc=L.getContext('2d',{willReadFrequently:true});
+  const sc=.875;lc.setTransform(sc,0,0,sc,W/2,H-6-GROUND*sc);ctx=lc;drawFighter(f,0,true);
+  lc.setTransform(1,0,0,1,0,0);crisp(lc,0,0,W,H);
+  const sl=document.createElement('canvas');sl.width=W;sl.height=H;const s2=sl.getContext('2d');s2.drawImage(L,0,0);s2.globalCompositeOperation='source-in';s2.fillStyle=OUTLINE;s2.fillRect(0,0,W,H);
+  for(const[ox,oy] of [[1,0],[-1,0],[0,1],[0,-1]])g.drawImage(sl,ox,oy);g.drawImage(L,0,0);
+  ctx=prev;const r={c,h:150*.875*D.size,w:W,H};FIGS.set(key,r);return r;
+}
+function stageBG(i){
+  if(BGS.has(i))return BGS.get(i);
+  const W=480,H=270,c=document.createElement('canvas');c.width=W;c.height=H;const prev=ctx,ps=stage;ctx=c.getContext('2d');stage=STAGES[i];
+  try{ctx.setTransform(W/SW,0,0,H/SH,0,0);STAGES[i].draw(3)}catch(_){}
+  ctx=prev;stage=ps;BGS.set(i,c);return c;
+}
+const hintsOf=s=>{const o={};for(const t of String(s||'').split(/\s+/)){if(!t)continue;const k=t.indexOf(':');if(k<0)o[t]=1;else o[t.slice(0,k)]=t.slice(k+1)}return o};
+function comicPanels(seg){
+  const out=[],who=w=>w==='h'?seg.hero:w==='e'?seg.enemy:CAMEOS[w]||null;
+  let cap=null,other=seg.shown?seg.enemy:null,bgNow=seg.stage;
+  const mk=(capT,capH,w,text,H)=>{const o=Object.assign({},capH||{},H||{});
+    if(w)delete o.empty;
+    const sp=w?who(w):null;
+    if(o.with&&CAMEOS[o.with])other=CAMEOS[o.with];
+    let ls=null;if(sp){ls=sp===seg.hero?other:seg.hero;if(sp!==seg.hero)other=sp}
+    if(o.bg!=null)bgNow=+o.bg;
+    out.push({seg,cap:capT,sp,text,H:o,other:sp?ls:other,stage:bgNow})};
+  for(const[w,t,h] of seg.lines){const H=hintsOf(h);
+    if(w==='n'){if(cap)mk(cap.t,cap.H);cap={t,H};continue}
+    mk(cap&&cap.t,cap&&cap.H,w,t,H);cap=null}
+  if(cap)mk(cap.t,cap.H);
+  if(seg.title&&out.length)out[0].title=seg.title;
+  return out;
+}
+function comicPages(segs){
+  const pages=[];
+  for(const seg of segs){
+    // as many panels on a page as the text allows: up to three short ones, or two longer ones
+    let cur=[];const L=p=>(p.cap||'').length*.9+(p.text||'').length,fits=a=>{const mx=Math.max(...a.map(L)),sm=a.reduce((s,p)=>s+L(p),0);
+      return a.length===1||a.length===2&&mx<=210&&sm<=330||a.length===3&&mx<=125&&sm<=300};
+    for(const p of comicPanels(seg)){if(cur.length&&!fits([...cur,p])){pages.push(cur);cur=[]}cur.push(p)}
+    if(cur.length)pages.push(cur);
+    const last=pages[pages.length-1],mood=last&&last[last.length-1].H||{};
+    if(seg.clash)pages.push([{seg,clash:seg.clash,stage:seg.stage,H:{night:mood.night,snow:mood.snow,fog:mood.fog}}]);
+    if(seg.end){const lp=pages[pages.length-1];pages.push([{seg,theend:1,stage:seg.stage,H:{}}])}
+  }
+  return pages;
+}
+var COMIC=null;
+function openComic(segs,doneLabel,done,alt,altLabel){
+  phase='menu';hideMatchUI();$('card').hidden=true;screen='comic';
+  closeComic(true);
+  const box=document.createElement('div');box.id='comic';
+  box.innerHTML=`<canvas id="comiccv"></canvas><div class="row comicrow"><button class="go ghost" id="back" type="button">Quit</button><button class="go ghost" id="cskip" type="button">Skip</button><button class="go" id="cnext" type="button">Next</button></div>`;
+  document.body.append(box);
+  COMIC={pages:comicPages(segs),pi:0,shown:0,rt:[],done,alt,doneLabel,altLabel,box,raf:0};
+  const next=()=>comicNext();
+  $('comiccv').onclick=next;$('cnext').onclick=next;
+  $('cskip').onclick=()=>{const C=COMIC;C.pi=C.pages.length-1;C.shown=0;C.rt=[];comicNext()};
+  $('back').onclick=menu;
+  COMIC.key=e=>{if(!COMIC)return;if(['Enter','Space','ArrowRight'].includes(e.code)){e.preventDefault();e.stopPropagation();comicNext()}};
+  addEventListener('keydown',COMIC.key,true);
+  COMIC.rs=()=>comicDraw();addEventListener('resize',COMIC.rs);
+  comicNext();$('cnext').focus();
+  if(document.fonts)Promise.all(['20px "Jersey 10"','10px "Press Start 2P"'].map(f=>document.fonts.load(f))).then(()=>{if(COMIC)comicDraw()},()=>{});
+}
+function closeComic(){
+  if(!COMIC){const o=$('comic');if(o)o.remove();return}
+  cancelAnimationFrame(COMIC.raf);removeEventListener('keydown',COMIC.key,true);removeEventListener('resize',COMIC.rs);COMIC.box.remove();COMIC=null;
+}
+function comicNext(){
+  const C=COMIC;if(!C)return;
+  const pg=C.pages[C.pi];
+  if(C.shown<pg.length){C.rt[C.shown]=performance.now();C.shown++;if(SET.sound)tone(520+C.shown*60,.04,.05,'square',.03)}
+  else if(C.pi<C.pages.length-1){C.pi++;C.shown=1;C.rt=[performance.now()];if(SET.sound)tone(300,.06,.08,'triangle',.04)}
+  else{C.done();return}
+  const lastPage=C.pi===C.pages.length-1&&C.shown>=C.pages[C.pi].length;
+  $('cnext').textContent=lastPage?C.doneLabel:'Next';
+  $('cskip').hidden=lastPage;
+  if(lastPage&&C.alt&&!$('calt')){$('back').hidden=true;const b=document.createElement('button');b.className='go';b.id='calt';b.type='button';b.textContent=C.altLabel;b.onclick=C.alt;$('cnext').classList.add('ghost');$('cnext').before(b);b.focus()}
+  comicAnim();
+}
+function comicAnim(){const C=COMIC;if(!C)return;cancelAnimationFrame(C.raf);
+  const loop=()=>{if(!COMIC)return;const busy=comicDraw();if(busy)C.raf=requestAnimationFrame(loop)};loop()}
+const PAPER='#efe4cc';
+let HALF=null;
+function halftone(g){if(!HALF){const c=document.createElement('canvas');c.width=c.height=6;const h=c.getContext('2d');h.fillStyle='rgba(0,0,0,.16)';h.beginPath();h.arc(3,3,1.1,0,7);h.fill();HALF=c}return g.createPattern(HALF,'repeat')}
+function wrapText(g,text,maxW){const words=String(text).split(/\s+/),lines=[];let cur='';
+  for(const w of words){const t=cur?cur+' '+w:w;if(g.measureText(t).width>maxW&&cur){lines.push(cur);cur=w}else cur=t}if(cur)lines.push(cur);return lines}
+function comicDraw(){
+  const C=COMIC;if(!C)return false;
+  const cv=$('comiccv'),dpr=Math.min(2,devicePixelRatio||1),W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return false;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr)}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=PAPER;g.fillRect(0,0,W,H);g.fillStyle=halftone(g);g.fillRect(0,0,W,H);
+  const pg=C.pages[C.pi],n=pg.length,m=Math.max(6,Math.min(12,W*.012)),gut=Math.max(6,W*.01),sl=Math.min(18,W*.02);
+  const pw=(W-m*2-gut*(n-1))/n,now=performance.now();let busy=false;
+  const fs=clamp(Math.min(H*.066,W*.034),14,26);
+  for(let k=0;k<n;k++){
+    if(k>=C.shown)break;
+    const x0=m+k*(pw+gut),x1=x0+pw,y0=m,y1=H-m;
+    const tl=k?x0+sl/2:x0,bl=k?x0-sl/2:x0,tr=k<n-1?x1+sl/2:x1,br=k<n-1?x1-sl/2:x1;
+    const u=clamp((now-(C.rt[k]||0))/260,0,1);if(u<1)busy=true;
+    const e=1-Math.pow(1-u,3);
+    g.save();g.globalAlpha=e;g.translate(0,(1-e)*14);
+    const poly=[[tl,y0],[tr,y0],[br,y1],[bl,y1]];
+    g.beginPath();poly.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath();
+    g.save();g.clip();drawComicPanel(g,pg[k],{x:Math.min(tl,bl),y:y0,w:Math.max(tr,br)-Math.min(tl,bl),h:y1-y0},fs,now);g.restore();
+    g.beginPath();poly.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath();g.lineWidth=3;g.strokeStyle=INK;g.lineJoin='miter';g.stroke();
+    g.restore();
+  }
+  // page counter
+  g.font=`${Math.round(fs*.7)}px "Jersey 10",monospace`;g.textAlign='right';g.fillStyle='rgba(18,12,8,.6)';g.fillText((C.pi+1)+' / '+C.pages.length,W-m-2,H-2);
+  return busy;
+}
+function drawComicPanel(g,P,b,fs,now){
+  const H=P.H||{},seg=P.seg;
+  // background: the stage, cropped like a camera shot
+  const bg=stageBG(P.stage),zoom=P.clash||P.theend?1:P.sp?1.75:1.15,ar=b.w/b.h;
+  let sh=bg.height/zoom,sw=sh*ar;if(sw>bg.width){sw=bg.width;sh=sw/ar}
+  const fx=P.sp?(P.sp===seg.hero?.38:.62):.5,sx=clamp(bg.width*fx-sw/2,0,bg.width-sw),sy=clamp(bg.height*.93-sh,0,bg.height-sh);
+  g.imageSmoothingEnabled=false;g.drawImage(bg,sx,sy,sw,sh,b.x,b.y,b.w,b.h);
+  const mood=()=>{
+    if(H.night){g.save();g.globalCompositeOperation='multiply';g.fillStyle='#3d4a8c';g.fillRect(b.x,b.y,b.w,b.h);g.restore();g.fillStyle='rgba(10,14,48,.25)';g.fillRect(b.x,b.y,b.w,b.h)}
+    if(H.fog){const gr=g.createLinearGradient(0,b.y,0,b.y+b.h);gr.addColorStop(0,'rgba(235,238,242,.55)');gr.addColorStop(1,'rgba(235,238,242,.25)');g.fillStyle=gr;g.fillRect(b.x,b.y,b.w,b.h)}
+    if(H.snow){g.fillStyle='rgba(225,235,255,.5)';g.fillRect(b.x,b.y,b.w,b.h);const sg=g.createLinearGradient(0,b.y+b.h*.55,0,b.y+b.h);sg.addColorStop(0,'rgba(255,255,255,0)');sg.addColorStop(1,'rgba(250,252,255,.85)');g.fillStyle=sg;g.fillRect(b.x,b.y,b.w,b.h);g.fillStyle='#fff';let s=7;const N=Math.round(b.w*b.h/900);for(let i=0;i<N;i++){s=(s*9301+49297)%233280;const rx=s/233280;s=(s*9301+49297)%233280;const ry=s/233280;const r=2+(i%3)*1.5;g.fillRect(b.x+rx*b.w,b.y+((ry*b.h+now*.02*(1+i%3))%b.h),r,r)}}
+  };
+  mood();
+  g.fillStyle=halftone(g);g.globalAlpha*=.6;g.fillRect(b.x,b.y,b.w,b.h);g.globalAlpha/=.6;
+  const put=(def,pose,face,x,foot,h,dim,kid)=>{const F=figure(def,pose,face,kid),s=h/F.h;
+    if(dim){g.save();g.filter='brightness(.62) saturate(.8)'}
+    g.imageSmoothingEnabled=false;g.drawImage(F.c,x-F.w/2*s,foot-(F.H-6)*s,F.w*s,F.H*s);if(dim)g.restore();
+    return{x,top:foot-h*1.05,h}};
+  const kid=!!H.kid,heroPose=H.pose&&(!P.sp||P.sp===seg.hero)?H.pose:seg.after?'idle':null;
+  const posOf=(def,isSp)=>{if(def===seg.enemy&&seg.after)return 'lie';if(isSp&&H.pose)return H.pose;if(!isSp&&H.opp)return H.opp;return 'idle'};
+  // clash splash
+  if(P.clash){
+    const cx=b.x+b.w/2,cy=b.y+b.h*.55;
+    g.save();g.globalAlpha*=.42;g.fillStyle=seg.hero.hud;g.beginPath();g.moveTo(b.x,b.y);g.lineTo(cx+b.h*.25,b.y);g.lineTo(cx-b.h*.25,b.y+b.h);g.lineTo(b.x,b.y+b.h);g.fill();
+    g.fillStyle=seg.enemy.hud;g.beginPath();g.moveTo(cx+b.h*.25,b.y);g.lineTo(b.x+b.w,b.y);g.lineTo(b.x+b.w,b.y+b.h);g.lineTo(cx-b.h*.25,b.y+b.h);g.fill();g.restore();
+    g.strokeStyle='rgba(255,255,255,.55)';for(let i=0;i<48;i++){const a=i/48*Math.PI*2+.07,r0=b.h*.32,r1=b.w;g.lineWidth=i%3?1:2.5;g.beginPath();g.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);g.lineTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);g.stroke()}
+    const hh=b.h*.78,foot=b.y+b.h*.98;
+    put(seg.hero,'rush',1,b.x+b.w*.27,foot,hh*Math.min(1.1,seg.hero.size||1));
+    put(seg.enemy,seg.enemy.shield?'shieldbash':'kick',-1,b.x+b.w*.73,foot,hh*Math.min(1.1,seg.enemy.size||1));
+    if(H.night){g.save();g.globalCompositeOperation='multiply';g.fillStyle='#6a76b0';g.fillRect(b.x,b.y,b.w,b.h);g.restore()}
+    const big=Math.min(b.h*.26,b.w*.12);
+    g.textAlign='center';g.textBaseline='middle';g.font=`${big}px "Press Start 2P",monospace`;g.lineJoin='round';
+    g.lineWidth=big*.28;g.strokeStyle=INK;g.strokeText('VS',cx,cy);g.fillStyle='#ffd23f';g.fillText('VS',cx,cy);
+    const nf=Math.max(9,big*.28);g.font=`${nf}px "Press Start 2P",monospace`;g.lineWidth=nf*.45;
+    for(const[d,x] of [[seg.hero,b.x+b.w*.2],[seg.enemy,b.x+b.w*.8]]){g.strokeText(T(d.name),x,b.y+b.h*.9);g.fillStyle=d.hud;g.fillText(T(d.name),x,b.y+b.h*.9)}
+    banner(g,P.clash,b,fs,true);
+    g.textBaseline='alphabetic';return;
+  }
+  if(P.theend){
+    const cx=b.x+b.w/2;g.fillStyle='rgba(255,210,63,.18)';g.fillRect(b.x,b.y,b.w,b.h);
+    g.strokeStyle='rgba(255,240,180,.5)';for(let i=0;i<36;i++){const a=i/36*Math.PI*2,r0=b.h*.2;g.lineWidth=i%2?1:3;g.beginPath();g.moveTo(cx+Math.cos(a)*r0,b.y+b.h*.5+Math.sin(a)*r0);g.lineTo(cx+Math.cos(a)*b.w,b.y+b.h*.5+Math.sin(a)*b.w);g.stroke()}
+    put(seg.hero,'win',1,cx,b.y+b.h*.97,b.h*.7);
+    const big=Math.min(b.h*.13,b.w*.06);g.textAlign='center';g.textBaseline='middle';g.font=`${big}px "Press Start 2P",monospace`;g.lineJoin='round';g.lineWidth=big*.3;g.strokeStyle=INK;
+    const y1=b.y+big*1.1,y2=y1+big*1.55;g.strokeText(T(seg.hero.name),cx,y1);g.fillStyle=seg.hero.hud;g.fillText(T(seg.hero.name),cx,y1);
+    g.strokeText(T('THE END'),cx,y2);g.fillStyle='#ffd23f';g.fillText(T('THE END'),cx,y2);g.textBaseline='alphabetic';return;
+  }
+  // text first, so the people can be sized to the space left under it
+  g.font=`${fs}px "Jersey 10",monospace`;
+  const pad=fs*.45,maxW=b.w-pad*4-16;let ty=b.y+8;
+  let capBox=null;
+  if(P.cap){const cf=fs*.92;g.font=`${cf}px "Jersey 10",monospace`;const ls=wrapText(g,T(P.cap),maxW+8);const lh=cf*1.02,w=Math.max(...ls.map(l=>g.measureText(l).width))+pad*2,h=ls.length*lh+pad*1.4;
+    capBox={x:b.x+8,y:ty,w,h,ls,lh,cf};ty+=h+6}
+  let bub=null;
+  if(P.sp){g.font=`${fs}px "Jersey 10",monospace`;const ls=wrapText(g,T(P.text),Math.min(maxW,Math.max(b.w*.55,fs*9)));const lh=fs*1.02,w=Math.max(fs*3,...ls.map(l=>g.measureText(l).width))+pad*2.4,h=ls.length*lh+pad*1.6;
+    const left=P.sp===seg.hero;bub={w,h,ls,lh,y:ty+fs*.5,x:left?b.x+10:b.x+b.w-10-w};ty=bub.y+h}
+  const room=b.y+b.h*1.03-ty;
+  // people
+  let spot=null;
+  const est=!P.sp;
+  if(est){
+    if(!H.empty){
+      const hh=clamp(room*.95,b.h*.42,b.h*.62),foot=b.y+b.h*.97;
+      const withC=H.with&&CAMEOS[H.with]?CAMEOS[H.with]:null;
+      const showE=seg.shown&&!withC,others=[withC,showE?seg.enemy:null].filter(Boolean);
+      put(seg.hero,heroPose||(seg.end?'win':'idle'),1,b.x+b.w*(others.length?.3:.5),foot,hh*(seg.hero.size||1)*(kid?.62:1),false,kid);
+      if(others[0])put(others[0],others[0]===seg.enemy?posOf(seg.enemy,false):'idle',-1,b.x+b.w*(others[0]===seg.enemy&&seg.after?.6:.72),foot,hh*(others[0].size||1));
+    }
+  }else{
+    const left=P.sp===seg.hero,hh=clamp(room+b.h*.12,b.h*.55,b.h*.95),foot=b.y+b.h*1.14;
+    const lis=P.other;
+    if(lis){const lk=lis===seg.hero&&kid;put(lis,lis===seg.hero?(H.opp||(seg.after?'idle':'idle')):posOf(lis,false),left?-1:1,b.x+b.w*(lis===seg.enemy&&seg.after?(left?.68:.32):(left?.86:.14)),lis===seg.enemy&&seg.after?b.y+b.h*1.0:foot-b.h*.04,hh*.82*(lis.size||1)*(lk?.62:1),true,lk)}
+    const sk=P.sp===seg.hero&&kid,lying=P.sp===seg.enemy&&seg.after&&!seg.end;
+    const sp=put(P.sp,P.sp===seg.hero?(H.pose||'idle'):lying?'lie':(H.pose||'idle'),left?1:-1,b.x+b.w*(lying?.5:left?.36:.64),lying?b.y+b.h*.98:foot,hh*(P.sp.size||1)*(sk?.62:1),false,sk);
+    spot=lying?{x:sp.x+(left?-1:1)*hh*.1,y:b.y+b.h*.82}:{x:sp.x+(left?1:-1)*hh*.08,y:sp.top+hh*.12};
+  }
+  if(H.night||H.fog){g.fillStyle=H.night?'rgba(12,18,60,.18)':'rgba(235,238,242,.18)';g.fillRect(b.x,b.y,b.w,b.h)}
+  if(P.title)banner(g,P.title,b,fs,false);
+  if(capBox){const c=capBox;g.fillStyle='#ffe28a';g.fillRect(c.x,c.y,c.w,c.h);g.lineWidth=2;g.strokeStyle=INK;g.strokeRect(c.x,c.y,c.w,c.h);
+    g.font=`${c.cf}px "Jersey 10",monospace`;g.fillStyle='#2a1a0c';g.textAlign='left';g.textBaseline='top';c.ls.forEach((l,i)=>g.fillText(l,c.x+pad,c.y+pad*.7+i*c.lh));g.textBaseline='alphabetic'}
+  if(bub){const B=bub,r=Math.min(14,B.h/2);
+    const tx=clamp(spot.x,Math.max(b.x+12,B.x-20),Math.min(b.x+b.w-12,B.x+B.w+20)),ty2=Math.max(spot.y,B.y+B.h+8),bx=clamp(tx,B.x+r+6,B.x+B.w-r-6);
+    g.fillStyle='#fffdf6';g.strokeStyle=INK;g.lineWidth=2.5;
+    g.beginPath();g.roundRect(B.x,B.y,B.w,B.h,r);g.fill();g.stroke();
+    g.beginPath();g.moveTo(bx-7,B.y+B.h-1.5);g.lineTo(tx,ty2);g.lineTo(bx+7,B.y+B.h-1.5);g.closePath();g.fill();
+    g.beginPath();g.moveTo(bx-7,B.y+B.h);g.lineTo(tx,ty2);g.lineTo(bx+7,B.y+B.h);g.stroke();
+    g.font=`${fs}px "Jersey 10",monospace`;g.fillStyle=INK;g.textAlign='center';g.textBaseline='top';
+    B.ls.forEach((l,i)=>g.fillText(l,B.x+B.w/2,B.y+fs*.7+i*B.lh));g.textBaseline='alphabetic';
+    // speaker tag
+    const nf=Math.max(7,fs*.38);g.font=`${nf}px "Press Start 2P",monospace`;const nm=T(P.sp.name),nw=g.measureText(nm).width+nf*1.2;
+    const nx=P.sp===seg.hero?B.x+8:B.x+B.w-8-nw;g.fillStyle=INK;g.fillRect(nx,B.y-nf*.9,nw,nf*1.8);g.fillStyle=P.sp.hud;g.textAlign='left';g.textBaseline='middle';g.fillText(nm,nx+nf*.6,B.y);g.textBaseline='alphabetic'}
+  if(H.sfx){const big=Math.min(b.h*.16,b.w*.14);g.save();g.translate(b.x+b.w*.7,b.y+b.h*.55);g.rotate(-.18);g.font=`${big}px "Press Start 2P",monospace`;g.textAlign='center';g.lineJoin='round';g.lineWidth=big*.3;g.strokeStyle=INK;g.strokeText(H.sfx,0,0);g.fillStyle='#ff5a3c';g.fillText(H.sfx,0,0);g.restore()}
+}
+function banner(g,[a,t],b,fs,top){
+  const f1=Math.max(8,fs*.42),f2=fs*1.05;g.font=`${f2}px "Jersey 10",monospace`;const tw=g.measureText(T(t)).width;g.font=`${f1}px "Press Start 2P",monospace`;
+  const w=Math.min(b.w-16,Math.max(g.measureText(T(a)).width,tw)+fs*1.6),h=f1+f2+fs*.8,x=b.x+8,y=top?b.y+8:b.y+b.h-h-10;
+  g.fillStyle=INK;g.beginPath();g.moveTo(x,y);g.lineTo(x+w,y);g.lineTo(x+w-fs*.6,y+h);g.lineTo(x,y+h);g.fill();
+  g.textAlign='left';g.textBaseline='top';g.fillStyle='#ffd23f';g.fillText(T(a),x+fs*.5,y+fs*.35);
+  g.font=`${f2}px "Jersey 10",monospace`;g.fillStyle='#fffdf6';g.fillText(T(t),x+fs*.5,y+fs*.4+f1+2);g.textBaseline='alphabetic';
 }
 function startArcade(){
   const others=CHARS.filter((_,i)=>i!==pickChar).sort(()=>Math.random()-.5);
